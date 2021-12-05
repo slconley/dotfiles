@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# argument should be target in <host>:<port> form.
+# no error checking just yet.  maybe later.
+
+versions="tls1_2 tls1_1 tls1 ssl3 ssl2"
+
+for v in $versions ; do
+  for c in $(openssl ciphers 'ALL:eNULL' | tr ':' ' '); do
+    openssl s_client -connect $1 -cipher $c -$v < /dev/null > /dev/null 2>&1 && echo -e "$v:\t$c"
+  done
+done
+

@@ -1,0 +1,393 @@
+#!/usr/bin/env perl
+
+use File::stat;
+use User::pwent;
+use User::grent;
+use Getopt::Std;
+
+######################################################################
+#
+# main routine
+#
+######################################################################
+
+%option = ();
+getopts("adghms", \%option );
+
+#
+# only one option between [agsv] may be used
+#
+if ($option{h} || $option{a} + $option{d} + $option{g} + $option{m} + $option{s} > 1) { 
+  usage();
+}
+
+#
+# call subroutine based on option set
+#
+$option{a} && audit_modes();
+$option{d} && diff_modes();
+$option{g} && get_modes();
+$option{m} && merge_modes();
+$option{s} && set_modes();
+
+
+
+######################################################################
+sub get_modes {
+######################################################################
+
+  while (<>) {
+    chomp;
+    if ($stats = stat($_) ) {
+
+      $user = ($pwent=getpwuid($stats->uid)) ? $pwent->name : $stats->uid;
+      $group = ($grent=getgrgid($stats->gid)) ? $grent->name : $stats->gid;
+
+      printf("%s|%04o|%s|%s\n", $_, $stats->mode & 07777, $user, $group);
+    }
+  }
+}
+
+
+######################################################################
+sub set_modes {
+######################################################################
+
+  while (<>) {
+
+    ########################################
+    #
+    # split record into fields
+    #
+    chomp;
+    $fcnt = (($db_fname,$db_mode,$db_user,$db_group) = split(/\|/)) ;
+    if ($fcnt != 4 ) {
+      warn("Incorrect field count: $_\n");
+      next;
+    }
+
+    ########################################
+    #
+    # stat file to get attributes
+    #
+    if ($stats = stat($db_fname) ) {
+
+      ########################################
+      #
+      # convert username to uid if necessary
+      #
+      if ($db_user =~ /^\d+$/) {
+        $uid = $db_user;		# user is already numeric
+      }
+      else {
+        if ($pwent = getpwnam($db_user)) {
+	  $uid = $pwent->uid;
+        }
+	else {
+          warn("No such user: $db_user: $_\n");
+	}
+      }
+        
+      ########################################
+      #
+      # convert group name to gid if necessary
+      #
+      if ($db_group =~ /^\d+$/) {
+        $gid = $db_group;
+      }
+      else {
+        if ($grent = getgrnam($db_group)) {
+	  $gid = $grent->gid;
+        }
+	else {
+          warn("No such group: $db_group: $_\n");
+	}
+      }
+
+      ########################################
+      #
+      # compare mode between DB and current, call chmod if differences
+      #
+      if ( ($db_mode =~ /^0+$/) || ($db_mode = oct $db_mode) ) { 
+        if ($db_mode != ($stats->mode & 07777) ) {
+          if (! chmod($db_mode, $db_fname) ) {
+  	    warn "chmod: $!: $db_fname: $db_mode\n";
+          }
+        }
+      }
+      else {
+        warn "chmod: invalid mode: $_\n";
+      }
+
+      ########################################
+      #
+      # compare uid/gid between DB and current, call chown if differences
+      #
+      if ( ($uid != $stats->uid) || ($gid != $stats->gid) ) {
+  	if (! (chown $uid, $gid, $db_fname) ) {
+  	  warn "chown: $!: $db_fname\n";
+  	}
+      }
+  
+    }  # if (stat)
+
+  }  # while (<>)
+
+}  # sub set_modes
+
+
+######################################################################
+sub audit_modes {
+######################################################################
+
+  while (<>) {
+
+    ########################################
+    #
+    # split record into fields
+    #
+    chomp;
+    $fcnt = (($db_fname,$db_mode,$db_user,$db_group) = split(/\|/)) ;
+    if ($fcnt != 4 ) {
+      warn("Incorrect field count: $_\n");
+      next;
+    }
+
+    ########################################
+    #
+    # stat file to get attributes
+    #
+    if ($stats = stat($db_fname) ) {
+
+      ########################################
+      #
+      # convert username to uid if necessary
+      #
+      if ($db_user =~ /^\d+$/) {
+        $uid = $db_user;		# user is already numeric
+      }
+      else {
+        if ($pwent = getpwnam($db_user)) {
+	  $uid = $pwent->uid;
+        }
+	else {
+          warn("No such user: $db_user: $_\n");
+	}
+      }
+        
+      ########################################
+      #
+      # convert group name to gid if necessary
+      #
+      if ($db_group =~ /^\d+$/) {
+        $gid = $db_group;
+      }
+      else {
+        if ($grent = getgrnam($db_group)) {
+	  $gid = $grent->gid;
+        }
+	else {
+          warn("No such group: $db_group: $_\n");
+	}
+      }
+
+      $file_pwent = getpwuid($stats->uid);
+      $file_grent = getgrgid($stats->gid);
+
+      ########################################
+      #
+      # compare mode between DB and current
+      #
+      if ( ($db_mode =~ /^0+$/) || ($db_mode = oct $db_mode) ) { 
+        if ($db_mode != ($stats->mode & 07777) ) {
+	  printf("FILE:%s\;EXPECTED:%04o\|%s\|%s\;ACTUAL:%04o\|%s\|%s\n",
+	    $db_fname,
+	    $db_mode & 07777, $db_user, $db_group,
+	    $stats->mode & 07777, $file_pwent->name, $file_grent->name);
+	  next;
+        }
+      }
+      else {
+        warn "chmod: invalid mode: $_\n";
+      }
+
+      ########################################
+      #
+      # compare uid/gid between DB and current
+      #
+      if ( ($uid != $stats->uid) || ($gid != $stats->gid) ) {
+	printf("FILE:%s\;EXPECTED:%04o\|%s\|%s\;ACTUAL:%04o\|%s\|%s\n",
+	  $db_fname,
+	  $db_mode & 07777, $db_user, $db_group,
+	  $stats->mode & 07777, $file_pwent->name, $file_grent->name);
+      }
+  
+    }  # if (stat)
+
+  }  # while (<>)
+
+}  # sub audit_modes
+
+
+
+######################################################################
+sub diff_modes {
+######################################################################
+
+  while (<>) {
+
+    ########################################
+    #
+    # split record into fields
+    #
+    chomp;
+    $fcnt = (($db_fname,$db_mode,$db_user,$db_group) = split(/\|/)) ;
+    if ($fcnt != 4 ) {
+      warn("Incorrect field count: $_\n");
+      next;
+    }
+
+    ########################################
+    #
+    # stat file to get attributes
+    #
+    if ($stats = stat($db_fname) ) {
+
+      ########################################
+      #
+      # convert username to uid if necessary
+      #
+      if ($db_user =~ /^\d+$/) {
+        $uid = $db_user;		# user is already numeric
+      }
+      else {
+        if ($pwent = getpwnam($db_user)) {
+	  $uid = $pwent->uid;
+        }
+	else {
+          warn("No such user: $db_user: $_\n");
+	}
+      }
+        
+      ########################################
+      #
+      # convert group name to gid if necessary
+      #
+      if ($db_group =~ /^\d+$/) {
+        $gid = $db_group;
+      }
+      else {
+        if ($grent = getgrnam($db_group)) {
+	  $gid = $grent->gid;
+        }
+	else {
+          warn("No such group: $db_group: $_\n");
+	}
+      }
+
+      $file_pwent = getpwuid($stats->uid);
+      $file_grent = getgrgid($stats->gid);
+
+      ########################################
+      #
+      # compare mode between DB and current
+      #
+      if ( ($db_mode =~ /^0+$/) || ($db_mode = oct $db_mode) ) { 
+        if ($db_mode != ($stats->mode & 07777) ) {
+          printf("%s|%04o|%s|%s\n", $db_fname, $db_mode & 07777, $db_user, $db_group);
+	  next;
+        }
+      }
+      else {
+        warn "chmod: invalid mode: $_\n";
+      }
+
+      ########################################
+      #
+      # compare uid/gid between DB and current
+      #
+      if ( ($uid != $stats->uid) || ($gid != $stats->gid) ) {
+        printf("%s|%04o|%s|%s\n", $db_fname, $db_mode & 07777, $db_user, $db_group);
+      }
+  
+    }  # if (stat)
+
+  }  # while (<>)
+
+}  # sub diff_modes
+
+
+
+######################################################################
+sub merge_modes {
+######################################################################
+
+  %files_seen = ();
+
+  while (<>) {
+
+    chomp;
+    $fcnt = (($db_fname,$db_mode,$db_user,$db_group) = split(/\|/)) ;
+    if ($fcnt != 4 ) {
+      warn("Incorrect field count: $_\n");
+      next;
+    }
+
+    #
+    # skip to next record if this filename has already been seen
+    #
+    next if exists $files_seen{$db_fname};
+
+    #
+    # print current record and add it to the 'seen' list
+    #
+    print "$_\n";
+    $files_seen{$db_fname} = 1;
+
+  }  # while (<>)
+
+}  # sub merge_modes
+
+
+######################################################################
+sub usage() {
+######################################################################
+  die <<EOF
+
+Usage: $0 [ -gms ] [ file ... ]
+
+Where:	-g 	performs mode 'get' operation on filenames provided.
+		this option reads filenames from 'file' or from STDIN
+		it's output (STDOUT) can be saved to be used
+		in future runs with the -m or -s options. the format of
+		this output is: "filename|mode|owner|group".  the owner
+		and group may be uid/gid if there is no associated name.
+		
+	-m	performs merge of two or more previous 'get' operations. 
+		this can be useful to add files to an existing database
+		without adding duplicates.  if a duplicate filename is
+		encountered, the first instance is considered correct and
+		subsequent duplicates are silently discarded from the output.
+
+	-s	performs mode 'set' operation from input provided
+		this option reads output from previous runs of the -g
+		option.  if the current file mode/owner/group differs
+		from the provided attributes, then the appropriate
+		changes will be made to the given file.  if a filename
+		provided does not actually exist on the system, the record
+		is silently ignored.
+
+	-a	performs mode 'audit' operation.  again, input is taken 
+		from named file or STDIN.  if any mode/ownership differences
+		are discovered between the input provided and the files
+		residing on the system, they are reported.  the filename
+		is given as well as the expected vs actual file attributes.
+
+	-d	diff - same concept as 'audit' except output is in strict mmdb 
+		format.  this output could be considered a delta file that 
+		could be run through 'mymodes -s' to make the system conform
+		to the original mmdb file.
+EOF
+}
+
+

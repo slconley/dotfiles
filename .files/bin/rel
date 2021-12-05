@@ -1,0 +1,14 @@
+#!/bin/sh
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
+# some basic host info
+uname -a
+grep . /etc/*release* 2> /dev/null
+
+# running in a VM?
+dmidecode -s system-product-name 2> /dev/null
+dmidecode -s system-serial-number 2> /dev/null
+
+
+

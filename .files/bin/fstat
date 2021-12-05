@@ -1,0 +1,211 @@
+#!/bin/env perl
+
+######################################################################
+#
+#		--> DOCUMENTATION <--
+#
+# try 'pod2text <filename> | less' to view this file
+#
+######################################################################
+
+=head1 NAME
+
+fstat - display stat structure elements of listed files
+
+=head1 SYNOPSIS
+
+fstat [ -nofname ] [ -attributes=<list> ] [ -delimiter=c ] [ filename ... ]
+
+=head1 OPTIONS
+
+=over
+
+=item B<-n>, B<-nofname>
+
+Do not print filenames in output.
+
+=item B<-a>, B<-attributes=<list>>
+
+List is comprised of one or more of the following attributes:
+
+=over
+
+    mode	- mode (premissions)
+    ino		- inode number
+    uid		- user ID
+    gid		- group ID
+    nlink	- number of links
+    size	- size (in bytes)
+    atime	- access time
+    mtime	- modification time (file contents)
+    ctime	- modification time (inode)
+
+
+=back
+
+=item B<-d>, B<-delimiter>=c
+
+Delimiter to be used in output.
+
+=back
+
+=head1 EXAMPLES
+
+    fstat -attributes=mode,uid,gid file1 file2 file3
+    fstat -attr=mode,uid,gid -del=: file1 file2 file3
+    fstat -attr=uid -nofname file1
+    find . | fstat -attr=mode
+
+=head1 NOTES
+
+filenames can be provided as arguments, or via STDIN
+
+exit status will return number of files successfully stat'd
+BUT...  the upper limit in exit codes is 256.  this feature
+is mostly useful if you are trying to stat a single file to
+see if it exists
+
+=cut
+
+##############################################################
+#
+#			--> MAIN <--
+#
+##############################################################
+
+use Getopt::Long;
+use File::stat;
+
+# ------------------------------------------------------------
+# main routine of script
+# ------------------------------------------------------------
+sub main()
+{
+  parse_options();
+  parse_attributes();
+
+  $statcnt = 0;
+
+  if (@ARGV) {
+    foreach (@ARGV) {
+      ($st = stat($_)) && ++$statcnt && print_attributes();
+    }
+  }
+
+  else {
+    while(<>) {
+      chomp;
+      ($st = stat($_)) && ++$statcnt && print_attributes();
+      #($st = stat($_)) && ++$statcnt;
+    }
+  }
+
+  return($statcnt)
+
+}
+
+# ------------------------------------------------------------
+# basic usage routine, called if args not understood
+# ------------------------------------------------------------
+# ------------------------------
+sub usage() 
+{
+  printf ("%s%s%s%s%s\n",
+  	"usage: $0:",
+	"[--nofname] ", 
+	"[--attributes=<list>] ",
+	"[delimieter=c] ",
+	"[filename ... ]");
+}
+
+# ------------------------------------------------------------
+# parse options provided on command line
+# ------------------------------------------------------------
+sub parse_options()
+{
+  $del = " ";		# default deilimeter is space
+  $opt_fname = 1;	# by default, show filenames
+
+  if ( !GetOptions ( "attributes=s" => \$attributes, "fname!", "delimiters=s" => \$del ) ) {
+      usage();
+      exit 0;
+  }
+}
+
+# ------------------------------------------------------------
+# create aray listing specified attributes to print
+# ------------------------------------------------------------
+sub parse_attributes()
+{
+  (@attributes) = split(/,/, $attributes);
+}
+
+
+# ------------------------------------------------------------
+# print attributes (print only what attributes were specified
+# ------------------------------------------------------------
+sub print_attributes()
+{
+
+  $opt_fname && printf "$_$del";
+
+  foreach $attr (@attributes) {
+
+    SWITCH_ATTR: {
+
+      $attr =~ /^mode$/ && do {
+	  printf("%o%s", $st->mode & 07777, $del);
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^ino$/ && do {
+	  print $st->ino, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^uid$/ && do {
+	  print $st->uid, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^gid$/ && do {
+	  print $st->gid, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^size$/ && do {
+	  print $st->size, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^nlink$/ && do {
+	  print $st->nlink, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^atime$/ && do {
+	  print $st->atime, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^mtime$/ && do {
+	  print $st->mtime, $del;
+	  last SWITCH_ATTR;
+      };
+
+      $attr =~ /^ctime$/ && do {
+	  print $st->ctime, $del;
+	  last SWITCH_ATTR;
+      };
+    }
+  }
+  print "\n";
+}
+
+
+# --------------------------------------------------
+# call main and exit with whatever result it returns
+# --------------------------------------------------
+exit(main());
+
+

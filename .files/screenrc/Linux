@@ -1,0 +1,2 @@
+bindkey '[1;5D' prev
+bindkey '[1;5C' next

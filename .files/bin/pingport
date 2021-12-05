@@ -1,0 +1,75 @@
+#!/bin/env perl
+
+use strict;
+use warnings;
+use IO::Socket;
+use Net::Ping;
+
+sub main()
+{
+    my $thisHost = `hostname`;
+    chomp $thisHost;
+
+    my @lines = <>;
+    my (@success) = grep { /^${thisHost}:succ/i } @lines;
+    my (@failure) = grep { /^${thisHost}:fail/i } @lines;
+
+    print "\nThese connections should succeed: -----------------------------\n\n" if @success;
+    foreach (@success) {
+        myping();
+    }
+
+    print "\nThese connections should fail:    -----------------------------\n\n" if @failure;
+    foreach (@failure) {
+        myping();
+    }
+
+    print "\n" if (@success | @failure);
+
+}
+
+sub myping()
+{
+    chomp;
+    my ($srchost, $expresult, $host, $proto, $port, $description) = ();
+    # remove EOL comments and trailing white-space
+    s/\#.*$//;
+    s/\s*$//;
+    my $argcnt = ($srchost, $expresult, $host, $proto, $port, $description) = split(/:/); 
+    if ($argcnt < 6) {
+      printf "INPUT ERROR: incorrect number of fields (6) --> $_\n";
+      return;
+    }
+    my $result = 0;
+    my $reason = "";
+    $@ = "";
+
+    if ("$proto" =~ "icmp" ) {
+        my $p = Net::Ping->new("icmp",$port);		# using port as timeout for ICMP
+	$result = $p->ping($host);
+	$port = "";
+	$p->close();
+    }
+
+    else {
+        my $remote = IO::Socket::INET->new(
+            Proto    => $proto,
+            PeerAddr  => $host,
+            PeerPort  => $port,
+            Timeout    => 8,
+        );
+	$result = $remote;
+	$reason = ($@ ? $@ : "");
+	close $remote if $remote;
+
+    } 
+
+    my $restext = ( $result ? "SUCCEEDED" : "FAILED" );
+    printf "    %-16s %-6s %-5s %-20s %-10s %s\n", 
+		$host, $proto, $port, $description, $restext, $reason;
+
+    return;
+}
+
+main();
+

@@ -1,0 +1,36 @@
+# general
+*.swp
+*credentials*
+*history*
+.*auth*
+.Trash*/
+.cache/
+.docker/
+.dropbox/
+.nfs*
+.tmp
+.var
+.vscode/
+tmp/
+
+# macos
+.AppleDB
+.AppleDesktop
+.AppleDouble
+.DS_Store
+.DocumentRevisions-V100
+.LSOverride
+.Spotlight-V100
+.TemporaryItems
+.VolumeIcon.icns
+._*
+.apdisk
+.com.apple.timemachine.donotpresent
+.fseventsd
+Icon
+Network Trash Folder
+Temporary Items
+
+# linux
+*~
+.fuse_hidden*

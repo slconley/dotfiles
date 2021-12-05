@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# simple script that unpacks an archive based on its' name.
+# the original archive file is left untouched.
+# does not do any error checking, so U R on UR own
+#
+
+OVERWRITE=""
+QUIET=""
+while getopts oq c; do
+  case $c in 
+    o)  OVERWRITE="-o";;
+    q)  QUIET=">/dev/null";;
+  esac
+done
+shift `expr $OPTIND - 1`
+
+#
+# the 'eval' business below is what makes QUIET expand properly if set
+#
+
+for file in $*; do
+
+  case $file in 
+
+    *.tar)
+  	eval tar xvf $file $QUIET
+	;;
+
+    *.tgz|*tar.gz|*tar.Z)
+  	gzip -dc $file | eval tar xvf - $QUIET
+	;;
+
+    *.zip)
+  	eval unzip $OVERWRITE $file $QUIET
+	;;
+
+    *.cpio.gz)
+  	gzip -dc $file | eval cpio -ivmud $QUIET
+	;;
+
+    *.cpio)
+  	eval cpio -ivmud < $file $QUIET
+	;;
+
+    *.tar.bz2)
+  	bzcat $file | eval tar xvf - $QUIET
+	;;
+
+    *.cpio.bz2)
+  	bzcat $file | eval cpio -ivmud $QUIET
+	;;
+
+    *.jar)
+  	eval jar xvf $file $QUIET
+	;;
+
+    *)
+  	echo I am lame... I do not know what to do with file: $file
+	;;
+
+  esac
+
+done
+
+

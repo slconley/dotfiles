@@ -1,0 +1,15 @@
+# ignore file endings altogether
+* -crlf
+
+# default to text
+* text=auto
+
+# use this instead on Windows systems
+# * text true   
+
+# binary filetypes
+*.gpg binary
+*.jks binary
+*.p12 binary
+*.png binary
+ignore binary

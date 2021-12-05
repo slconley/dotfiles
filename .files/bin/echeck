@@ -1,0 +1,15 @@
+#!/bin/bash
+
+EGRESS_TARGETS="${EGRESS_TARGETS:-http://speedtest.wdc01.softlayer.com/downloads/test10.zip}"
+
+while :; do
+  for t in $EGRESS_TARGETS; do
+    date=$(date -u '+%Y%m%d.%H%M%S')
+    set -- $(curl -Lso /dev/null $t -w "%{remote_ip} %{response_code} %{size_download} %{time_total} %{speed_download}")
+    let kbytes=$3/1024
+    let kps=$(echo $5 | cut -d. -f1)/1024
+    printf "${date}: ${t}($1) response:$2 KB:$kbytes seconds:$4 K/s:$kps\n"
+  done
+done
+
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+case $OS in
+
+  SunOS)
+    count_opt=""
+    timout_opt="2"
+    break;;
+
+  Lin*)
+    count_opt="-c 1"
+    timout_opt="-W 2"
+    break;;
+
+esac
+
+for host in `getent hosts | egrep -- $1 | awk '{print $2}' | sort -u`; do
+  if ping $host $count_opt $timout_opt >/dev/null 2>&1; then
+    echo ${host} is alive
+  else
+    echo ${host}: no answer
+  fi
+done
+
+

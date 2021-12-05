@@ -1,0 +1,53 @@
+#!/bin/sh
+
+prog=`basename $0`
+OS="`uname -s`" 
+
+case $OS in
+	IRIX*)	KILL="killall"
+		PS="/sbin/ps -ef"
+		break;;
+	SunOS)
+		KILL="kill"
+		PS="/usr/bin/ps -ef"
+		break;;
+	Lin*)
+		KILL="kill"
+		PS="/bin/ps -ef"
+		break;;
+esac
+
+
+for PROC in $*; do
+  echo $prog\'ing $PROC processes
+
+  # get PIDs (if SunOS)
+  if [[ "$OS" == "SunOS" || "$OS" =~ Lin* ]] ; then
+    PIDS=`$PS|egrep $PROC|grep -v grep|grep -v $0|awk '{printf "%s ",$2}'`
+    if [ "$PIDS" = "" ] ; then
+      echo Found no processes named \"$PROC\"
+      break
+    fi
+  else
+    PIDS=$PROC
+  fi
+
+  # ------------------------------------------------------------
+  # build list of relatives if entire tree must be slain
+  # ------------------------------------------------------------
+  if [ "$prog" = "slaytree" ]; then
+    for pid in $PIDS; do
+      PIDS="`ptree $pid | awk '{print $1}'` $PIDS"
+    done
+    PIDS="`echo $PIDS | tr ' ' '\n' | sort -urn`"
+  fi
+
+  case "$prog" in
+    hup) $KILL -HUP $PIDS ;;
+    term) $KILL -TERM $PIDS ;;
+    SLAY) $KILL -KILL $PIDS ;;
+    *) for sig in TERM HUP INT QUIT ABRT KILL; do $KILL -${sig} $PIDS 2> /dev/null; done  ;;
+  esac
+
+done
+

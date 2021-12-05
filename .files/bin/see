@@ -1,0 +1,101 @@
+#!/bin/sh
+#
+# originally named lesspipe - look at the less man page for details
+#
+
+VERBOSE=""
+while getopts dv c; do
+  case $c in
+    d)  set -x;;
+    v)  VERBOSE=1;;
+  esac
+done
+shift `expr $OPTIND - 1`
+for file in $*; do
+
+  [ $VERBOSE ] && echo ----------  file: $file  ----------
+
+  case "$file" in 
+    # gzip readable tar files
+    *tar.Z|*tar.gz|*.tgz) gzip -dc $file | tar tvf - 2>/dev/null ;;
+
+    # bzip readable tar files
+    *tar.bz2) bzcat $file | tar tvf - 2>/dev/null ;;
+
+    # bzip readable tar files
+    *.bz2) bzcat -dc $file | cpio -itv 2>/dev/null ;;
+
+    # ordinary tar files
+    *.tar) tar tvf $file 2> /dev/null ;;
+
+    # compressed cpio archives
+    *.cpio.gz|*.cpio.Z) gzip -dc $file | cpio -itv 2>/dev/null ;;
+
+    # cpio archives
+    *.cpio) cpio -itv < $file 2>/dev/null ;;
+
+    # compressed man pages
+    *.[123456789lmn].gz|*.[123456789lmn]??.gz) gzip -dc $file | nroff -man 2> /dev/null; break;;
+
+    # plain man pages
+    *.[123456789lmn]) nroff -man $file 2> /dev/null; break;;
+
+    # other compessed files
+    *.Z|*.gz|*.z) gzip -dc $file 2>/dev/null ;;
+
+    # object files
+    *.so*|*.o) nm -s $file 2> /dev/null ;;
+
+    # plain old documentation
+    #*.pod) pod2man -c "" -n "" -r "" $file | nroff -man 2> /dev/null ;;
+    *.pod) pod2man $file | nroff -man 2> /dev/null ;;
+
+    # static libraries
+    *.a) ar -tv $file 2> /dev/null ;;
+
+    # zip/jar/class files
+    *.zip|*.jar|*.class) zipinfo -m $file 2> /dev/null ;;
+
+    # Sybase interfaces files
+    *interfaces) decode-tli $file 2> /dev/null ;;
+
+    # package device files
+    *pkg) pkginfo -l -d $file 2> /dev/null ;;
+
+    # package device files
+    *rpm) rpm -qilp $file 2> /dev/null ;;
+
+    # berkeley db files
+    *.bdb|*.db) db_dump $file 2> /dev/null ;;
+
+    # html
+    *.html|*.htm) html2text $file 2> /dev/null ;;
+
+    # markdown
+    #*.markdown|*.md) markdown $file | html2text 2> /dev/null ;;
+    #*.markdown|*.md) markdown $file 2> /dev/null ;;
+
+    # json
+    *.json) which jq > /dev/null 2>&1 && jq -C . $file || cat $file;;
+
+
+    *.rar) unrar l $file 2> /dev/null ;;
+
+    #*.nmap) grcat ~/.grc/conf.nmap < $file ;;
+    *.nmap) [ "$GRC" ] && grcat ~/.grc/conf.nmap < $file || cat $file ;;
+
+    # all the PKI things
+    id_*|*.pem|*.csr|*.crt|*.cert|*.key|*.p12|*.pub) 
+        subtype=$(file -Lb $file)
+        case $subtype in 
+          *PEM*request*) openssl req -text -verify -in $file 2> /dev/null ;;
+          *PEM*key*) openssl rsa -check -in $file 2> /dev/null ;;
+          *cert*|*text*) openssl pkcs12 -export -in $file -nokeys -passout pass:'' | openssl pkcs12 -chain -passin pass:'' 2> /dev/null && openssl x509 -text -in $file 2> /dev/null ;;
+          *data*) openssl pkcs12 -info -in $file -nodes -passin pass:${password:-''} -nokeys ;;
+          *) cat $file ;;
+        esac ;;
+
+  esac
+
+done
+

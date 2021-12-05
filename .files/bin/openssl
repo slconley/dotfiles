@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# openssl wrapper with specific PATH
+
+PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/local/bin
+
+if [ -e /usr/local/Cellar/openssl* ]; then
+  dir=$(ls -d /usr/local/Cellar/openssl*/*/bin | tail -1)
+  PATH=$dir:$PATH
+fi
+
+openssl $@ ; exit $?
+

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# I might be old-school unix, but I have to believe I am not the only person that dislikes spaces in file names.
+# this (very basic) script renames files in the current dir, only if spaces exist in the filenames.
+
+for f in *\ *; do 
+  t="${f// /_}"
+  [ -f "$t" ] && { printf 'target name already exists. skipping command: mv "%s" "%s"\n' "$f" "$t"; continue; }
+  mv "$f" "$t"
+done
+

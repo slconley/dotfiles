@@ -1,0 +1,37 @@
+#!/bin/env perl
+
+use strict;
+use warnings;
+use IO::Socket;
+use Net::hostent;
+
+if ($#ARGV < 0) {
+  printf "usage: $0 <port>\n";
+  exit 1;
+}
+
+my $server_port =  $ARGV[0];
+
+sub main()
+{
+
+    my $server = IO::Socket::INET->new(LocalPort => $server_port,
+    		Type	=> SOCK_STREAM,
+		Reuse	=> 1,
+		Listen	=> SOMAXCONN )
+        or die "Could not start server on port $server_port: $@\n";
+
+    print "[listening on port (tcp) $server_port]\n";
+
+    while (my $client = $server->accept()) {
+	my $host = gethost($client->peerhost());
+	my $reportname = ( $host && $host->name ) ? 
+	    $host->name . " (" . $client->peerhost() . ")" : $client->peerhost();
+	printf "[Connect from %s]\n", $reportname;
+	close $client;
+    }
+
+}
+
+main();
+

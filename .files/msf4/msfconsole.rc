@@ -1,0 +1,14 @@
+set -g consolelogging true
+set -g sessionlogging true
+set -g threads 32
+set -g timeout 5
+
+# TODO: determine if vars can be used for this stuff
+mkdir -p /home/zero/opt/workspace/megacorp
+cd /home/zero/opt/workspace/megacorp
+workspace megacorp
+
+load alias
+alias h history
+
+save

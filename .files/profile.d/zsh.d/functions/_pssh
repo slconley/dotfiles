@@ -1,0 +1,2 @@
+_pssh() {_arguments : -h:"_files -P ~/etc/pssh/ -W ~/etc/pssh/":}
+

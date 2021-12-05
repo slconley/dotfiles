@@ -1,0 +1,8 @@
+bindkey \E[1;5D prev
+bindkey \E[1;5C next
+bindkey \E[1;2D prev
+bindkey \E[1;2C next
+
+# caption always "%3n %t%? (%u)%?%?: %h%?"
+
+

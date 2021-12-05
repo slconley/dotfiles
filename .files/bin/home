@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# work from $HOME
+cd
+
+case "$1" in 
+
+  # zip up core HOME
+  zip)		$HOME/.files/bin/ziphome ;;
+
+  # sync home
+  sync)		$HOME/.files/bin/synchome ;;
+
+  # create filelist - used by 'loc' function
+  updatedb)	[ -d $HOME/.local ] || mkdir $HOME/.local; find $HOME | gzip -c > $HOME/.local/filelist.gz;;
+
+  # light cleaning
+  clean)	make -f $HOME/etc/Makefile.home clean ;;
+
+  # heavy cleaning
+  CLEAN)	make -f $HOME/etc/Makefile.home CLEAN ;;
+
+esac
+

@@ -1,0 +1,32 @@
+[user]
+  email = slconley@users.noreply.github.com
+  name = sean.conley
+[core]
+  autocrlf = input
+  pager = less -S
+  excludesfile = ~/.gitignore_global
+[init]
+  defaultBranch = main
+[push]
+  default = current
+[pull]
+  default = current
+  rebase=true
+[rebase]
+  autostash = true
+[alias]
+  difflist = !git diff --name-only
+  permission-reset = !git diff -p -R --no-color | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply
+  sync = !git pull && git push --all all && git fetch --all
+[filter "lfs"]
+  clean = git-lfs clean %f
+  smudge = git-lfs smudge %f
+  required = true
+[color]
+  ui = true
+[format]
+  pretty = format:%h %Cblue%ai%Creset %<(20)%ae %Cblue%d%Creset %Cgreen%s%Creset
+[diff "sopsdiff"]
+  textconv = sops -d
+[credential]
+  helper = cache --timeout=43200

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+PATH=/bin:/usr/bin
+
+destinations="
+	$HOME/GoogleDrive/@work/HOME
+	$HOME/OneDrive/@work/HOME
+	$HOME/Dropbox/@work/HOME
+"
+
+cd $HOME
+for d in $destinations ; do
+  rsync -Fa --delete . $d
+done
+

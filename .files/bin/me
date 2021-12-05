@@ -1,0 +1,18 @@
+#!/bin/sh -f
+
+PATH=/bin:/usr/bin
+
+# just uncomment any current favorite(s)
+
+#curl -s http://whatismyip.org
+
+#curl http://ipinfo.io/ip
+#curl http://ipinfo.io/hostname
+#curl http://ipinfo.io/city
+#curl http://ipinfo.io/region
+#curl http://ipinfo.io/contry
+#curl http://ipinfo.io/loc
+#curl http://ipinfo.io/org
+#curl http://ipinfo.io/postal
+curl http://ipinfo.io/
+

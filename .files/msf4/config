@@ -1,0 +1,13 @@
+[framework/core]
+lhost=172.16.10.209
+rhost=172.16.10.0/24
+lport=443
+consolelogging=true
+sessionlogging=true
+connecttimeout=30
+threads=32
+timeout=5
+
+[framework/ui/console]
+ActiveWorkspace=megacorp
+

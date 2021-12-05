@@ -1,0 +1,41 @@
+# some basic settings
+altscreen
+chdir
+deflogin off
+defmode 0600
+defscrollback 10000
+# hardstatus on
+hardstatus alwaysignore
+msgwait 3
+# shelltitle '% |'
+shelltitle '% |'
+startup_message off
+vbell off
+
+setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"
+
+term screen-256color
+# basic termcap
+termcapinfo xterm*|rxvt*|kterm*|Eterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+# disable setting to 80 columns when starting
+termcapinfo xterm* 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
+# play nice with standard scroll-back - i.e.putty window
+termcapinfo xterm* ti@:te@
+# enable 80/132 switching
+termcapinfo xterm* Z0=\E[?3h:Z1=\E[?3l:is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l
+
+caption always '%{= g}[ %{G}%H %{g}][ %{w}%?%-w%?%{R}(%{W}%n%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{g}][%{B} %m/%d %{W}%c %{W}]'
+#caption always '%{= g}[ %{G}%H %{g}][ %{w}%?%-w%?%{R}(%{W}%n%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{g}][${vcs_info_msg_0_}][%{B} %m/%d %{W}%c %{W}]'
+#hardstatus alwayslastline "%{=b}%{G} %{b}%w %=%{kG} %u@%H %Y/%m/%d %c"
+
+
+# common key bindings
+bindkey ^L lockscreen # lock screen (note: interferes with ctrl-L for clear-screen)
+bindkey ^N screen     # create new window
+bindkey ^X detach     # detach session
+bindkey ^P copy       # copy/scroll mode
+
+# xterm specific key bindings (most common terminal type)
+bindkey '[1;5D' prev # arrow keys to switch windows
+bindkey '[1;5C' next
+

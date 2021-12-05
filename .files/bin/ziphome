@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# ------------------------------------------------------------
+# some basic VARs
+# ------------------------------------------------------------
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+TIME="`date '+%Y.%m%d'`"
+OSNAME="`uname -s`"
+OSREL="`uname -r`"
+
+MANIFEST=/tmp/${LOGNAME}-manifest.$TIME; >$MANIFEST
+
+# ------------------------------------------------------------
+# list of everything that should be included in archive
+# ------------------------------------------------------------
+INCLUDES="
+	.bashrc
+	.bash_login
+	.cshrc
+	.digrc
+  .files
+	.gitconfig
+  .grc
+	.hushlogin
+	.login
+	.minttyrc
+	.profile*
+	.rsync-filter
+	.screen*
+	.ssh/authorized_keys
+	.ssh/config
+	.ssh/*.pub
+	.vim*
+	.zlog*
+	.zshrc*
+	bin
+"
+
+# ------------------------------------------------------------
+# work from $HOME, create manifest, and finally create archive
+# ------------------------------------------------------------
+cd $HOME
+for file in $INCLUDES; do
+  [ -d $file -o -f $file -o -s $file ] && echo $file >> $MANIFEST
+done
+
+rm -rf home.zip
+zip -oqry -@ home < $MANIFEST
+
+rm $MANIFEST

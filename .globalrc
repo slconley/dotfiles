@@ -1,0 +1,22 @@
+# shellcheck shell=bash
+
+HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
+[[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
+[[ -f $HOME/.nickname ]] && HOST=$(cat "$HOME/.nickname")
+
+HIST_DTG="$(/bin/date '+%Y%m')"
+HISTFILE=$HOME/.local/var/$HOST/history/sh.${HIST_DTG}
+HISTFILE_GLOBAL=$HOME/.local/var/.global/histfile
+
+OSNAME="$(uname -s)"
+OSREL="$(uname -r)"
+OS="$OSNAME$OSREL"
+PKG_CONFIG_PATH=/usr/share/pkgconfig
+SHELL=${commands[zsh]:-${BASH}}
+
+export HIST_DTG HISTFILE HISTFILE_GLOBAL HOST OSNAME OSREL OSTYPE OS PKG_CONFIG_PATH SHELL
+
+PROFILES=$HOME/.files/profile.d
+LPROFILES=$HOME/.local/profile.d
+
+export LPROFILES PROFILES 

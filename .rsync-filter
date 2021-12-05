@@ -1,0 +1,39 @@
+# excludes
+- *.swp
+
+# includes 
+# order here is important
+# + .p10k.zsh
+# + .powerlevel10k/
++ .fzf*
++ .globalrc
++ .ssh
++ .ssh/authorized_keys
++ .ssh/config.satellite
++ .ssh/rc
+- .ssh/*
++ .bashrc*
++ .bash_login
++ .digrc
++ .files
++ .gemrc
++ .gitconfig
++ .grc
++ .hushlogin
++ .login
++ .minttyrc
++ .profile*
++ .rsync-filter
++ .screen*
+- .viminfo
++ .vim*
++ .zlog*
++ .zshrc*
+- .kite
++ /bin/
+
+# takebacks
+- .git
+- .DS_Store
+- nvm/
+- /*

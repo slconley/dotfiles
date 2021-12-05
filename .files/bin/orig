@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for f in $* ; do
+   [ ! -f ${f}.ORIG ] && [ -f $f ] && cp -p $f ${f}.ORIG
+done
+
