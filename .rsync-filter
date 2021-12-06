@@ -3,9 +3,11 @@
 
 # includes 
 # order here is important
++ .digrc
 # + .p10k.zsh
 # + .powerlevel10k/
 + .fzf*
++ .gemrc
 + .globalrc
 + .ssh
 + .ssh/authorized_keys
@@ -29,6 +31,7 @@
 + .vim*
 + .zlog*
 + .zshrc*
++ .zlogout*
 - .kite
 + /bin/
 
