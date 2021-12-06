@@ -1,3 +1,6 @@
 *
 !.gitignore
-!grc/
+!git
+!git/*
+!grc
+!grc/*

@@ -1,0 +1,64 @@
+# ------------------------------------------------------------
+# macOS
+# ------------------------------------------------------------
+
+# general
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# icon must end with two \r
+# this ignore file is treated as binary to accomplish that.
+# this could cause issue on Windows, which I try hard to avoid anyway.
+Icon
+
+# thumbnails
+._*
+
+# files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# ------------------------------------------------------------
+# binary files...  just in cases
+# ------------------------------------------------------------
+*.7z binary
+*.bz2 binary
+*.eot binary
+*.ez binary
+*.fla binary
+*.flv binary
+*.gif binary
+*.gz binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.mov binary
+*.mp3 binary
+*.mp4 binary
+*.pdf binary
+*.png binary
+*.pyc binary
+*.swf binary
+*.swp binary
+*.ttf binary
+*.woff binary
+*.zip binary
+
+# ------------------------------------------------------------
+# personal additions
+# ------------------------------------------------------------
+**/.ignore/
+
