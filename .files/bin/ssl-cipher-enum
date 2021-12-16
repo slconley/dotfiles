@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # argument should be target in <host>:<port> form.
 # no error checking just yet.  maybe later.

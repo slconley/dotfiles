@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 SEARCHPATH="`echo $PATH | tr ':' ' '`"
 PATH=/usr/bin:/bin:/usr/sbin:/sbin

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # stolen/modified from here: https://github.com/cleanbrowsing/dnsperftest
 # source of additional pub servers: 

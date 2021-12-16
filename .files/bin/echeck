@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 EGRESS_TARGETS="${EGRESS_TARGETS:-http://speedtest.wdc01.softlayer.com/downloads/test10.zip}"
 

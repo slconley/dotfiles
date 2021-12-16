@@ -6,7 +6,16 @@
 PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/local/bin:/usr/local/opt/bin:/usr/bin:/bin:/usr/sbin:/sbin:
 
 export LSCOLORS=exfxcxdxcxegedabagacad   # macOS only?
-export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;34:*.jpeg=01;34:*.gif=01;34:*.bmp=01;34:*.pbm=01;34:*.pgm=01;34:*.ppm=01;34:*.tga=01;34:*.xbm=01;34:*.xpm=01;34:*.tif=01;34:*.tiff=01;34:*.png=01;34:*.mov=01;34:*.mpg=01;34:*.mpeg=01;34:*.avi=01;34:*.fli=01;34:*.gl=01;34:*.dl=01;34:*.xcf=01;34:*.xwd=01;34:*.ogg=01;34:*.mp3=01;34:*.wav=01;34:'
+export LS_COLORS=$(tr -d '\n' << END
+no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:
+*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:
+*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;34:*.jpeg=01;34:*.gif=01;34:*.bmp=01;34:*.pbm=01;34:
+*.pgm=01;34:*.ppm=01;34:*.tga=01;34:*.xbm=01;34:*.xpm=01;34:*.tif=01;34:*.tiff=01;34:*.png=01;34:
+*.mov=01;34:*.mpg=01;34:*.mpeg=01;34:*.avi=01;34:*.fli=01;34:*.gl=01;34:*.dl=01;34:*.xcf=01;34:
+*.xwd=01;34:*.ogg=01;34:*.mp3=01;34:*.wav=01;34:
+END
+)
+
 
 # ------------------------------------------------------------
 # any non-interactive stuff should go above this line
@@ -74,7 +83,7 @@ export LANG=C
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
 export LESS="aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t"
 export LESSOPEN="|$HOME/.files/bin/see %s"
-export LISTINGS="$HOME/.local/.index.gz $HOME/*/.index.gz /Volumes/Vault/.index.gz"
+export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.gz"
 export PAGER=more
 export SYSLOG=/var/log/messages
 export TMPDIR=~/.tmp/$HOST; export TEMP=$TMPDIR
@@ -145,7 +154,7 @@ alias which='which -a'
 # ----------------------------------------------------------------------
 a()        { apropos $* 2> /dev/null; }
 c()        { clear; }
-color-()   { unset CLICOLOR COLOR_GREP COLORFGBG COLORTERM GRC LSCOLORS LS_COLORS ZLS_COLORS ; COLOR_GRC='--colour=off'; }
+color-()   { unset CLICOLOR COLOR_GREP COLOR_LS COLORFGBG COLORTERM GRC LSCOLORS LS_COLORS ZLS_COLORS ; COLOR_GRC='--colour=off'; }
 bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
 defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
 e()        { (set;command env)| grep -va '^[_	 ]' | cut -c1-120 | sort -u | grep -ai $COLOR_GREP $*; }
@@ -164,7 +173,7 @@ hh()       { grep -ih $1 $HOME/.local/var/$HOST/history/* $HOME/cloud/*/var/$HOS
 hhh()      { grep -ih $1 $HOME/.local/var/*/history/* $HOME/cloud/*/home/var/*/history/* | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
 io()       { iostat -xnmz $* 3; }
 l()        { command ls -F $COLOR_LS $*; }
-loc()      { ( locate -i $1; eval gzip -dc $LISTINGS 2> /dev/null) | grep -i $COLOR_GREP $1; }
+loc()      { ( locate -i $1; eval gzip -dc $INDICES 2> /dev/null) | grep -i $COLOR_GREP $1; }
 lt()       { $GRC ls -lrtF $COLOR_LS $*; }
 otr()      { savehist; unset HISTFILE HISTFILE_GLOBAL; }
 p()        { $PAGER $*;}

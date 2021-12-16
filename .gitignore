@@ -5,6 +5,7 @@
 /.fusion/
 /.fzf*
 /.gnupg*
+/.kube/
 /.lemminx/
 /.lesshst
 /.local/
