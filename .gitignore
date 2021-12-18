@@ -15,6 +15,7 @@
 /.openjfx/
 /.rbenv/
 /.redhat/
+/.terraform.d/
 /.viminfo
 /.zsh_sessions/
 /[^\.]*

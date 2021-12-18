@@ -1,8 +1,8 @@
 # shellcheck shell=bash
 
-[ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
-
 # source() { echo $SHELL sourcing: $1; builtin source $1; }            # for rough tracing
+
+[ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
 
 shopt -s nullglob
 for f in $LPROFILES/pre-*.{,ba}sh ; do source $f; done
