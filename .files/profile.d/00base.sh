@@ -187,6 +187,7 @@ pstime()   { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k5; }
 restart()  { service $1 restart; }
 s()        { sudo -sE HOME=$HOME; }
 savehist() { history -a; }
+showcerts() { openssl s_client -connect $1 -servername ${1%:*} -showcerts < /dev/null; }
 sslconn()  { openssl s_client -connect $1 -servername ${1%:*} < /dev/null; }
 sockets()  { netstat -anp | grep -ai "list|idle|tcp|udp" | grep -i $COLOR_GREP "$*"; }
 start()    { service $1 start; }

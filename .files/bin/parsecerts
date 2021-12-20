@@ -1,0 +1,11 @@
+#!/bin/bash
+
+tmp=$(mktemp -d)
+awk '/BEGIN/ { i++; } /BEGIN/, /END/ { print > (tmp "/cert-" i ".pem")  }' tmp=$tmp
+for c in $tmp/cert-*.pem; do
+  i=$(openssl x509 -noout -subject -hash < $c | tr -d '/ *' | tr '\n' '-')
+  i=${i##*CN=}; i=${i#\.}; i=${i%-}
+  [ -f ${i}.pem ] || { mv "$c" ${i}.pem && echo new cert file: ${i}.pem; }
+done
+rm -rf $tmp
+
