@@ -1,10 +1,12 @@
 /.CFUserTextEncoding
 /.ICEauthority
 /.bridge/
+/.ansible/
 /.cups/
 /.fusion/
 /.fzf*
 /.gnupg*
+/.grip/
 /.kube/
 /.lemminx/
 /.lesshst
