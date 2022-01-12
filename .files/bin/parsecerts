@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# ----------------------------------------------------------------------------------------------------
+# this script accepts stdin and creates individual pem files based on certs discovered in chain.
+# try something like this:
+#   openssl s_client -connect www.example.org:443 -showcerts < /dev/null | parsecert
+# ----------------------------------------------------------------------------------------------------
+
 tmp=$(mktemp -d)
 awk '/BEGIN/ { i++; } /BEGIN/, /END/ { print > (tmp "/cert-" i ".pem")  }' tmp=$tmp
 for c in $tmp/cert-*.pem; do
