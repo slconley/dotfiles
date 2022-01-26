@@ -78,6 +78,7 @@ export GROK="$HOME/{,cloud/}opt/share/grok $HOME/.local/grok"
 export HISTCONTROL=ignoreboth
 export HISTSIZE=9999
 export HISTSIZE_GLOBAL=999999
+export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE
 export LANG=C
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
