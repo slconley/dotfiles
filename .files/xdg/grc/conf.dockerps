@@ -50,5 +50,4 @@ colours=default,bright_green,default,bright_green, default, bright_green,default
 ======
 # NAMES
 regexp=(?:([a-z\-_0-9]+)\/)*([a-z\-_0-9]+)$
-# colours=default,yellow,on_blue white
-colours=default,yellow,blue
+colours=default,yellow,on_blue white
