@@ -19,6 +19,7 @@
 /.redhat/
 /.terraform.d/
 /.viminfo
+/.vmware
 /.zsh_sessions/
 /[^\.]*
 
