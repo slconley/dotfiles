@@ -134,6 +134,7 @@ alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
 alias grep="grep -Ed skip --exclude-dir '*git'"
 alias gs='git status -s'
 alias l.='$GRC ls -Fd $COLOR_LS .* 2> /dev/null'
+alias mkdir='mkdir -p'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
 alias pkill='pkill -U $EUID'
 alias pssh='pssh -x \"-tt\"'
