@@ -5,8 +5,8 @@ AWS_CONFIG=${AWS_CONFIG:-"$HOME/.aws/config"}
 # ------------------------------
 # default profile
 # ------------------------------
-AWS_DEFAULT_PROFILE="${AWS_PROFILE:-'default'}"
-AWS_PROFILE="$AWS_DEFAULT_PROFILE"
+# AWS_DEFAULT_PROFILE="${AWS_PROFILE:-'default'}"
+# AWS_PROFILE="$AWS_DEFAULT_PROFILE"
 
 # ------------------------------
 # default region
