@@ -3,6 +3,7 @@
 /.bridge/
 /.ansible/
 /.cups/
+/.disabled/
 /.fusion/
 /.fzf*
 /.gnupg*
@@ -10,13 +11,14 @@
 /.kube/
 /.lemminx/
 /.lesshst
-/.local/
+/.local
 /.m2/
 /.noscreen
 /.npm/
 /.openjfx/
 /.rbenv/
 /.redhat/
+/.rest-client/
 /.terraform.d/
 /.viminfo
 /.vmware
