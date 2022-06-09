@@ -27,5 +27,3 @@ LPROFILES=$HOME/.local/profile.d
 
 export LPROFILES PROFILES 
 
-# testing sync
-
