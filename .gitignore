@@ -1,8 +1,9 @@
 /.CFUserTextEncoding
 /.ICEauthority
-/.bridge/
 /.ansible/
 /.archive/
+/.bridge/
+/.config/
 /.cups/
 /.disabled/
 /.fusion/
@@ -14,6 +15,7 @@
 /.lesshst
 /.local
 /.m2/
+/.minikube/
 /.noscreen
 /.npm/
 /.openjfx/
