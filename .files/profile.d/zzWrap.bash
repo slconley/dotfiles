@@ -8,7 +8,7 @@
 # --------------------------------------------------
 # env vars
 # --------------------------------------------------
-HISTFILE="$HOME/.var/$HOST/bash.histfile.${HIST_DTG}"
+HISTFILE="$HISTDIR/bash.histfile.${HIST_DTG}"
 PS1='\[\e[0;32m\][\u@\h \W]\$\[\e[0m\] '
 PROMPT_DIRTRIM=2
 export PROMPT_DIRTRIM HISTFILE

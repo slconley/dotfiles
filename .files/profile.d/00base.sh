@@ -34,7 +34,7 @@ export PREFSHELL=${PREFSHELL:=zsh}
 # ----------------------------------------
 umask 77
 me="$(command id -un)"
-for d in $HOME/.local/profile.d/default $HOME/.var/$HOST $HOME/.tmp/$HOST/ssh/sockets $HOME/.terraform.d/plugin-cache $TEMP; do
+for d in $HOME/.local/profile.d/default $HOME/.var/$HOST $HOME/.terraform.d/plugin-cache $TMPDIR; do
   [ -d $d ] || mkdir -p $d 2> /dev/null
 done
 umask 22
@@ -42,7 +42,7 @@ umask 22
 # ----------------------------------------
 # keep ssh init above screen
 # ----------------------------------------
-authfile=$TMPDIR/ssh/ssh_auth_sock.${HOST}.${OSTYPE}
+authfile=$TMPDIR/ssh_auth_sock.${HOST}.${OSTYPE}
 [ -h $authfile ] && [ ! -e $authfile ] && rm $authfile
 [ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
 ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
@@ -89,9 +89,6 @@ export PAGER=more
 export SYSLOG=/var/log/messages
 export TOP="-s3"
 export TTY=$(who am i|awk '{print $2}'|sed 's./._.')
-export XDG_CONFIG_HOME=~/.files/xdg
-export XDG_RUNTIME_DIR=$TMPDIR
-export VSC_TMP=$TMPDIR
 
 export esEndpoint=${ES_NETWORK_HOST}:9200
 

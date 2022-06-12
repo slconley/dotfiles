@@ -2,10 +2,12 @@
 
 HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
-[[ -f $HOME/.nickname ]] && HOST=$(cat "$HOME/.nickname")
+# NICK=${NICK:-$HOST}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nickname")
+NICK=${HOST}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nickname")
 
 HIST_DTG="$(/bin/date '+%Y%m')"
-HISTFILE=$HOME/.var/$HOST/sh.histfile.${HIST_DTG}
+HISTDIR=$HOME/.var/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
 HISTFILE_GLOBAL=$HOME/.var/.global/sh.histfile
 
 OSNAME="$(uname -s)"
@@ -16,11 +18,13 @@ SHELL=${commands[zsh]:-${BASH}}
 TEMP=$HOME/.tmp/$HOST
 TMPDIR=$TEMP
 VSC_TMP=$TEMP
+XDG_CONFIG_HOME=~/.files/xdg
 XDG_RUNTIME_DIR=$TEMP
 
-export SCREENDIR=$TEMP/.screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
 
-export HIST_DTG HISTFILE HISTFILE_GLOBAL HOST OSNAME OSREL OSTYPE OS PKG_CONFIG_PATH SHELL TEMP TMPDIR XDG_RUNTIME_DIR VSC_TMP
+export SCREENDIR=$TMPDIR/.screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
+
+export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST NICK OSNAME OSREL OSTYPE OS PKG_CONFIG_PATH SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 
 PROFILES=$HOME/.files/profile.d
 LPROFILES=$HOME/.local/profile.d
