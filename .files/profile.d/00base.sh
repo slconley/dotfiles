@@ -36,7 +36,7 @@ export PREFSHELL=${PREFSHELL:=zsh}
 # ----------------------------------------
 umask 77
 me="$(command id -un)"
-for d in $HOME/.local/profile.d/default $HOME/.var/$HOST $HOME/.terraform.d/plugin-cache $TMPDIR/ssh; do
+for d in $HOME/.local/profile.d/default $HOME/.var/$HOST $HOME/.var/.global $HOME/.terraform.d/plugin-cache $TMPDIR/ssh; do
   [ -d $d ] || mkdir -p $d 2> /dev/null
 done
 umask 22
