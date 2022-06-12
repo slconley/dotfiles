@@ -26,15 +26,17 @@ END
 # preferred shell defaults to zsh if available
 # ------------------------------------------------------------
 export PREFSHELL=${PREFSHELL:=zsh}
-[ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
 [ "$PREFSHELL" = "bash" ] && [ -z "$BASH" ] && which bash >/dev/null 2>&1 && exec bash
+[ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
+[ "$ZSH_REEXEC" ] || {export ZSH_REEXEC=done; exec zsh;}
+
 
 # ----------------------------------------
 # generic stuff
 # ----------------------------------------
 umask 77
 me="$(command id -un)"
-for d in $HOME/.local/profile.d/default $HOME/.var/$HOST $HOME/.terraform.d/plugin-cache $TMPDIR; do
+for d in $HOME/.local/profile.d/default $HOME/.var/$HOST $HOME/.terraform.d/plugin-cache $TMPDIR/ssh; do
   [ -d $d ] || mkdir -p $d 2> /dev/null
 done
 umask 22
@@ -42,7 +44,7 @@ umask 22
 # ----------------------------------------
 # keep ssh init above screen
 # ----------------------------------------
-authfile=$TMPDIR/ssh_auth_sock.${HOST}.${OSTYPE}
+authfile=$TMPDIR/ssh/ssh_auth_sock.${HOST}.${OSTYPE}
 [ -h $authfile ] && [ ! -e $authfile ] && rm $authfile
 [ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
 ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
