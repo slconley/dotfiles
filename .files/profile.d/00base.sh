@@ -55,6 +55,7 @@ ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null &&
 # ----------------------------------------
 # attempt to use screen if it is available
 # ----------------------------------------
+export SCREENDIR=$TMPDIR/.screen.$USER
 SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
 if which screen >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.noscreen || "$TERM_PROGRAM" = "vscode" ]];  then
   screen $SCREEN_OPTS -RR
