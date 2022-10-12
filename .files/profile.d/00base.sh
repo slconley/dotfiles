@@ -28,7 +28,7 @@ END
 export PREFSHELL=${PREFSHELL:=zsh}
 [ "$PREFSHELL" = "bash" ] && [ -z "$BASH" ] && which bash >/dev/null 2>&1 && exec bash
 [ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
-[ "$ZSH_REEXEC" ] || {export ZSH_REEXEC=done; exec zsh;}
+[ "$ZSH_REEXEC" ] || { export ZSH_REEXEC=done; exec zsh; }
 
 
 # ----------------------------------------
