@@ -159,6 +159,7 @@ c()        { clear; }
 color-()   { unset CLICOLOR COLOR_GREP COLOR_LS COLORFGBG COLORTERM GRC LSCOLORS LS_COLORS ZLS_COLORS ; COLOR_GRC='--colour=off'; }
 bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
 defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
+dx()       { docker run -ith dx --rm -e HOME=$HOME -v ~:$HOME $* $PREFSHELL; }
 e()        { (set;command env)| grep -va '^[_	 ]' | cut -c1-120 | sort -u | grep -ai $COLOR_GREP $*; }
 eb()       { savehist; export PREFSHELL=bash; exec bash ;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}

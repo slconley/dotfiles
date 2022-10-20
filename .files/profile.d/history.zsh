@@ -14,7 +14,7 @@ setopt hist_reduce_blanks
 HISTDIR="$HOME/.var/$NICK"; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
 HISTFILE_GLOBAL="$HOME/.var/.global/zsh.histfile"
-HISTORY_IGNORE='( *|#*|*<<*|AWS*|e[bsz]|e *|*exec *|h|h[h]*|kx *|l|l *|l[lst]*|lpass*|man *|open *|otr|p *|s|which*)'
+HISTORY_IGNORE='( *|#*|*<<*|AWS*|e[bsz]|e *|*exec *|h|h[h]*|kx *|l|l *|l[lst]*|lpass*|man *|open *|otr|p *|s|sleep*|which*)'
 PERIOD=300
 SAVEHIST=$HISTSIZE
 export HISTDIR HISTFILE HISTORY_IGNORE PERIOD SAVEHIST
