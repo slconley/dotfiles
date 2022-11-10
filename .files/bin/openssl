@@ -4,10 +4,8 @@
 
 PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/local/bin
 
-if [ -e /usr/local/Cellar/openssl* ]; then
-  dir=$(ls -d /usr/local/Cellar/openssl*/*/bin | tail -1)
-  PATH=$dir:$PATH
-fi
+dir=$(ls -d /usr/local/Cellar/openssl*/*/bin 2>/dev/null| tail -1)
+[ -d $dir ] && PATH=$dir:$PATH
 
 openssl $@ ; exit $?
 

@@ -85,6 +85,7 @@ for file in $*; do
     *.nmap) [ "$GRC" ] && grcat ~/.grc/conf.nmap < $file || cat $file ;;
 
     # all the PKI things
+    *.p7s) openssl pkcs7 -in $file -inform DER -print_certs -noout -text ;;
     id_*|*.pem|*.csr|*.crt|*.cert|*.key|*.p12|*.pub) 
         subtype=$(file -Lb $file)
         case $subtype in 
