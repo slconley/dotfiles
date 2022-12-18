@@ -5,12 +5,11 @@ autocmd FileType make setlocal noexpandtab shiftwidth=8 softtabstop=0
 autocmd FileType python setlocal expandtab smarttab shiftwidth=4 softtabstop=4 tabstop=2 textwidth=80
 autocmd BufEnter * if &filetype == "" | setlocal ft=yaml | endif
 
-
-"colorscheme torte
-"colorscheme murphy
-colorscheme elflord
+" default looks pretty good these days, but these are usable options:
+"colorscheme elflord
+"colorscheme habamax
 "colorscheme koehler
-"colorscheme darkblue
+"colorscheme pablo
 
 if &t_Co > 2 || has("gui_running")
   syntax enable

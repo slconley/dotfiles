@@ -82,9 +82,9 @@ export GPG_TTY=$(tty)
 export GNUPGHOME=${GNUPGHOME:-$HOME/.gnupg}
 export GREP_COLOR='01;32'
 export GREP_COLORS='ms=01;32:mc=01;32:sl=:cx=:fn=36:ln=33:bn=33:se=36'
-export GROK="$HOME/{,cloud/}opt/share/grok $HOME/.local/grok"
+export GROK="$HOME/{,xcloud/}opt/share/grok $HOME/.local/grok"
 export HISTCONTROL=ignoreboth
-export HISTSIZE=9999
+export HISTSIZE=4999
 export HISTSIZE_GLOBAL=999999
 export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE

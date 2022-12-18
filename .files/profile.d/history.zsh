@@ -1,4 +1,4 @@
-# shellcheck shell=zsh
+# shellcheck shell=sh
 
 #unsetopt append_history
 setopt extended_history

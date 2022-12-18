@@ -31,3 +31,5 @@ LPROFILES=$HOME/.local/profile.d
 
 export LPROFILES PROFILES 
 
+# vi:filetype=zsh
+

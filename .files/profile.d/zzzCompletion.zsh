@@ -1,4 +1,4 @@
-# shellcheck shell=zsh
+# shellcheck shell=sh
 
 mkdir -p ~/.local/.zsh/$HOST/functions
 alias compinit='compinit -C -d ~/.local/.zsh/$HOST/.zcompdump'
@@ -39,3 +39,6 @@ compdef _path_commands h hh hhh
 fzf_sources=( /etc/profile.d/fzf.sh /usr/share/doc/fzf/examples/{completion,key-bindings}.zsh $fzf_home/shell/{completion,key-bindings}.zsh)
 for f in $fzf_sources; [ -f "$f" ] && source "$f" 2> /dev/null 
 unset aws_completer_scripts fzf_sources c d f
+
+# vi:filetype=zsh
+

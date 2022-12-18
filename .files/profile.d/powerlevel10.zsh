@@ -1,4 +1,4 @@
-# shellcheck shell=zsh
+# shellcheck shell=sh
 
 # will revisit powerlevel10 later
 return

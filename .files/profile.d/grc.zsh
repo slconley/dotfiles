@@ -1,4 +1,4 @@
-# shellcheck shell=zsh
+# shellcheck shell=sh
 
 [ "$TERM" = dumb ] || (( ! $+commands[grc] )) && return
 
