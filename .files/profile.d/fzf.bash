@@ -9,6 +9,7 @@
 which fzf > /dev/null 2>&1 || return
 
 sources=(
+  ~/.fzf.bash
   /etc/profile.d/fzf.sh
   /usr/share/doc/fzf/examples/{completion,key-bindings}.bash
   "$fzf_home/shell/{completion,key-bindings}.bash"
