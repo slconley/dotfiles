@@ -203,4 +203,4 @@ status()   { service $1 status; }
 stop()     { service $1 stop; }
 tcp()      { lsof -i tcp | grep -i $* ; }
 tgz()      { tar cvzf ${1}.tgz $1; }
-zipit()    { zip -ry ${1}.zip $1; }
+zipit()    { zip -ry ${1}-$(now).zip $1; }
