@@ -198,6 +198,7 @@ savehist() { history -a; }
 showcerts() { openssl s_client -connect $1 -servername ${1%:*} -showcerts < /dev/null; }
 sslconn()  { openssl s_client -connect $1 -servername ${1%:*} < /dev/null; }
 sockets()  { netstat -anp | grep -ai "list|idle|tcp|udp" | grep -i $COLOR_GREP "$*"; }
+sourcevault() { source <(ansible-vault view $*); }
 start()    { service $1 start; }
 status()   { service $1 status; }
 stop()     { service $1 stop; }
