@@ -4385,6 +4385,7 @@
 	<key>ToolbeltTools</key>
 	<array>
 		<string>Paste History</string>
+		<string>Jobs</string>
 	</array>
 	<key>TripleClickSelectsFullWrappedLines</key>
 	<true/>

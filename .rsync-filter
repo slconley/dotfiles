@@ -27,6 +27,7 @@
 + .profile*
 + .rsync-filter
 + .screen*
++ .tmux.conf
 - .viminfo
 + .vim*
 + .zlog*

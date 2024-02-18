@@ -69,6 +69,7 @@ fi
 PATH="$PATH:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/proc/bin"
 PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
 
+
 export BASH_SILENCE_DEPRECATION_WARNING=1
 export CC=gcc
 export COLOR_GRC="--colour=on"
@@ -94,6 +95,7 @@ export LESS="aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .
 export LESSOPEN="|$HOME/.files/bin/see %s"
 export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.gz"
 export PAGER=more
+export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=/var/log/messages
 export TOP="-s3"
 export TTY=$(who am i|awk '{print $2}'|sed 's./._.')
@@ -151,10 +153,14 @@ alias sops='TERM=xterm sops'
 alias t='$GRC traceroute -I'
 alias tf='terraform'
 alias tlog='tail -50f $SYSLOG'
+alias today="date -u '+%Y%m%d'"
 alias vi='$EDITOR'
 alias vless='/usr/share/vim/vim70/macros/less.sh'
 alias vm='VBoxManage'
 alias which='which -a'
+
+# conditional aliases
+[[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L$(basename $TTY)'
 
 # ----------------------------------------------------------------------
 # functions
