@@ -151,6 +151,7 @@ alias sha='openssl sha256'
 alias sls='screen -ls'
 alias sops='TERM=xterm sops'
 alias t='$GRC traceroute -I'
+alias ta='tmux attach -dxt'
 alias tf='terraform'
 alias tlog='tail -50f $SYSLOG'
 alias today="date -u '+%Y%m%d'"
