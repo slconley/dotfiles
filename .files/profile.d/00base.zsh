@@ -15,6 +15,8 @@ setopt pushd_silent
 setopt rm_star_silent
 setopt transient_rprompt
 
+unset zle_bracketed_paste
+
 # --------------------------------------------------
 # environment variables
 # --------------------------------------------------

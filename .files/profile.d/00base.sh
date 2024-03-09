@@ -58,7 +58,15 @@ ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null &&
 [ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config'
 
 # ----------------------------------------
+# attempt to use tmux if it is available
+# ----------------------------------------
+if which tmux >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
+  tmux -l
+fi
+
+# ----------------------------------------
 # attempt to use screen if it is available
+# note: tmux above trumps screen
 # ----------------------------------------
 export SCREENDIR=$TMPDIR/.screen.$USER
 SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
@@ -173,11 +181,11 @@ bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
 defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
 dx()       { docker run -ith dx --rm -e HOME=$HOME -v ~:$HOME $* $PREFSHELL; }
 e()        { (set;command env)| grep -va '^[_	 ]' | cut -c1-120 | sort -u | grep -ai $COLOR_GREP $*; }
-eb()       { savehist; export PREFSHELL=bash; exec bash ;}
+eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
 es()       { savehist; screen $SCREEN_OPTS -RR; }
-ez()       { savehist; export PREFSHELL=zsh; exec zsh ;}
+ez()       { savehist; export PREFSHELL=zsh; exec zsh -l;}
 fgrok()    { eval grep -ilr $* $GROK; }
 getenv()   { [ "$SUBENV" = "$1" ] && return; SUBENV=$1; exec $PREFSHELL; }
 gr()       { grep -i $COLOR_GREP $*;}
