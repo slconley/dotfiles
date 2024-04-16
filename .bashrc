@@ -12,3 +12,6 @@ for f in $PROFILES/$SUBENV/*.{,ba}sh ; do source $f; done
 for f in $LPROFILES/$SUBENV/*.{,ba}sh ; do source $f; done
 shopt -u nullglob
 
+[ -f ~/.muxrc ] && source ~/.muxrc
+
+

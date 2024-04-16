@@ -16,22 +16,10 @@ no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31
 END
 )
 
-
 # ------------------------------------------------------------
 # any non-interactive stuff should go above this line
 # ------------------------------------------------------------
 [ -z "$PS1" ] || [ ! $TERM ] && return
-
-# ------------------------------------------------------------
-# preferred shell defaults to zsh if available
-# ------------------------------------------------------------
-export PREFSHELL=${PREFSHELL:=zsh}
-[ "$PREFSHELL" = "bash" ] && [ -z "$BASH" ] && which bash >/dev/null 2>&1 && exec bash
-[ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
-
-# uh, what was this for again?
-# [ "$ZSH_REEXEC" ] || { export ZSH_REEXEC=done; exec zsh; }
-
 
 # ----------------------------------------
 # generic stuff
@@ -47,7 +35,7 @@ done
 umask 22
 
 # ----------------------------------------
-# keep ssh init above screen
+# configure ssh agent/auth
 # ----------------------------------------
 authfile=$TMPDIR/ssh/auth/ssh_auth_sock.${HOST}.${OSTYPE}
 [ -h $authfile ] && [ ! -e $authfile ] && rm $authfile
@@ -57,26 +45,10 @@ ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null &&
 [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
 [ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config'
 
-# ----------------------------------------
-# attempt to use tmux if it is available
-# ----------------------------------------
-if which tmux >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
-  tmux -l
-fi
-
-# ----------------------------------------
-# attempt to use screen if it is available
-# note: tmux above trumps screen
-# ----------------------------------------
-export SCREENDIR=$TMPDIR/.screen.$USER
-SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
-if which screen >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.noscreen || "$TERM_PROGRAM" = "vscode" ]];  then
-  screen $SCREEN_OPTS -RR
-fi
-
 PATH="$PATH:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/proc/bin"
 PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
 
+export TTY=$(tty)
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
 export CC=gcc
@@ -87,7 +59,7 @@ export EDITOR=vi
 export ES_NETWORK_HOST=localhost
 export FUNCNEST=25
 export FZF_DEFAULT_OPTS='-e --ansi --no-mouse'
-export GPG_TTY=$(tty)
+export GPG_TTY=$TTY
 export GNUPGHOME=${GNUPGHOME:-$HOME/.gnupg}
 export GREP_COLOR='01;32'
 export GREP_COLORS='ms=01;32:mc=01;32:sl=:cx=:fn=36:ln=33:bn=33:se=36'
@@ -106,7 +78,6 @@ export PAGER=more
 export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=/var/log/messages
 export TOP="-s3"
-export TTY=$(who am i|awk '{print $2}'|sed 's./._.')
 
 export esEndpoint=${ES_NETWORK_HOST}:9200
 
@@ -151,7 +122,7 @@ alias gs='git status -s'
 alias l.='$GRC ls -Fd $COLOR_LS .* 2> /dev/null'
 alias mkdir='mkdir -p'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
-# alias pkill='pkill -U $EUID'
+alias pkill='pkill -U $EUID'
 alias pssh='pssh -x \"-tt\"'
 alias script='script ~/.local/var/$HOST/log/script.$(now)'
 alias serial='screen /dev/ttyS0 9600'
@@ -161,6 +132,7 @@ alias sops='TERM=xterm sops'
 alias t='$GRC traceroute -I'
 alias ta='tmux attach -dxt'
 alias tf='terraform'
+alias tg='terragrunt'
 alias tlog='tail -50f $SYSLOG'
 alias today="date -u '+%Y%m%d'"
 alias vi='$EDITOR'
@@ -185,6 +157,7 @@ eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
 es()       { savehist; screen $SCREEN_OPTS -RR; }
+et()       { savehist; tmux -l; }
 ez()       { savehist; export PREFSHELL=zsh; exec zsh -l;}
 fgrok()    { eval grep -ilr $* $GROK; }
 getenv()   { [ "$SUBENV" = "$1" ] && return; SUBENV=$1; exec $PREFSHELL; }

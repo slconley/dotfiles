@@ -1,8 +1,17 @@
 # shellcheck shell=bash
 
+# ------------------------------------------------------------
+# PREFSHELL selection
+# ------------------------------------------------------------
+export PREFSHELL=${PREFSHELL:=zsh}
+[ "$PREFSHELL" = "bash" ] && [ -z "$BASH" ] && which bash >/dev/null 2>&1 && exec bash
+[ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
+
+# uh, what was this for again?
+# [ "$ZSH_REEXEC" ] || { export ZSH_REEXEC=done; exec zsh; }
+
 HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
-# NICK=${NICK:-$HOST}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nickname")
 NICK=${HOST}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nickname")
 
 HIST_DTG="$(/bin/date '+%Y%m')"
@@ -20,14 +29,12 @@ VSC_TMP=$TEMP
 XDG_CONFIG_HOME=~/.files/xdg
 XDG_RUNTIME_DIR=$TEMP
 
-
-export SCREENDIR=$TMPDIR/.screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
-
-export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST NICK OSNAME OSREL OSTYPE OS SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
-
+SCREENDIR=$TMPDIR/.screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
 PROFILES=$HOME/.files/profile.d
 LPROFILES=$HOME/.local/profile.d
 
+export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST NICK OSNAME OSREL OSTYPE OS 
+export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 export LPROFILES PROFILES 
 
 # vi:filetype=zsh

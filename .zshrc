@@ -16,6 +16,7 @@
 
 setopt nullglob
 for f in $LPROFILES/pre-*.{,z}sh ; source $f
+for f in $LPROFILES/$SUBENV/pre-*.{,z}sh ; source $f
 for f in $PROFILES/*.{,z}sh $PROFILES/.profile.${OSNAME}*; source $f
 for f in $LPROFILES/post-*.{,z}sh ; source $f
 for f in $PROFILES/$SUBENV/*.{,z}sh ; source $f
@@ -24,6 +25,8 @@ setopt nonullglob
 unset f
 
 typeset -U path cdpath manpath fpath    # remove dupes
+
+[ -f ~/.muxrc ] && source ~/.muxrc
 
 # unsetopt xtrace
 # exec 2>&3 3>&-
