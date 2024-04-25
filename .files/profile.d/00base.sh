@@ -43,7 +43,7 @@ authfile=$TMPDIR/ssh/auth/ssh_auth_sock.${HOST}.${OSTYPE}
 ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
 [ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
 [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
-[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config'
+[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
 PATH="$PATH:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/proc/bin"
 PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')

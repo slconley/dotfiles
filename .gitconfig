@@ -1,5 +1,4 @@
 [user]
-  email = slconley@users.noreply.github.com
   name = sean.conley
 [core]
   autocrlf = input
@@ -29,4 +28,4 @@
 [diff "sopsdiff"]
   textconv = sops -d
 [credential]
-  helper = cache --timeout=43200
+	helper = cache --timeout=43200
