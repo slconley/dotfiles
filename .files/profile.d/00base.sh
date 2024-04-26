@@ -26,11 +26,13 @@ END
 # ----------------------------------------
 umask 77
 me="$(command id -un)"
-for d in \
-  $HOME/.local/profile.d/default  $HOME/.var/$HOST  $HOME/.var/.global \
-  $HOME/.terraform.d/plugin-cache  $TMPDIR/ssh/auth $TMPDIR/ssh/cp; \
-do
-    [ -d $d ] || mkdir -p $d 2> /dev/null
+mkdirs=(
+  $HOME/.local/profile.d/default  $HOME/.var/$HOST  $HOME/.var/.global
+  $HOME/.terraform.d/plugin-cache  $TMPDIR/ssh/auth $TMPDIR/ssh/cp
+  $TMPDIR/tmux
+)
+for d in $mkdirs; do
+  [ -d $d ] || mkdir -p $d 2> /dev/null
 done
 umask 22
 
@@ -77,6 +79,7 @@ export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.g
 export PAGER=more
 export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=/var/log/messages
+export TMUX_TMPDIR=$TMPDIR/tmux
 export TOP="-s3"
 
 export esEndpoint=${ES_NETWORK_HOST}:9200
@@ -130,7 +133,8 @@ alias sha='openssl sha256'
 alias sls='screen -ls'
 alias sops='TERM=xterm sops'
 alias t='$GRC traceroute -I'
-alias ta='tmux attach -dxt'
+alias ta='tmux attach -dL $SUBENV -t'
+alias tls='tmux -L $SUBENV ls'
 alias tf='terraform'
 alias tg='terragrunt'
 alias tlog='tail -50f $SYSLOG'
@@ -141,7 +145,7 @@ alias vm='VBoxManage'
 alias which='which -a'
 
 # conditional aliases
-[[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L$(basename $TTY)'
+[[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -lL $(basename $TTY)' || alias tmux='tmux -lL $SUBENV'
 
 # ----------------------------------------------------------------------
 # functions
@@ -157,7 +161,7 @@ eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
 es()       { savehist; screen $SCREEN_OPTS -RR; }
-et()       { savehist; tmux -l; }
+et()       { savehist; tmux; }
 ez()       { savehist; export PREFSHELL=zsh; exec zsh -l;}
 fgrok()    { eval grep -ilr $* $GROK; }
 getenv()   { [ "$SUBENV" = "$1" ] && return; SUBENV=$1; exec $PREFSHELL; }
