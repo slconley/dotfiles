@@ -1,5 +1,5 @@
 [user]
-  name = sean.conley
+	name = sean.conley
 [core]
   autocrlf = input
   pager = less -S
