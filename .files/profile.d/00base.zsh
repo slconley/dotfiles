@@ -24,6 +24,7 @@ DIRSTACKSIZE=20
 PERIOD=600
 PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c %#%{\e[0m%} '
 PS4=$'%{\e[0;33m%}+%x:%I>%{\e[0m%} '
+TMPPREFIX=$XDG_RUNTIME_DIR/tmp/zsh
 export PERIOD SHELL
 
 # --------------------------------------------------
@@ -76,7 +77,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:
 
 ## completion caching
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path ~/.local/.zsh/$HOST/zcompcache
+zstyle ':completion::complete:*' cache-path $XDG_RUNTIME_DIR/zsh/zcompcache
 
 ## add colors to completions
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}

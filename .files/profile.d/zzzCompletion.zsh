@@ -1,14 +1,14 @@
 # shellcheck shell=sh
 
-mkdir -p ~/.local/.zsh/$HOST/functions
-alias compinit='compinit -C -d ~/.local/.zsh/$HOST/.zcompdump'
+mkdir -p $XDG_RUNTIME_DIR/zsh/functions
+alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 
 declare -a fplist
-fplist=( /usr/local/share/zsh-completions ~/.files/zsh/functions ~/.local/.zsh/$HOST/functions )
+fplist=( /usr/local/share/zsh-completions ~/.files/zsh/functions $XDG_RUNTIME_DIR/zsh/functions )
 for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
 
-[ -f ~/.local/.zsh/$HOST/functions/_kubectl ] || command kubectl completion zsh > ~/.local/.zsh/$HOST/functions/_kubectl 2> /dev/null
-[ -f ~/.local/.zsh/$HOST/functions/_helm ] || helm completion zsh > ~/.local/.zsh/$HOST/functions/_helm 2> /dev/null
+[ -f ~$XDG_RUNTIME_DIR/zsh/functions/_kubectl ] || command kubectl completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_kubectl 2> /dev/null
+[ -f $XDG_RUNTIME_DIR/zsh/functions/_helm ] || helm completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_helm 2> /dev/null
 
 # aws fallback completion
 [ "${functions[_aws]}" ] && {
@@ -23,7 +23,6 @@ compctl -k "(all rhel6)" -x 'p[2]' -f -- dist2
 compctl -g '*' -W ~/var/.config myconfig
 compctl -W profile_dirs -/ getenv
 autoload -U compinit
-# compinit -C -d ~/.local/.zsh/$HOST/.zcompdump
 compinit
 compdef _vars e
 autoload -U +X bashcompinit && bashcompinit

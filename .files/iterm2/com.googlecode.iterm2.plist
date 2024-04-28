@@ -3022,11 +3022,13 @@
 	<key>DisableGrowl</key>
 	<false/>
 	<key>DoubleClickPerformsSmartSelection</key>
-	<true/>
+	<false/>
 	<key>EnableProxyIcon</key>
 	<false/>
 	<key>EnableRendezvous</key>
 	<false/>
+	<key>EnterCopyModeAutomatically</key>
+	<true/>
 	<key>FocusFollowsMouse</key>
 	<true/>
 	<key>FocusOnRightOrMiddleClick</key>

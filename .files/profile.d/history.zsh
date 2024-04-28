@@ -11,13 +11,12 @@ setopt hist_reduce_blanks
 # setopt hist_save_no_dups
 
 # reminder... if HISTORY_IGNORE not completely working, you are potentially using an older zsh
-HISTDIR="$HOME/.var/$NICK"; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
-HISTFILE_GLOBAL="$HOME/.var/.global/zsh.histfile"
+HISTFILE_GLOBAL="$HISTDIR/../.global/zsh.histfile"
 HISTORY_IGNORE='( *|#*|*<<*|AWS*|e[bsz]|e *|*exec *|h|h[h]*|kx *|l|l *|l[lst]*|lpass*|man *|open *|otr|p *|s|sleep*|which*)'
 PERIOD=300
 SAVEHIST=$HISTSIZE
-export HISTDIR HISTFILE HISTORY_IGNORE PERIOD SAVEHIST
+export HISTFILE HISTORY_IGNORE PERIOD SAVEHIST
 
 h()   { fc -ln 1 | grep -i \.\?$* | tail -50; }
 hh()  { fc -ln 1 | grep -i $COLOR_GREP \.\?$*; }
@@ -45,7 +44,6 @@ MAKEHIST() {
 
 trap 'savehist;' EXIT HUP
 
-d=$(dirname $HISTFILE); [ -d $d ] || mkdir -p $d 2> /dev/null
 touch $HISTFILE 2> /dev/null || { [ -d ~$LOGNAME/... ] && HOME=~$LOGNAME/... && exec zsh }
 unset d
 

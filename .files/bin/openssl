@@ -2,7 +2,7 @@
 
 # openssl wrapper with specific PATH
 
-PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/local/bin
+PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin
 
 dir=$(ls -d /usr/local/Cellar/openssl*/*/bin 2>/dev/null| tail -1)
 [ -d $dir ] && PATH=$dir:$PATH

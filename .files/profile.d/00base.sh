@@ -27,9 +27,9 @@ END
 umask 77
 me="$(command id -un)"
 mkdirs=(
-  $HOME/.local/profile.d/default  $HOME/.var/$HOST  $HOME/.var/.global
-  $HOME/.terraform.d/plugin-cache  $TMPDIR/ssh/auth $TMPDIR/ssh/cp
-  $TMPDIR/tmux
+  $HOME/.local/profile.d/default $HOME/.terraform.d/plugin-cache $HISTDIR $HISTDIR/../.global
+  $XDG_RUNTIME_DIR/ssh/auth $XDG_RUNTIME_DIR/ssh/cp $XDG_RUNTIME_DIR/tmux
+  $LOGDIR $VSC_TMP
 )
 for d in $mkdirs; do
   [ -d $d ] || mkdir -p $d 2> /dev/null
@@ -39,7 +39,7 @@ umask 22
 # ----------------------------------------
 # configure ssh agent/auth
 # ----------------------------------------
-authfile=$TMPDIR/ssh/auth/ssh_auth_sock.${HOST}.${OSTYPE}
+authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock.${NICK}.${OSTYPE}
 [ -h $authfile ] && [ ! -e $authfile ] && rm $authfile
 [ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
 ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
@@ -79,7 +79,7 @@ export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.g
 export PAGER=more
 export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=/var/log/messages
-export TMUX_TMPDIR=$TMPDIR/tmux
+export TMUX_TMPDIR=$XDG_RUNTIME_DIR/tmux
 export TOP="-s3"
 
 export esEndpoint=${ES_NETWORK_HOST}:9200
@@ -91,7 +91,7 @@ export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
 # conditional stuff
-[ -d ~/.local/profile.d/$HOST ] && SUBENV=$HOST
+[ -d ~/.local/profile.d/$NICK ] && SUBENV=$NICK
 [ "$SUBENV" ] || SUBENV=default; export SUBENV
 which less >/dev/null 2>&1 && PAGER=less
 which vim  >/dev/null 2>&1 && EDITOR=vim
@@ -116,7 +116,7 @@ unset TMOUT
 # ----------------------------------------------------------------------
 alias @='curl http://ipinfo.io/'
 alias \#=:    # allows comments to be pasted into command buffer along with commands
-alias compinit='compinit -C -d ~/.zsh/$HOST/.zcompdump'
+alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 alias df='df -h'
 alias du='du -h'
 alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
@@ -127,7 +127,7 @@ alias mkdir='mkdir -p'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
 alias pkill='pkill -U $EUID'
 alias pssh='pssh -x \"-tt\"'
-alias script='script ~/.local/var/$HOST/log/script.$(now)'
+alias script='script $LOGDIR/script.$(now)'
 alias serial='screen /dev/ttyS0 9600'
 alias sha='openssl sha256'
 alias sls='screen -ls'
@@ -168,9 +168,9 @@ getenv()   { [ "$SUBENV" = "$1" ] && return; SUBENV=$1; exec $PREFSHELL; }
 gr()       { grep -i $COLOR_GREP $*;}
 grok()     { less -j10 +/$1 $(eval grep -ilr $* $GROK 2>/dev/null) 2> /dev/null ;}
 h()        { history | grep -i "$*"|tail -30; }
-header()   { echo -ne "\e]0;$me@${HOST}\a"; }
-hh()       { grep -ih $1 $HOME/.local/var/$HOST/history/* $HOME/cloud/*/var/$HOST/history/* 2>/dev/null| cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
-hhh()      { grep -ih $1 $HOME/.local/var/*/history/* $HOME/cloud/*/home/var/*/history/* | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
+header()   { echo -ne "\e]0;$me@${NICK}\a"; }
+hh()       { grep -ih $1 $HISTDIR/* 2>/dev/null | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
+hhh()      { grep -ih $1 $HISTDIR/../*/* 2>/dev/null | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
 io()       { iostat -xnmz $* 3; }
 l()        { command ls -F $COLOR_LS $*; }
 loc()      { ( locate -i $1; eval gzip -dc $INDICES 2> /dev/null) | grep -i $COLOR_GREP $1; }

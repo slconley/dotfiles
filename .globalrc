@@ -12,28 +12,31 @@ export PREFSHELL=${PREFSHELL:=zsh}
 
 HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
-NICK=${HOST}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nickname")
+NICK=${HOST}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
 
 HIST_DTG="$(/bin/date '+%Y%m')"
-HISTDIR=$HOME/.var/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+HISTDIR=~/.var/hist/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
 HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
-HISTFILE_GLOBAL=$HOME/.var/.global/sh.histfile
+HISTFILE_GLOBAL=~/.var/hist/.global/sh.histfile
+
+LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ]
+
+XDG_CONFIG_HOME=~/.files/xdg
+XDG_RUNTIME_DIR=~/.run/$NICK
 
 OSNAME="$(uname -s)"
 OSREL="$(uname -r)"
 OS="$OSNAME$OSREL"
 SHELL=${commands[zsh]:-${BASH}}
-TEMP=$HOME/.tmp/$HOST
+TEMP=$XDG_RUNTIME_DIR/tmp
 TMPDIR=$TEMP
-VSC_TMP=$TEMP
-XDG_CONFIG_HOME=~/.files/xdg
-XDG_RUNTIME_DIR=$TEMP
+VSC_TMP=$XDG_RUNTIME_DIR/vsc; [ -d "$VSC_TMP" ]
 
-SCREENDIR=$TMPDIR/.screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
-PROFILES=$HOME/.files/profile.d
-LPROFILES=$HOME/.local/profile.d
+SCREENDIR=$XDG_RUNTIME_DIR/screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
+PROFILES=~/.files/profile.d
+LPROFILES=~/.local/profile.d
 
-export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST NICK OSNAME OSREL OSTYPE OS 
+export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
 export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 export LPROFILES PROFILES 
 
