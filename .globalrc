@@ -24,7 +24,7 @@ HISTFILE_GLOBAL=~/.var/hist/.global/sh.histfile
 
 LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ]
 
-XDG_CONFIG_HOME=~/.files/xdg
+XDG_CONFIG_HOME=~/.files/config
 XDG_RUNTIME_DIR=~/.run/$NICK
 
 OSNAME="$(uname -s)"
