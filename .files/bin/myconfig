@@ -1,0 +1,84 @@
+#!/bin/sh
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+CONFIGDIR=${CONFIGDIR:-/etc/config}
+
+usage() {
+cat <<DONE
+Usage: $0 [-cfhsq] [parameter] [value]
+	where:
+	-c - use named config directory
+	-p - suppress printing of parameter names (print values only)
+	-h - print usage statement
+	-i - name of input file for value (used with -s to set value)
+	-s - directs that parameter should be set to value
+	-q - run in quiet mode
+
+	paramter - parameter to be set or checked
+	value - value that paramter should be set to or checked against
+		the default value is "true"
+
+DONE
+}
+
+# loop to process options
+while getopts c:hi:psq c; do
+  case $c in
+    c) CONFIGDIR=$OPTARG;;
+    i) INPUTFILE=$OPTARG;;
+    p) SUPPRESSPARAM=1;;
+    s) SETPARAM=1;;
+    q) QUIET=1;;
+    *) usage; exit 0;;
+  esac
+done
+shift `expr $OPTIND - 1`
+
+# remaining arguments are (optional) PARAM and VALUE
+PARAM="${1:-}"
+[ "$*" != "" ] && shift
+[ "$INPUTFILE" = "" ] && VALUE="${*:-true}"	# default to 'true' when not provided
+
+# make sure config dir exists
+[ -d $CONFIGDIR ] || mkdir -p $CONFIGDIR
+
+# setting a parameter
+if [ $SETPARAM ]; then
+  if [ "$VALUE" != "" ]; then
+    echo $VALUE > $CONFIGDIR/$PARAM
+    exit 0
+  elif [ "$INPUTFILE" != "" ]; then
+    cat $INPUTFILE >> $CONFIGDIR/$PARAM
+    exit 0
+  fi
+  exit 1
+fi
+
+# if we got to this point, we're just displaying parameter/value pairs
+if [ "$PARAM" ]; then
+  if [ -f $CONFIGDIR/$PARAM ]; then
+    CURRENT_VALUE="`grep -v ^# $CONFIGDIR/$PARAM`"
+  else
+    [ "$QUIET" ] || echo Parameter not currently set: $PARAM && exit 1
+  fi
+
+  if [ ! "$QUIET" ]; then
+    [ "$SUPPRESSPARAM" ] && echo $CURRENT_VALUE || printf "$PARAM\t\t$CURRENT_VALUE\n"
+  fi
+
+  # exit with appropriate value
+  [ "$CURRENT_VALUE" = "$VALUE" -o "$CURRENT_VALUE" = "on" ] && exit 0 || exit 1
+
+else
+
+  # no PARAM provided, so display all defined pairs
+  for PARAM in `cd $CONFIGDIR; ls`; do
+    printf "$PARAM\t\t"
+    cat $CONFIGDIR/$PARAM
+  done
+
+fi
+
+
+

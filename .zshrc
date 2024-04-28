@@ -1,4 +1,6 @@
+# --------------------------------------------------
 # globalrc should always be first
+# --------------------------------------------------
 [ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
 
 # --------------------------------------------------
@@ -76,33 +78,15 @@ zle -N up-line-or-beginning-search up-line-or-beginning-search
 zle -N down-line-or-beginning-search down-line-or-beginning-search
 
 # --------------------------------------------------
+# aliase(s)
+# --------------------------------------------------
+alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
+
+# --------------------------------------------------
 # functions
 # --------------------------------------------------
 ..()       { builtin cd ..; }
 s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
-
-# ----------------------------------------------------------------------
-# from: http://hintsforums.macworld.com/archive/index.php/t-6493.html
-# ----------------------------------------------------------------------
-## case-insensitive (uppercase from lowercase) completion
-#zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-## case-insensitive (all) completion
-#zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
-## case-insensitive,partial-word and then substring completion
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
-## completion caching
-zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path $XDG_RUNTIME_DIR/zsh/zcompcache
-
-## add colors to completions
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-
-# complete cd with local dirs if a match, then path dirs
-zstyle ':completion:*:cd:*' tag-order local-directories path-directories
-
-# completion for commands that use usernames/hostnames (i.e. ssh)
-zstyle ':completion:*:my-accounts' users-hosts $my_accounts
 
 # ------------------------------------------------------------
 # VCS aware prompt
@@ -139,14 +123,58 @@ setopt nonullglob
 unset f
 
 # ----------------------------------------------------------------------
-# some completion/function related items that need to be done late
+# from: http://hintsforums.macworld.com/archive/index.php/t-6493.html
 # ----------------------------------------------------------------------
-mkdir -p $XDG_RUNTIME_DIR/zsh/functions
-alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
+## case-insensitive (uppercase from lowercase) completion
+#zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+## case-insensitive (all) completion
+#zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+## case-insensitive,partial-word and then substring completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+# completion caching
+zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion::complete:*' cache-path $XDG_RUNTIME_DIR/zsh/zcompcache
+
+# add colors to completions
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# complete cd with local dirs if a match, then path dirs
+zstyle ':completion:*:cd:*' tag-order local-directories path-directories
+
+# ----------------------------------------
+# account completion via defined config
+# ----------------------------------------
+my_accounts=()
+[ -f $XDG_CONFIG_HOME/enum/hosts ]    && hosts=($(cat $XDG_CONFIG_HOME/enum/hosts)) || hosts=()
+[ -f $XDG_CONFIG_HOME/enum/domains ]  && domains=($(cat $XDG_CONFIG_HOME/enum/domains)) || domains=()
+[ -f $XDG_CONFIG_HOME/enum/accounts ] && accounts=($(cat $XDG_CONFIG_HOME/enum/accounts)) || accounts=()
+accounts_spec="{$(echo $accounts | tr -s ' ' ',')}"
+my_accounts=($my_accounts $(eval echo $accounts_spec))
+for h in $hosts ; do
+  my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
+  for d in $domains ; do
+    my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
+  done
+done
+unset d h accounts_spec
+
+# --------------------------------------------------
+# this must occur after defining 'my_accounts'
+# --------------------------------------------------
+zstyle ':completion:*:my-accounts' users-hosts $my_accounts 
+
+# ----------------------------------------
+# hostname completion via known_hosts
+# ----------------------------------------
+[ -r ~/.ssh/known_hosts ] && myhosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || myhosts=()
+zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
 
 declare -a fplist
+[ -d "$XDG_RUNTIME_DIR/zsh/functions" ] || mkdir -p $XDG_RUNTIME_DIR/zsh/functions
 fplist=( /usr/local/share/zsh-completions ~/.files/zsh/functions $XDG_RUNTIME_DIR/zsh/functions )
 for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
+unset d fplist
 
 [ -f $XDG_RUNTIME_DIR/zsh/functions/_kubectl ] || command kubectl completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_kubectl 2> /dev/null
 [ -f $XDG_RUNTIME_DIR/zsh/functions/_helm ]    || command helm completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_helm 2> /dev/null
@@ -158,18 +186,18 @@ for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
   declare -a aws_completer_scripts
   aws_completer_scripts=( "${commands[aws]%%aws}aws_zsh_completer.sh" /usr/local/share/zsh/site-functions/aws_zsh_completer.sh /usr/bin/aws_zsh_completer.sh )
   for f in ${aws_completer_scripts[@]}; { [ -f $f ] && source $f && break; }		# first match wins
-  unset aws_completer_scripts
+  unset f aws_completer_scripts
 }
 
 profile_dirs=($PROFILES $LPROFILES)
 compctl -g '*' -W /etc/init.d start status stop restart
 compctl -k "(all rhel6)" -x 'p[2]' -f -- dist2
-compctl -g '*' -W ~/var/.config myconfig
+compctl -g '*' -W $XDG_CONFIG_HOME/myconfig myconfig
 compctl -W profile_dirs -/ getenv
 autoload -U compinit
+autoload -U +X bashcompinit && bashcompinit
 compinit
 compdef _vars e
-autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
 
 # ------------------------------------------------------------------------------------------
@@ -178,12 +206,20 @@ compdef _pssh pssh pscp
 compdef _path_commands h hh hhh
 # ------------------------------------------------------------------------------------------
 
+# --------------------
 # remove dupes
+# --------------------
 typeset -U path cdpath manpath fpath 
 
-[ -f ~/.muxrc ] && source ~/.muxrc
-
+# ----------------------------------------------------------------------
+# diable exhaustive tracing - this is paired with section at the top
+# ----------------------------------------------------------------------
 # unsetopt xtrace
 # exec 2>&3 3>&-
 # zprof            # for profiling
+
+# --------------------
+# exec mux app
+# --------------------
+[ -f ~/.muxrc ] && source ~/.muxrc
 
