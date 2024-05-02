@@ -1,6 +1,7 @@
 # shellcheck shell=sh
 
-[ "$TERM" = dumb ] || (( ! $+commands[grc] )) && return
+export GRC="$commands[grc]"
+[ "$TERM" = dumb ] || [ -z "$GRC" ] || [ ! $commands[python3] ] && return
 
 # Supported commands
 cmds=(

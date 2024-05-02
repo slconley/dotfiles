@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-which python > /dev/null 2>&1 || return
+which python3 > /dev/null 2>&1 || return
 GRC="$(which grc 2> /dev/null)"
 
 if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then

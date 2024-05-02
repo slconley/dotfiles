@@ -20,10 +20,10 @@ for file in $*; do
     *tar.Z|*tar.gz|*.tgz) gzip -dc $file | tar tvf - 2>/dev/null ;;
 
     # bzip readable tar files
-    *tar.bz2) bzcat $file | tar tvf - 2>/dev/null ;;
+    *tar.bz2) bzcat -dc $file | tar tvf - 2>/dev/null ;;
 
-    # bzip readable tar files
-    *.bz2) bzcat -dc $file | cpio -itv 2>/dev/null ;;
+    # bzip readable cpio files
+    *cpio.bz2) bzcat -dc $file | cpio -itv 2>/dev/null ;;
 
     # ordinary tar files
     *.tar) tar tvf $file 2> /dev/null ;;
@@ -78,24 +78,37 @@ for file in $*; do
     # json
     *.json) which jq > /dev/null 2>&1 && jq -C . $file || cat $file;;
 
-
+    # rar archives
     *.rar) unrar l $file 2> /dev/null ;;
 
-    #*.nmap) grcat ~/.grc/conf.nmap < $file ;;
-    *.nmap) [ "$GRC" ] && grcat ~/.grc/conf.nmap < $file || cat $file ;;
+    # nmap captures
+    *.nmap) [ "$GRC" ] && grcat $XDG_CONFIG_HOME/grc/conf.nmap < $file || cat $file ;;
+
+    # compressed log files
+    *\.log*bz2) [ "$GRC" ] && bzcat -dc $file | grcat $XDG_CONFIG_HOME/grc/conf.log || bzcat -dc $file ;;
+
+    # standard log files
+    *\.log*|*messages*) [ "$GRC" ] && grcat $XDG_CONFIG_HOME/grc/conf.log < $file || cat $file ;;
 
     # all the PKI things
     *.p7s) openssl pkcs7 -in $file -inform DER -print_certs -noout -text ;;
     id_*|*.pem|*.csr|*.crt|*.cert|*.key|*.p12|*.pub) 
-        subtype=$(file -Lb $file)
-        case $subtype in 
-          *PEM*request*) openssl req -text -verify -in $file 2> /dev/null ;;
-          *PEM*key*) openssl rsa -check -in $file 2> /dev/null ;;
-          *cert*|*text*) openssl pkcs12 -export -in $file -nokeys -passout pass:'' | openssl pkcs12 -chain -passin pass:'' 2> /dev/null && openssl x509 -text -in $file 2> /dev/null ;;
-          *data*) openssl pkcs12 -info -in $file -nodes -passin pass:${password:-''} -nokeys ;;
-          *) cat $file ;;
-        esac ;;
+      subtype=$(file -Lb $file)
+      case $subtype in 
+        *PEM*request*) openssl req -text -verify -in $file 2> /dev/null ;;
+        *PEM*key*) openssl rsa -check -in $file 2> /dev/null ;;
+        *cert*|*text*) openssl pkcs12 -export -in $file -nokeys -passout pass:'' | openssl pkcs12 -chain -passin pass:'' 2> /dev/null && openssl x509 -text -in $file 2> /dev/null ;;
+        *data*) openssl pkcs12 -info -in $file -nodes -passin pass:${password:-''} -nokeys ;;
+        *) cat $file ;;
+      esac ;;
 
+    # unknown file extension; try using file type
+    *)
+      ftype=$(file -L -s -b --mime $file)
+      case $ftype in
+        *x-bzip*) bzcat -dc $file ;;
+        *) [ "$GRC" ] && grcat $XDG_CONFIG_HOME/grc/conf.env < $file || cat $file ;;
+      esac ;;
   esac
 
 done

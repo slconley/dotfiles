@@ -202,6 +202,7 @@ e()        { (set;command env)| grep -va '^[_	 ]' | cut -c1-120 | sort -u | grep
 eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
+em()       { savehist; tmux || screen $SCREEN_OPTS -RR; }
 es()       { savehist; screen $SCREEN_OPTS -RR; }
 et()       { savehist; tmux; }
 ez()       { savehist; export PREFSHELL=zsh; exec zsh -l;}
