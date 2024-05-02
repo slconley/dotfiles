@@ -1,17 +1,16 @@
 # shellcheck shell=bash
 
-# ------------------------------------------------------------
-# PREFSHELL selection
-# ------------------------------------------------------------
-export PREFSHELL=${PREFSHELL:=zsh}
-[ "$PREFSHELL" = "bash" ] && [ -z "$BASH" ] && which bash >/dev/null 2>&1 && exec bash
-[ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
-
-# ----------------------------------------------------------------------------------------------------
-# the purpose of this reexec is to ensure consistent use of preferred zsh binary (based on new PATH).
-# it is best that this be done as early as possible. also, it is skipped for bash shells.
-# ----------------------------------------------------------------------------------------------------
-[ "$BASH" ] || [ "$ZSH_REEXEC" ] || { export ZSH_REEXEC=done; exec zsh; }
+# ------------------------------------------------------------------------------------------
+# PREFSHELL selection - for interactive sessions only.
+# the purpose of the reexec below (zsh only) is to ensure consistent use of preferred
+# zsh binary (based on new PATH). it is best that this be done as early as possible.
+# ------------------------------------------------------------------------------------------
+if [ "$PS1" ]; then
+  export PREFSHELL=${PREFSHELL:=zsh}
+  [ "$PREFSHELL" = "bash" ] && [ -z "$BASH" ] && which bash >/dev/null 2>&1 && exec bash
+  [ "$PREFSHELL" = "zsh"  ] && [ -z "$ZSH_NAME" ] && which zsh >/dev/null 2>&1 && exec zsh
+  [ "$BASH" ] || [ "$ZSH_REEXEC" ] || { export ZSH_REEXEC=done; exec zsh; }
+fi
 
 HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"

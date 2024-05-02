@@ -1,5 +1,5 @@
 [user]
-	name = sean.conley
+  name = sean.conley
 [core]
   autocrlf = input
   pager = less -S
@@ -28,4 +28,4 @@
 [diff "sopsdiff"]
   textconv = sops -d
 [credential]
-	helper = cache --timeout=43200
+  helper = cache --timeout=43200
