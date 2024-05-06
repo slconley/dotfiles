@@ -63,21 +63,6 @@ END
 [ -z "$PS1" ] || [ ! $TERM ] && return
 
 # ----------------------------------------
-# generic stuff
-# ----------------------------------------
-umask 77
-me="$(command id -un)"
-mkdirs=(
-  $HOME/.local/profile.d/default $HOME/.terraform.d/plugin-cache $HISTDIR $HISTDIR/../.global
-  $XDG_RUNTIME_DIR/ssh/auth $XDG_RUNTIME_DIR/ssh/cp $XDG_RUNTIME_DIR/tmux
-  $LOGDIR $VSC_TMP
-)
-for d in $mkdirs; do
-  [ -d $d ] || mkdir -p $d 2> /dev/null
-done
-umask 22
-
-# ----------------------------------------
 # configure ssh agent/auth
 # ----------------------------------------
 authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock.${NICK}.${OSTYPE}
@@ -245,5 +230,20 @@ export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL O
 export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 export LPROFILES PROFILES 
 
-# vi:filetype=zsh
+# ----------------------------------------
+# generic stuff
+# ----------------------------------------
+me="$(command id -un)"
+mkdirs=(
+  $HOME/.local/profile.d/default $HOME/.terraform.d/plugin-cache $HISTDIR $HISTDIR/../.global
+  $XDG_RUNTIME_DIR/ssh/auth $XDG_RUNTIME_DIR/ssh/cp $XDG_RUNTIME_DIR/tmux
+  $LOGDIR $TMPDIR $VSC_TMP
+)
+umask 77
+for d in $mkdirs; do
+  [ -d $d ] || mkdir -p $d 2> /dev/null
+done
+umask 22
+
+# vi:filetype=sh
 
