@@ -1,3 +1,3 @@
-[submodule ".files/xdg/cheat/cheatsheets/community"]
+[submodule ".files/config/cheat/cheatsheets/community"]
 	path = .files/config/cheat/cheatsheets/community
 	url = https://github.com/cheat/cheatsheets.git

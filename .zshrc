@@ -94,15 +94,15 @@ s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
 setopt prompt_subst
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn
-zstyle ':vcs_info:*' actionformats '%F{5}|%F{2}%b%F{3}|%F{1}%a%F{5}]%f '
-zstyle ':vcs_info:*' formats       '%F{3}|%F{2}%b%F{3}|%f'
+zstyle ':vcs_info:*' actionformats '%F{2}%b%f|%F{1}%a|'
+zstyle ':vcs_info:*' formats       '%F{2}%b|'
 precmd() { vcs_info; header; }
 PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 
 # --------------------------------------------------
 # right-side prompt
 # --------------------------------------------------
-RPROMPT='${vcs_info_msg_0_}'
+RPROMPT='%F{green}${vcs_info_msg_0_}${SUBENV}%f'
 autoload -U colors; colors
 # kubectl config current-context > /dev/null 2>&1 && \
 # RPROMPT='${vcs_info_msg_0_}[%{$fg[green]%}$(kubectl config current-context)%{$reset_color%}]'
