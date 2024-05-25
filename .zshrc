@@ -1,9 +1,4 @@
 # --------------------------------------------------
-# globalrc should always be first
-# --------------------------------------------------
-[ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
-
-# --------------------------------------------------
 # simple tracing 
 # --------------------------------------------------
 # source() { echo $SHELL sourcing: $1; builtin source $1; }
@@ -16,6 +11,11 @@
 # PS4=$'\\\011%D{%s%6.}\011%x\011%I\011%N\011%e\011'
 # exec 3>&2 2> $HOME/zshstart.$$.log
 # setopt xtrace prompt_subst
+
+# --------------------------------------------------
+# globalrc should always be first
+# --------------------------------------------------
+[ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
 
 # zinit on/off/exclusive?
 [ -f ~/.zinit/.zshrc ] && { source ~/.zinit/.zshrc; unalias gr 2>/dev/null; }

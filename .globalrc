@@ -1,6 +1,10 @@
 # shellcheck shell=bash
 
 # ------------------------------------------------------------------------------------------
+PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/opt/bin
+
+
+# ------------------------------------------------------------------------------------------
 # PREFSHELL selection - for interactive sessions only.
 # the purpose of the reexec below (zsh only) is to ensure consistent use of preferred
 # zsh binary (based on new PATH). it is best that this be done as early as possible.
