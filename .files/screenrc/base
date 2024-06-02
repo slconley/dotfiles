@@ -24,8 +24,8 @@ termcapinfo xterm* ti@:te@
 # enable 80/132 switching
 termcapinfo xterm* Z0=\E[?3h:Z1=\E[?3l:is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l
 
-caption always '%{= g}[ %{G}%H %{g}][ %{w}%?%-w%?%{R}(%{W}%n%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{g}][%{B} %m/%d %{W}%c %{W}]'
-#caption always '%{= g}[ %{G}%H %{g}][ %{w}%?%-w%?%{R}(%{W}%n%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{g}][${vcs_info_msg_0_}][%{B} %m/%d %{W}%c %{W}]'
+caption always '%{= g}[ %{G}%H %{g}][ %{w}%?%-w%?%{R}(%{W}%n%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{g}][%{B} %m/%d %{W}%c %{g}]'
+#caption always '%{= g}[ %{G}%H %{g}][ %{w}%?%-w%?%{R}(%{W}%n%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{g}][${vcs_info_msg_0_}][%{B} %m/%d %{W}%c %{g}]'
 #hardstatus alwayslastline "%{=b}%{G} %{b}%w %=%{kG} %u@%H %Y/%m/%d %c"
 
 

@@ -3,7 +3,7 @@
 # ----------------------------------------
 # attempt to use tmux if it is available
 # ----------------------------------------
-if which tmux >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
+if which tmux >/dev/null 2>&1 && [[ "$TERM" != *tmux* ]] && [[ ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
   tmux
   return
 fi
@@ -14,7 +14,7 @@ fi
 # ----------------------------------------
 if which screen >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.noscreen || "$TERM_PROGRAM" = "vscode" ]];  then
   SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
-  export SCREENDIR=$TMPDIR/screen/$USER; [ -d "$SCREENDIR" ] || mkdir -p "$SCREENDIR"
+  [ -d "$SCREENDIR" ] || mkdir -p "$SCREENDIR"
   screen $SCREEN_OPTS -RR
 fi
 
