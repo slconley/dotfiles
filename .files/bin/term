@@ -23,7 +23,7 @@ for PROC in $*; do
 
   # get PIDs (if SunOS)
   if [[ "$OS" == "SunOS" || "$OS" =~ Lin* ]] ; then
-    PIDS=`$PS|egrep $PROC|grep -v grep|grep -v $0|awk '{printf "%s ",$2}'`
+    PIDS=`$PS|grep -E $PROC|grep -v grep|grep -v $0|awk '{printf "%s ",$2}'`
     if [ "$PIDS" = "" ] ; then
       echo Found no processes named \"$PROC\"
       break

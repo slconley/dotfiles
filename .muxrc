@@ -3,16 +3,19 @@
 # ----------------------------------------
 # attempt to use tmux if it is available
 # ----------------------------------------
-if which tmux >/dev/null 2>&1 && [[ "$TERM" != *tmux* ]] && [[ ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
-  tmux
-  return
+# if which tmux >/dev/null 2>&1 && [[ ! "$TMUX" ]] && [[ "$emforce" ]] || [[ ! "$TMUX" && ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
+if which tmux >/dev/null 2>&1 && [[ ! "$TMUX" && "$emforce" ]] || [[ ! "$TMUX" && ! -f ~/.notmux || "$TERM_PROGRAM" = "vscode" ]];  then
+  unset emforce
+  target=$(tmux ls | grep -v attached | head -1 | cut -d: -f1)
+  [ "$target" ] && tmux attach -t $target && return
+  tmux && return
 fi
 
 # ----------------------------------------
 # attempt to use screen if it is available
 # note: tmux above trumps screen
 # ----------------------------------------
-if which screen >/dev/null 2>&1 && [[ "$TERM" != *screen* ]] && [[ ! "$TERMCAP" =~ .*screen.* ]] && [[ ! -f ~/.noscreen || "$TERM_PROGRAM" = "vscode" ]];  then
+if which screen >/dev/null 2>&1 && [[ "$emforce" && "$TERM" != *screen* ]] || [[ ! "$TERMCAP" =~ .*screen.* && ! -f ~/.noscreen || "$TERM_PROGRAM" = "vscode" ]];  then
   SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
   [ -d "$SCREENDIR" ] || mkdir -p "$SCREENDIR"
   screen $SCREEN_OPTS -RR

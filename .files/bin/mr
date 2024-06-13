@@ -2029,7 +2029,7 @@ lib =
 		fi
 	}
 	is_bzr_checkout() {
-		LANG=C bzr info | egrep -q '^Checkout'
+		LANG=C bzr info | grep -E -q '^Checkout'
 	}
 	lazy() {
 		if [ -d "$MR_REPO" ]; then
@@ -2228,7 +2228,7 @@ git_register =
 	echo "Registering git url: $url in $MR_CONFIG"
 	mr -c "$MR_CONFIG" config "`pwd`" checkout="git clone '$url' '$MR_REPO'"
 bzr_register =
-	url="`LC_ALL=C bzr info . | egrep -i 'checkout of branch|parent branch' | awk '{print $NF}' | head -n 1`"
+	url="`LC_ALL=C bzr info . | grep -E -i 'checkout of branch|parent branch' | awk '{print $NF}' | head -n 1`"
 	if [ -z "$url" ]; then
 		error "cannot determine bzr url"
 	fi

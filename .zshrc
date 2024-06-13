@@ -142,6 +142,9 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # complete cd with local dirs if a match, then path dirs
 zstyle ':completion:*:cd:*' tag-order local-directories path-directories
 
+# help tmux find custom sockets dir
+zstyle ':completion:*:*:tmux:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
+
 # ----------------------------------------
 # account completion via defined config
 # ----------------------------------------

@@ -14,7 +14,7 @@ case $OS in
 
 esac
 
-for host in `getent hosts | egrep -- $1 | awk '{print $2}' | sort -u`; do
+for host in `getent hosts | grep -E -- $1 | awk '{print $2}' | sort -u`; do
   if ping $host $count_opt $timout_opt >/dev/null 2>&1; then
     echo ${host} is alive
   else

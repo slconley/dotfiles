@@ -108,7 +108,7 @@ for file in $*; do
       ftype=$(file -L -s -b --mime $file)
       case $ftype in
         *x-bzip*) bzcat -dc $file ;;
-        *) [ "$GRC" ] && grcat $XDG_CONFIG_HOME/grc/conf.env < $file || cat $file ;;
+        # *) [ "$GRC" ] && grcat $XDG_CONFIG_HOME/grc/conf.env < $file || cat $file ;;
       esac ;;
   esac
 
