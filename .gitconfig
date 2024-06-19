@@ -6,17 +6,23 @@
   excludesfile = ~/.gitignore_global
 [init]
   defaultBranch = main
+[fetch]
+  multiple = true
+  parallel = 12
+  prune = true
+  prunetags = true
 [push]
   default = current
 [pull]
   default = current
-  rebase=true
+  rebase = true
 [rebase]
   autostash = true
 [alias]
   difflist = !git diff --name-only
   permission-reset = !git diff -p -R --no-color | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply
-  sync = !git pull && git push --all all && git fetch --all
+  sync = !git fetch --all && git pull && git push --all all
+	lol = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 [filter "lfs"]
   clean = git-lfs clean %f
   smudge = git-lfs smudge %f
@@ -24,7 +30,7 @@
 [color]
   ui = true
 [format]
-  pretty = format:%h %Cblue%ai%Creset %<(20)%ae %Cblue%d%Creset %Cgreen%s%Creset
+  pretty = format:%h %Cblue%ai%Creset %<(25,trunc)%ae %Cblue%d%Creset %Cgreen%s%Creset
 [diff "sopsdiff"]
   textconv = sops -d
 [credential]

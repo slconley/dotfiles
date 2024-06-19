@@ -147,6 +147,7 @@ unset TMOUT
 alias @='curl http://ipinfo.io/'
 alias \#=:    # allows comments to be pasted into command buffer along with commands
 alias c-='COLOR_GRC="--colour=off" COLOR_GREP="--color=never"  $*'
+alias c-='unset COLOR_GRC COLOR_GREP; $*'
 alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 alias df='df -h'
 alias du='du -h'
