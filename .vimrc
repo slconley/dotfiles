@@ -1,15 +1,6 @@
-set expandtab ignorecase incsearch paste ruler smartcase showmatch shiftwidth=2 tabstop=2 modeline modelines=20
-set rtp+=/usr/local/opt/fzf
+set expandtab ignorecase incsearch modeline paste ruler smartcase showmatch modelines=20 shiftwidth=2 tabstop=2
 filetype plugin indent on
-autocmd FileType make setlocal noexpandtab shiftwidth=8 softtabstop=0
-autocmd FileType python setlocal expandtab smarttab shiftwidth=4 softtabstop=4 tabstop=2 textwidth=80
-autocmd BufEnter * if &filetype == "" | setlocal ft=yaml | endif
-
-" default looks pretty good these days, but these are usable options:
-"colorscheme elflord
-"colorscheme habamax
-"colorscheme koehler
-"colorscheme pablo
+nmap . .`[
 
 if &t_Co > 2 || has("gui_running")
   syntax enable
@@ -17,8 +8,29 @@ if &t_Co > 2 || has("gui_running")
 endif
 
 if has("autocmd")
+  autocmd BufEnter    * if &filetype == "" | setlocal ft=yaml | endif
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+  autocmd FileType make   setlocal noexpandtab shiftwidth=8 softtabstop=0
+  autocmd FileType python setlocal expandtab smarttab shiftwidth=4 softtabstop=4 tabstop=2 textwidth=80
 endif
 
-nmap . .`[
+" generally agreeable picks for me (from v9)
+colorscheme desert
+colorscheme elflord
+colorscheme evening
+colorscheme habamax
+colorscheme koehler
+colorscheme pablo
+colorscheme ron
+colorscheme slate
+
+" minimalistic but still nice
+colorscheme quiet
+
+" front-runners
+colorscheme retrobox
+
+" current favorite(s)
+colorscheme torte
+if version >= 900 | colorscheme sorbet | endif
 
