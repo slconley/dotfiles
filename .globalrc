@@ -240,7 +240,7 @@ export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 export LPROFILES PROFILES 
 
 # ----------------------------------------
-# generic stuff
+# random stuff
 # ----------------------------------------
 me="$(command id -un)"
 mkdirs=(
@@ -248,11 +248,7 @@ mkdirs=(
   $XDG_RUNTIME_DIR/ssh/auth $XDG_RUNTIME_DIR/ssh/cp $XDG_RUNTIME_DIR/tmux
   $LOGDIR $TMPDIR $VSC_TMP
 )
-umask 77
-for d in $mkdirs; do
-  [ -d $d ] || mkdir -p $d 2> /dev/null
-done
-umask 22
+umask 77; for d in ${mkdirs[*]}; do [ -d $d ] || mkdir -p $d; done; umask 22
 
 # vi:filetype=sh
 

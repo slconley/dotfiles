@@ -15,22 +15,24 @@ if has("autocmd")
 endif
 
 " generally agreeable picks for me (from v9)
-colorscheme desert
-colorscheme elflord
-colorscheme evening
-colorscheme habamax
-colorscheme koehler
-colorscheme pablo
-colorscheme ron
-colorscheme slate
+"colorscheme desert
+"colorscheme elflord
+"colorscheme evening
+"colorscheme habamax
+"colorscheme koehler
+"colorscheme pablo
+"colorscheme ron
+"colorscheme slate
 
 " minimalistic but still nice
-colorscheme quiet
+"colorscheme quiet
 
 " front-runners
-colorscheme retrobox
+"colorscheme retrobox
 
 " current favorite(s)
-colorscheme torte
-if version >= 900 | colorscheme sorbet | endif
+" colorscheme torte
+" if version >= 900 | colorscheme sorbet | endif
+
+colorscheme sorbet
 
