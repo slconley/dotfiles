@@ -3,14 +3,14 @@
 # ------------------------------------------------------------
 # don't bother with aanything more if already in mux session
 # ------------------------------------------------------------
-[[ "$TERM" = *tmux* || "$TERM" = *screen* ]] && return
+[ "$TERM" = *tmux* ] || [ "$TERM" = *screen* ] && return
 
 # ----------------------------------------
 # attempt to use tmux if it is available
 # ----------------------------------------
-if which tmux >/dev/null 2>&1; then
-  target=$(tmux ls 2>/dev/null | grep -v attached | head -1 | cut -d: -f1)
-  if [[ ! -f ~/.nomux || -n "$emforce" || "$TERM_PROGRAM" = "vscode" || -n "$target" ]]; then
+if type -p tmux >/dev/null 2>&1; then
+  target=$(tmux ls -F '#{session_id}' -f '#{?#{session_attached},0,1}' | head -1)
+  if [ ! -f ~/.nomux ] || [ -n "$emforce" ] || [ "$TERM_PROGRAM" = "vscode" ] || [ -n "$target" ]; then
     [ "$target" ] && tmux attach -t $target && return
     tmux && return
   fi
@@ -20,10 +20,10 @@ fi
 # attempt to use screen if it is available
 # note: tmux above trumps screen
 # ----------------------------------------
-if which screen >/dev/null 2>&1; then
+if type -p screen >/dev/null 2>&1; then
   SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
   [ -d "$SCREENDIR" ] || mkdir -p "$SCREENDIR"
-  if [[ ! -f ~/.nomux || -n "$emforce" || "$TERM_PROGRAM" = "vscode" ]]; then
+  if [ ! -f ~/.nomux ] || [ -n "$emforce" ] || [ "$TERM_PROGRAM" = "vscode" ]; then
     screen $SCREEN_OPTS -RR; return
   fi
 fi
