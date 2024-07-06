@@ -14,25 +14,8 @@ if has("autocmd")
   autocmd FileType python setlocal expandtab smarttab shiftwidth=4 softtabstop=4 tabstop=2 textwidth=80
 endif
 
-" generally agreeable picks for me (from v9)
-"colorscheme desert
-"colorscheme elflord
-"colorscheme evening
-"colorscheme habamax
-"colorscheme koehler
-"colorscheme pablo
-"colorscheme ron
-"colorscheme slate
+colorscheme torte
 
-" minimalistic but still nice
-"colorscheme quiet
+if version >= 900 | source ~/.vim/vim90/vimrc | endif
 
-" front-runners
-"colorscheme retrobox
-
-" current favorite(s)
-" colorscheme torte
-" if version >= 900 | colorscheme sorbet | endif
-
-colorscheme sorbet
 

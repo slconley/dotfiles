@@ -1,4 +1,6 @@
+# ------------------------------
 # shellcheck shell=bash
+# ------------------------------
 
 # ------------------------------------------------------------------------------------------
 PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/opt/bin

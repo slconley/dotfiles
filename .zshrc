@@ -1,3 +1,5 @@
+# shellcheck shell=zsh
+
 # --------------------------------------------------
 # simple tracing 
 # --------------------------------------------------
@@ -225,4 +227,6 @@ typeset -U path cdpath manpath fpath
 # exec mux app
 # --------------------
 [ -f ~/.muxrc ] && source ~/.muxrc
+
+[ "$TERM" =~ tmux ] && [ ! -f /usr/share/terminfo/*/$TERM ] && TERM=screen-256color         # tmux v1.x hack
 

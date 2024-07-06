@@ -119,7 +119,7 @@ hi DiffRemoved guifg=#d75f5f guibg=NONE gui=NONE cterm=NONE
 hi debugBreakpoint guifg=#8787af guibg=#000000 gui=bold,reverse cterm=bold,reverse
 
 if s:t_Co >= 256
-  " hi Normal ctermfg=253 ctermbg=233 cterm=NONE
+  hi Normal ctermfg=253 ctermbg=233 cterm=NONE
   hi Normal ctermfg=253 ctermbg=0 cterm=NONE
   hi ColorColumn ctermfg=NONE ctermbg=235 cterm=NONE
   hi Conceal ctermfg=NONE ctermbg=NONE cterm=NONE
