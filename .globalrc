@@ -109,7 +109,7 @@ export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.g
 export PAGER=more
 export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=/var/log/messages
-export TMUX_TMPDIR=$XDG_RUNTIME_DIR/tmux
+export TMUX_TMPDIR=$TEMP/tmux
 export TOP="-s3"
 
 export esEndpoint=${ES_NETWORK_HOST}:9200
@@ -180,8 +180,7 @@ alias vm='VBoxManage'
 alias which='which -a'
 
 # conditional aliases
-# [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -lL $(basename $TTY)' || alias tmux='tmux -lL $SUBENV'
-[[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)' || alias tmux='tmux -L $SUBENV'
+alias tmux='tmux -L $SUBENV';    [[ "$TTY" =~ "tty[0-9]" ]]         && alias tmux='tmux -L $(basename $TTY)'
 
 # ----------------------------------------------------------------------
 # functions

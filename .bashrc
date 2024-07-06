@@ -39,14 +39,36 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 savehist() { history -a; }
 
 shopt -s nullglob
-for f in $LPROFILES/pre-*.{,ba}sh ; do source $f; done
+for f in $LPROFILES/.early/*.{,ba}sh ; do source $f; done
+for f in $LPROFILES/$SUBENV/.early/*.{,ba}sh ; do source $f; done
 for f in $PROFILES/*.{,ba}sh $PROFILES/.profile.${OSNAME}*; do source $f; done
-for f in $LPROFILES/post-*.{,ba}sh ; do source $f; done
 for f in $PROFILES/$SUBENV/*.{,ba}sh ; do source $f; done
-for f in $LPROFILES/$SUBENV/*.{,ba}sh ; do source $f; done
+for f in $LPROFILES/{,.late}/*.{,ba}sh ; do source $f; done
+for f in $LPROFILES/$SUBENV/{,.late}/*.{,ba}sh ; do source $f; done
 shopt -u nullglob
+                                                                                                                                            # --------------------------------------------------
+# env var(s)
+# --------------------------------------------------
+HISTFILE="$HISTDIR/bash.histfile.${HIST_DTG}"
+PS1='\[\e[0;32m\][\u@\h \W]\$\[\e[0m\] '
+PROMPT_DIRTRIM=2
+export PROMPT_DIRTRIM HISTFILE
+touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.histfile.${HIST_DTG}"
 
+# --------------------------------------------------
+# ensure "python" maps to somethingg (v3 preferred)
+# --------------------------------------------------
+hash -p $(type -p python3 2> /dev/null) python > /dev/null 2>&1
+type -p python >/dev/null 2>&1 || hash -p $(type -p python2 2> /dev/null) python > /dev/null 2>&1
+
+# --------------------------------------------------
+# root specific tweak(s)
+# --------------------------------------------------
+[ "$me" = "root" ] && { umask 22; PS1='\[\e[0;31m\][\u@\h \W]\$\[\e[0m\] '; }
+
+# --------------------------------------------------
+# muxrc
+# --------------------------------------------------
 [ -f ~/.muxrc ] && source ~/.muxrc
-
-[ "$TERM" =~ tmux ] && [ ! -f /usr/share/terminfo/t/$TERM ] && TERM=screen-256color         # tmux v1.x hack
+[[ "$TERM" =~ tmux && ! -f /usr/share/terminfo/t/$TERM ]] && TERM=screen-256color         # tmux v1.x hack
 

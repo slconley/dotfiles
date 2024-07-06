@@ -47,6 +47,7 @@ DIRSTACKSIZE=20
 PERIOD=600
 PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c %#%{\e[0m%} '
 PS4=$'%{\e[0;33m%}+%x:%I>%{\e[0m%} '
+READNULLCMD=$PAGER
 TMPPREFIX=$XDG_RUNTIME_DIR/tmp/zsh
 export PERIOD SHELL
 
@@ -80,7 +81,7 @@ zle -N up-line-or-beginning-search up-line-or-beginning-search
 zle -N down-line-or-beginning-search down-line-or-beginning-search
 
 # --------------------------------------------------
-# aliase(s)
+# alias(es)
 # --------------------------------------------------
 alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 
@@ -115,12 +116,12 @@ autoload -U colors; colors
 [ "$me" = "root" ] && { umask 22; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
 
 setopt nullglob
-for f in $LPROFILES/pre-*.{,z}sh ; source $f
-for f in $LPROFILES/$SUBENV/pre-*.{,z}sh ; source $f
+for f in $LPROFILES/.early/*.{,z}sh ; source $f
+for f in $LPROFILES/$SUBENV/.early/*.{,z}sh ; source $f
 for f in $PROFILES/*.{,z}sh $PROFILES/.profile.${OSNAME}*; source $f
-for f in $LPROFILES/post-*.{,z}sh ; source $f
 for f in $PROFILES/$SUBENV/*.{,z}sh ; source $f
-for f in $LPROFILES/$SUBENV/*.{,z}sh ; source $f
+for f in $LPROFILES/{,.late}/*.{,z}sh ; source $f
+for f in $LPROFILES/$SUBENV/{,.late}/*.{,z}sh ; source $f
 setopt nonullglob
 unset f
 
@@ -177,7 +178,7 @@ zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
 
 declare -a fplist
 [ -d "$XDG_RUNTIME_DIR/zsh/functions" ] || mkdir -p $XDG_RUNTIME_DIR/zsh/functions
-fplist=( /usr/local/share/zsh-completions ~/.files/zsh/functions $XDG_RUNTIME_DIR/zsh/functions )
+fplist=( /usr/local/share/zsh-completions ~/.files/zsh.d/functions $XDG_RUNTIME_DIR/zsh/functions )
 for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
 unset d fplist
 
@@ -214,7 +215,14 @@ compdef _path_commands h hh hhh
 # --------------------
 # remove dupes
 # --------------------
-typeset -U path cdpath manpath fpath 
+#typeset -U path cdpath manpath fpath 
+
+# --------------------------------------------------
+# ensure "python" maps to something (v3 preferred)
+# NOTE: this must come after the 'typeset' above
+# --------------------------------------------------
+hash python=$(whence -p python3 2> /dev/null)
+whence -p python > /dev/null 2>&1 || hash python=$(whence -p python2 2> /dev/null)
 
 # ----------------------------------------------------------------------
 # diable exhaustive tracing - this is paired with section at the top
@@ -224,9 +232,8 @@ typeset -U path cdpath manpath fpath
 # zprof            # for profiling
 
 # --------------------
-# exec mux app
+# muxrc
 # --------------------
 [ -f ~/.muxrc ] && source ~/.muxrc
-
 [ "$TERM" =~ tmux ] && [ ! -f /usr/share/terminfo/*/$TERM ] && TERM=screen-256color         # tmux v1.x hack
 

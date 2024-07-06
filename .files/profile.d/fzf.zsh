@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=zsh
 
 [[ $- == *i* ]] || return
 
