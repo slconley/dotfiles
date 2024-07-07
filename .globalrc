@@ -78,7 +78,7 @@ ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null &&
 [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
 [ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
-PATH="$PATH:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/proc/bin"
+PATH="$PATH:$XDG_RUNTIME_DIR/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/proc/bin"
 PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
 
 export TTY=$(tty)
@@ -109,7 +109,7 @@ export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.g
 export PAGER=more
 export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=/var/log/messages
-export TMUX_TMPDIR=$TEMP/tmux
+export TMUX_TMPDIR=$XDG_RUNTIME_DIR/tmux
 export TOP="-s3"
 
 export esEndpoint=${ES_NETWORK_HOST}:9200
@@ -235,7 +235,6 @@ tcp()      { lsof -i tcp | grep -i $* ; }
 tgz()      { tar cvzf ${1}.tgz $1; }
 zipit()    { zip -ry ${1}.zip $1; }
 
-
 export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
 export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 export LPROFILES PROFILES 
@@ -246,8 +245,7 @@ export LPROFILES PROFILES
 me="$(command id -un)"
 mkdirs=(
   $HOME/.local/profile.d/default $HOME/.terraform.d/plugin-cache $HISTDIR $HISTDIR/../.global
-  $XDG_RUNTIME_DIR/ssh/auth $XDG_RUNTIME_DIR/ssh/cp $XDG_RUNTIME_DIR/tmux
-  $LOGDIR $TMPDIR $VSC_TMP
+  $XDG_RUNTIME_DIR/{bin,tmux} $XDG_RUNTIME_DIR/ssh/{auth,cp} $LOGDIR $VSC_TMP
 )
 umask 77; for d in ${mkdirs[*]}; do [ -d $d ] || mkdir -p $d; done; umask 22
 

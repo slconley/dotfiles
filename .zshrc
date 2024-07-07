@@ -221,8 +221,8 @@ compdef _path_commands h hh hhh
 # ensure "python" maps to something (v3 preferred)
 # NOTE: this must come after the 'typeset' above
 # --------------------------------------------------
-hash python=$(whence -p python3 2> /dev/null)
-whence -p python > /dev/null 2>&1 || hash python=$(whence -p python2 2> /dev/null)
+# hash python=$(whence -p python3 2> /dev/null)
+# whence -p python > /dev/null 2>&1 || hash python=$(whence -p python2 2> /dev/null)
 
 # ----------------------------------------------------------------------
 # diable exhaustive tracing - this is paired with section at the top

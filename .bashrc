@@ -58,8 +58,8 @@ touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.
 # --------------------------------------------------
 # ensure "python" maps to somethingg (v3 preferred)
 # --------------------------------------------------
-hash -p $(type -p python3 2> /dev/null) python > /dev/null 2>&1
-type -p python >/dev/null 2>&1 || hash -p $(type -p python2 2> /dev/null) python > /dev/null 2>&1
+# hash -p $(type -p python3 2> /dev/null) python > /dev/null 2>&1
+# type -p python >/dev/null 2>&1 || hash -p $(type -p python2 2> /dev/null) python > /dev/null 2>&1
 
 # --------------------------------------------------
 # root specific tweak(s)

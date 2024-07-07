@@ -1,8 +1,5 @@
 # shellcheck shell=bash
 
-which python3 > /dev/null 2>&1 || return
-GRC="$(which grc 2> /dev/null)"
-
 if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
     alias colourify="$GRC -es"
     alias blkid='colourify blkid'
@@ -28,7 +25,7 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
     alias journalctl='colourify journalctl'
     alias kubectl='colourify kubectl'
     alias ld='colourify ld'
-    alias ls='colourify ls'
+    #alias ls='colourify ls'
     alias lsof='colourify lsof'
     alias lsblk='colourify lsblk'
     alias lspci='colourify lspci'
