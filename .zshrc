@@ -97,8 +97,8 @@ s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
 setopt prompt_subst
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn
-zstyle ':vcs_info:*' actionformats '%F{2}%b%f|%F{1}%a|'
-zstyle ':vcs_info:*' formats       '%F{2}%b|'
+zstyle ':vcs_info:*' actionformats '|%F{2}%b%f|%F{1}%a'
+zstyle ':vcs_info:*' formats       '|%F{2}%b'
 precmd() { vcs_info; header; }
 PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 
