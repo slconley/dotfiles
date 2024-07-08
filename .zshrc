@@ -105,7 +105,8 @@ PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 # --------------------------------------------------
 # right-side prompt
 # --------------------------------------------------
-RPROMPT='%F{green}${vcs_info_msg_0_}${SUBENV}%f'
+RPROMPT='%F{green}${SUBENV}${vcs_info_msg_0_}%f'
+[ "$TMUX" ] && RPROMPT=''
 autoload -U colors; colors
 # kubectl config current-context > /dev/null 2>&1 && \
 # RPROMPT='${vcs_info_msg_0_}[%{$fg[green]%}$(kubectl config current-context)%{$reset_color%}]'
