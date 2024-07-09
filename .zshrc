@@ -45,7 +45,7 @@ unset zle_bracketed_paste
 # --------------------------------------------------
 DIRSTACKSIZE=20
 PERIOD=600
-PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c %#%{\e[0m%} '
+PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 PS4=$'%{\e[0;33m%}+%x:%I>%{\e[0m%} '
 READNULLCMD=$PAGER
 TMPPREFIX=$XDG_RUNTIME_DIR/tmp/zsh
@@ -100,7 +100,6 @@ zstyle ':vcs_info:*' enable git svn
 zstyle ':vcs_info:*' actionformats '|%F{2}%b%f|%F{1}%a'
 zstyle ':vcs_info:*' formats       '|%F{2}%b'
 precmd() { vcs_info; header; }
-PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 
 # --------------------------------------------------
 # right-side prompt

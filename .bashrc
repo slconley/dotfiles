@@ -50,7 +50,7 @@ shopt -u nullglob
 # env var(s)
 # --------------------------------------------------
 HISTFILE="$HISTDIR/bash.histfile.${HIST_DTG}"
-PS1='\[\e[0;32m\][\u@\h \W]\$\[\e[0m\] '
+PS1='\[\e[0;32m\][\u@\h:\w]\$\[\e[0m\] '
 PROMPT_DIRTRIM=2
 export PROMPT_DIRTRIM HISTFILE
 touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.histfile.${HIST_DTG}"
@@ -64,7 +64,7 @@ touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.
 # --------------------------------------------------
 # root specific tweak(s)
 # --------------------------------------------------
-[ "$me" = "root" ] && { umask 22; PS1='\[\e[0;31m\][\u@\h \W]\$\[\e[0m\] '; }
+[ "$me" = "root" ] && { umask 22; PS1='\[\e[0;31m\][\u@\h:\w]\$\[\e[0m\] '; }
 
 # --------------------------------------------------
 # muxrc

@@ -6,12 +6,13 @@
 [ -d /usr/local/opt/fzf ] && fzf_home=/usr/local/opt/fzf
 [ -d ~/.fzf/bin ] && fzf_home=~/.fzf
 [ -d $fzf_home/bin ] && PATH=$PATH:$fzf_home/bin || return
+[ -x /usr/bin/fzf ] && fzf_home=/usr
 which fzf > /dev/null 2>&1 || return
 
 sources=(
   ~/.fzf.bash
   /etc/profile.d/fzf.sh
-  /usr/share/doc/fzf/examples/{completion,key-bindings}.bash
+  /usr/share/{doc,}/fzf/{examples,}/{completion,key-bindings}.bash
   "$fzf_home/shell/{completion,key-bindings}.bash"
 )
 

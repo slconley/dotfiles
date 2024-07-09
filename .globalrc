@@ -5,7 +5,6 @@
 # ------------------------------------------------------------------------------------------
 PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/opt/bin
 
-
 # ------------------------------------------------------------------------------------------
 # PREFSHELL selection - for interactive sessions only.
 # the purpose of the reexec below (zsh only) is to ensure consistent use of preferred
@@ -180,7 +179,7 @@ alias vm='VBoxManage'
 alias which='which -a'
 
 # conditional aliases
-alias tmux='tmux -L $SUBENV';    [[ "$TTY" =~ "tty[0-9]" ]]         && alias tmux='tmux -L $(basename $TTY)'
+alias tmux='tmux -L $SUBENV'; [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
 
 # ----------------------------------------------------------------------
 # functions
