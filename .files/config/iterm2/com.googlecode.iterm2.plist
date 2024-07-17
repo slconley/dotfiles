@@ -3075,6 +3075,8 @@
 	<integer>2</integer>
 	<key>MaxVertically</key>
 	<false/>
+	<key>NeverBlockSystemShutdown</key>
+	<true/>
 	<key>NeverWarnAboutShortLivedSessions_8836F4A8-8A21-42B5-AB8F-0BCE60BC6839</key>
 	<true/>
 	<key>NeverWarnAboutShortLivedSessions_8836F4A8-8A21-42B5-AB8F-0BCE60BC6839_selection</key>
@@ -4339,7 +4341,7 @@
 	<key>Print In Black And White</key>
 	<true/>
 	<key>PromptOnQuit</key>
-	<true/>
+	<false/>
 	<key>QuitWhenAllWindowsClosed</key>
 	<false/>
 	<key>RightCommand</key>
