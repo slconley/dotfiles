@@ -242,8 +242,8 @@ export LPROFILES PROFILES
 # ----------------------------------------
 me="$(command id -un)"
 mkdirs=(
-  "$HOME/.local/profile.d/default" "$HOME"/.terraform.d/plugin-cache "$HISTDIR" "$HISTDIR"/../.global
-  "$XDG_RUNTIME_DIR"/{bin,tmux} "$XDG_RUNTIME_DIR"/ssh/{auth,cp} "$LOGDIR" "$VSC_TMP"
+  "$HOME/.local/profile.d/default" "$HOME"/.terraform.d/plugin-cache "$HISTDIR" "$HISTDIR"/../.global "$LOGDIR"
+  "$XDG_RUNTIME_DIR"/{bin,tmp,tmux} "$XDG_RUNTIME_DIR"/ssh/{auth,cp} "$VSC_TMP"
 )
 umask 77; for d in "${mkdirs[@]}"; do [ -d "$d" ] || mkdir -p "$d"; done; umask 22
 

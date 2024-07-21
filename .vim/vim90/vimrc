@@ -1,0 +1,18 @@
+" generally agreeable picks for me (from v9)
+"colorscheme desert
+"colorscheme elflord
+"colorscheme evening
+"colorscheme habamax
+"colorscheme koehler
+"colorscheme pablo
+"colorscheme ron
+
+" minimalistic but still nice
+"colorscheme quiet
+
+" front-runners
+"colorscheme retrobox
+
+" current favorite(s)
+colorscheme vim90/sorbet
+colorscheme wildcharm
