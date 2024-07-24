@@ -6,7 +6,7 @@
 # source() { echo $SHELL sourcing: $1; builtin source $1; }
 # export PS4='\[\e[0;33m\][${BASH_SOURCE[0]:-inherited}:${LINENO}:${FUNCNAME[0]:-main}]>>>\[\e[0m\] '
 
-[ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
+[ -f $HOME/.globalrc ] && source $HOME/.globalrc
 
 # --------------------------------------------------
 # remainder is specific to interactive shells
@@ -64,7 +64,7 @@ touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.
 # --------------------------------------------------
 # root specific tweak(s)
 # --------------------------------------------------
-[ "$me" = "root" ] && { umask 22; PS1='\[\e[0;31m\][\u@\h:\w]\$\[\e[0m\] '; }
+[ "$EUID" = 0 ] && { umask \2\2; PS1='\[\e[0;31m\][\u@\h:\w]\$\[\e[0m\] '; }
 
 # --------------------------------------------------
 # muxrc

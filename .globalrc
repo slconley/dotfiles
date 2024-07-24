@@ -29,7 +29,11 @@ HISTFILE_GLOBAL=~/.var/hist/.global/sh.histfile
 LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ]
 
 XDG_CONFIG_HOME=~/.files/config
-XDG_RUNTIME_DIR=~/.run/$NICK
+
+[ -d /run/user ] && XDG_RUNTIME_DIR=/run/user/$EUID
+[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/run/users/0}
+XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-~/.run/$NICK}
+[ -d $XDG_RUNTIME_DIR ] || umask 77 && mkdir -p $XDG_RUNTIME_DIR
 
 OSNAME="$(uname -s)"
 OSREL="$(uname -r)"
@@ -38,9 +42,8 @@ OS="$OSNAME$OSREL"
 SHELL=${commands[zsh]:-${BASH}}
 TEMP=$XDG_RUNTIME_DIR/tmp
 TMPDIR=$TEMP
-VSC_TMP=$XDG_RUNTIME_DIR/vsc; [ -d "$VSC_TMP" ]
+VSC_TMP=$XDG_RUNTIME_DIR/vsc
 
-SCREENDIR=$XDG_RUNTIME_DIR/screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
 PROFILES=~/.files/profile.d
 LPROFILES=~/.local/profile.d
 
@@ -66,16 +69,6 @@ END
 # all non-interactive stuff should go above this line
 # ------------------------------------------------------------
 [ -z "$PS1" ] || [ ! $TERM ] && return
-
-# ----------------------------------------
-# configure ssh agent/auth
-# ----------------------------------------
-authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock.${NICK}.${OSTYPE}
-[ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
-ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
-[ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
-[ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
-[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
 PATH="$PATH:$XDG_RUNTIME_DIR/bin:/usr/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/proc/bin"
 PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
@@ -152,7 +145,7 @@ alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 alias df='df -h'
 alias du='du -h'
 alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
-alias grep="grep -Ed skip --exclude-dir '*git'"
+alias grep='grep -Ed skip $COLOR_GREP --exclude-dir *git'
 alias gs='git status -s'
 alias l.='$GRC ls -Fd $COLOR_LS .* 2> /dev/null'
 alias mkdir='mkdir -p'
@@ -190,7 +183,7 @@ colormap() { for i in {0..255}; do printf "\x1b[38;5;${i}mcolor${i}\n"; done; }
 bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
 defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
 dx()       { docker run -ith dx --rm -e HOME=$HOME -v ~:$HOME $* $PREFSHELL; }
-e()        { (set;command env)| grep -va '^[_	 ]' | cut -c1-120 | sort -u | grep -ai $COLOR_GREP $*; }
+e()        { (set;command env)| grep -Eva '^[_	 ]' | cut -c1-120 | sort -u | grep -Eai $COLOR_GREP $*; }
 eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
@@ -238,14 +231,22 @@ export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
 export LPROFILES PROFILES 
 
 # ----------------------------------------
-# random stuff
+# misc
 # ----------------------------------------
-me="$(command id -un)"
 mkdirs=(
   "$HOME/.local/profile.d/default" "$HOME"/.terraform.d/plugin-cache "$HISTDIR" "$HISTDIR"/../.global "$LOGDIR"
   "$XDG_RUNTIME_DIR"/{bin,tmp,tmux} "$XDG_RUNTIME_DIR"/ssh/{auth,cp} "$VSC_TMP"
 )
-umask 77; for d in "${mkdirs[@]}"; do [ -d "$d" ] || mkdir -p "$d"; done; umask 22
+umask 77; for d in "${mkdirs[@]}"; do [ -d "$d" ] || mkdir -p "$d"; done; umask 27
+
+# ----------------------------------------
+# configure ssh agent/auth
+# ----------------------------------------
+authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock.${NICK}.${OSTYPE}
+[ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
+ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
+[ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
+[ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
+[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
 # vi:filetype=sh
-

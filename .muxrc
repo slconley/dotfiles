@@ -9,7 +9,8 @@
 # attempt to use tmux if it is available
 # ----------------------------------------
 if type -p tmux >/dev/null 2>&1; then
-  target=$(tmux ls 2>/dev/null | grep -v attached | cut -d: -f1 | head -1)
+  export TMUX_VERSION="${$(tmux -V)##*[- ]}"
+  target=$(tmux ls 2>/dev/null | command grep -v attached | cut -d: -f1 | head -1)
   if [ -n "$target" ] || [ -n "$emforce" ] || [ ! -f ~/.nomux ] || [ "$TERM_PROGRAM" = "vscode" ]; then
     [ "$target" ] && tmux attach -t $target && readhist && return
     tmux && readhist && return
@@ -21,6 +22,7 @@ fi
 # note: tmux above trumps screen
 # ----------------------------------------
 if type -p screen >/dev/null 2>&1; then
+  export SCREENDIR=$XDG_RUNTIME_DIR/screen; [ -d $SCREENDIR ] || { mkdir -p $SCREENDIR; chmod 700 $SCREENDIR; }
   SCREEN_OPTS=''; [ "$TERM_PROGRAM" = "vscode" ] && SCREEN_OPTS='-m'
   [ -d "$SCREENDIR" ] || mkdir -p "$SCREENDIR"
   if [ -n "$emforce" ] || [ ! -f ~/.nomux ] || [ "$TERM_PROGRAM" = "vscode" ]; then

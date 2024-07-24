@@ -17,7 +17,7 @@
 # --------------------------------------------------
 # globalrc should always be first
 # --------------------------------------------------
-[ -f $HOME/.globalrc ] && source $HOME/.globalrc || return
+[ -f $HOME/.globalrc ] && source $HOME/.globalrc
 
 # zinit on/off/exclusive?
 [ -f ~/.zinit/.zshrc ] && { source ~/.zinit/.zshrc; unalias gr 2>/dev/null; }
@@ -113,7 +113,7 @@ autoload -U colors; colors
 # --------------------------------------------------
 # root specific tweaks
 # --------------------------------------------------
-[ "$me" = "root" ] && { umask 22; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
+[ "$EUID" = 0 ] && { umask \2\2; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
 
 setopt nullglob
 for f in $LPROFILES/.early/*.{,z}sh ; source $f

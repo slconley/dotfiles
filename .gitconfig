@@ -30,7 +30,7 @@
 [color]
   ui = true
 [format]
-  pretty = format:%h %Cblue%ai%Creset %<(25,trunc)%ae %Cblue%d%Creset %Cgreen%s%Creset
+  pretty = format:%h %Cblue%ai%Creset %<(33,trunc)%ae %Cblue%d%Creset %Cgreen%s%Creset
 [diff "sopsdiff"]
   textconv = sops -d
 [credential]
