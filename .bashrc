@@ -6,6 +6,9 @@
 # source() { echo $SHELL sourcing: $1; builtin source $1; }
 # export PS4='\[\e[0;33m\][${BASH_SOURCE[0]:-inherited}:${LINENO}:${FUNCNAME[0]:-main}]>>>\[\e[0m\] '
 
+# --------------------------------------------------
+# globalrc should always be first
+# --------------------------------------------------
 [ -f $HOME/.globalrc ] && source $HOME/.globalrc
 
 # --------------------------------------------------
