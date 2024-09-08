@@ -44,7 +44,7 @@ unset zle_bracketed_paste
 # environment variables
 # --------------------------------------------------
 DIRSTACKSIZE=20
-PERIOD=600
+PERIOD=300
 PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 PS4=$'%{\e[0;33m%}+%x:%I>%{\e[0m%} '
 READNULLCMD=$PAGER
@@ -225,7 +225,7 @@ compdef _path_commands h hh hhh
 # whence -p python > /dev/null 2>&1 || hash python=$(whence -p python2 2> /dev/null)
 
 # ----------------------------------------------------------------------
-# diable exhaustive tracing - this is paired with section at the top
+# disable exhaustive tracing - this is paired with section at the top
 # ----------------------------------------------------------------------
 # unsetopt xtrace
 # exec 2>&3 3>&-

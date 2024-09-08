@@ -1,44 +1,26 @@
-# excludes
+# global excludes
 - *.swp
-
-# includes 
-# order here is important
-+ .digrc
-# + .p10k.zsh
-# + .powerlevel10k/
-+ .fzf*
-+ .gemrc
-+ .globalrc
-+ .muxrc
-+ .ssh
-+ .ssh/authorized_keys
-+ .ssh/config.satellite
-+ .ssh/rc
-- .ssh/*
-+ .bashrc*
-+ .bash_login
-+ .digrc
-+ .files
-+ .gemrc
-+ .gitconfig
-+ .grc
-+ .hushlogin
-+ .login
-+ .minttyrc
-+ .profile*
-+ .rsync-filter
-+ .screen*
-+ .tmux.conf
-- .viminfo
-+ .vim*
-+ .zlog*
-+ .zshrc*
-+ .zlogout*
-- .kite
-+ /bin/
-
-# takebacks
-- .git
 - .DS_Store
-- nvm/
+- .git
+
+# top-level includes
++ /*rc
++ /.bash_login
++ /.files/
++ /.fzf/
++ /.gitconfig
++ /.gitignore*
++ /.hushlogin
++ /.login
++ /.profile
++ /.rsync-filter
++ /.ssh/authorized_keys
++ /.ssh/config.example
++ /.ssh/config.satellite
++ /.ssh/rc
++ /.tmux.conf
++ /.vim/
++ /.zlogout
+
+# exclude everything else
 - /*

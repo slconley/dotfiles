@@ -1,5 +1,5 @@
 # ------------------------------
-# shellcheck shell=bash
+# shellcheck shell=zsh
 # ------------------------------
 
 # ----------------------------------------
@@ -154,7 +154,7 @@ alias grep='grep -Ed skip $COLOR_GREP --exclude-dir *git'
 alias gs='git status -s'
 alias l.='$GRC ls -Fd $COLOR_LS .* 2> /dev/null'
 alias mkdir='mkdir -p'
-alias mls='tmux -L $SUBENV ls 2>/dev/null || screen -ls 2>/dev/null;'
+alias mls='tmux ls 2>/dev/null || screen -ls 2>/dev/null;'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
 alias pkill='pkill -U $EUID'
 alias pssh='pssh -x \"-tt\"'
@@ -254,4 +254,4 @@ ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null &&
 [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
 [ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
-# vi:filetype=sh
+# vi: filetype=zsh

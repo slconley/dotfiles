@@ -15,7 +15,7 @@ cmds=(
   df
   diff
   dig
-  dnf
+  # dnf
   docker
   docker-compose
   docker-machine

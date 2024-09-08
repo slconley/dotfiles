@@ -7,7 +7,7 @@ AWS_CONFIG=${AWS_CONFIG:-"$HOME/.aws/config"}
 # ------------------------------
 AWS_DEFAULT_REGION="${AWS_REGION}"
 [ "${AWS_DEFAULT_REGION}" ] || {
-  AWS_DEFAULT_REGION="$(curl --connect-timeout 1 -fsq http://169.254.169.254/latest/meta-data/placement/region)"
+  # AWS_DEFAULT_REGION="$(curl --connect-timeout 1 -fsq http://169.254.169.254/latest/meta-data/placement/region)"
   AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-'us-east-1'}
 }
 AWS_REGION=$AWS_DEFAULT_REGION

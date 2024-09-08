@@ -18,7 +18,7 @@ PERIOD=300
 SAVEHIST=$HISTSIZE
 export HISTFILE HISTORY_IGNORE PERIOD SAVEHIST
 
-h()   { fc -ln 1 | grep -i \.\?$* | tail -50; }
+h()   { fc -ln 1 | grep -i ${*:-''} | tail -50; }
 hh()  { fc -ln 1 | grep -i --color=always $*; }
 hhh() { readhist; fc -ln 1 | grep -ih $COLOR_GREP "$1" }
 periodic()      { savehist; }
@@ -52,5 +52,5 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\C-e' edit-command-line
 
+[ -f "$HISTFILE" ] && [ -f "$HISTFILE_GLOBAL" ] || { touch "$HISTFILE" "$HISTFILE_GLOBAL";  makehist; }
 
-[ -f "$HISTFILE_GLOBAL" ] || { touch "$HISTFILE_GLOBAL";  makehist; }
