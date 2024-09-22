@@ -1,4 +1,7 @@
+# --------------------------------------------------
 # shellcheck shell=bash
+# vi: filetype=sh
+# --------------------------------------------------
 
 # --------------------------------------------------
 # good for debugging (use "set -x")
@@ -43,11 +46,8 @@ savehist() { history -a; }
 
 shopt -s nullglob
 for f in $LPROFILES/.early/*.{,ba}sh ; do source $f; done
-for f in $LPROFILES/$SUBENV/.early/*.{,ba}sh ; do source $f; done
 for f in $PROFILES/*.{,ba}sh $PROFILES/.profile.${OSNAME}*; do source $f; done
-for f in $PROFILES/$SUBENV/*.{,ba}sh ; do source $f; done
 for f in $LPROFILES/{,.late}/*.{,ba}sh ; do source $f; done
-for f in $LPROFILES/$SUBENV/{,.late}/*.{,ba}sh ; do source $f; done
 shopt -u nullglob
                                                                                                                                             # --------------------------------------------------
 # env var(s)

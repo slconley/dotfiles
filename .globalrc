@@ -1,12 +1,11 @@
 # ------------------------------
-# shellcheck shell=zsh
+# shellcheck shell=sh
 # ------------------------------
 
 # ----------------------------------------
 # local globalrc comes first if it exists
 # ----------------------------------------
 [ -f $HOME/.local/.globalrc ] && source $HOME/.local/.globalrc
-
 
 # ------------------------------------------------------------------------------------------
 PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/opt/bin
@@ -27,18 +26,22 @@ HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
 NICK=${HOST}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
 
+HISTBASE=$HOME/.var/hist
 HIST_DTG="$(/bin/date '+%Y%m')"
-HISTDIR=~/.var/hist/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
 HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
-HISTFILE_GLOBAL=~/.var/hist/.global/sh.histfile
+HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
 
 LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
 
-XDG_CONFIG_HOME=~/.files/config
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_STATE_HOME=$HOME/.local/state
 
 [ -d /run/user ] && XDG_RUNTIME_DIR=/run/user/$EUID
 [ "$EUID" = 0 ] && XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/run/users/0}
-XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-~/.run/$NICK}
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/.run/$NICK}
+export XDG_CACHE_HOME=$XDG_RUNTIME_DIR
 [ -d $XDG_RUNTIME_DIR ] || umask 77 && mkdir -p $XDG_RUNTIME_DIR
 
 OSNAME="$(uname -s)"
@@ -81,9 +84,10 @@ PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
 export TTY=$(tty)
 
 export CC=gcc
-export COLOR_GRC="--colour=auto"				# note to self...  having this always on messes up completion for grc-fronted commands
+export CDPATH=".:$HOME/.local/cdpath:$XDG_RUNTIME_DIR:$XDG_CONFIG_HOME:$HOME/.files:$HOME/.local:$HOME"
+export CDPATH_BASE=$CDPATH
 export COLOR_GREP="--color=always"
-export COLOR_LS="--color=auto"
+export COLOR_LS="--color=always"
 export EDITOR=vi
 export ES_NETWORK_HOST=localhost
 export FUNCNEST=25
@@ -92,7 +96,7 @@ export GPG_TTY=$TTY
 export GNUPGHOME=${GNUPGHOME:-$HOME/.gnupg}
 export GREP_COLOR='01;32'
 export GREP_COLORS='ms=01;32:mc=01;32:sl=:cx=:fn=36:ln=33:bn=33:se=36'
-export GROK="$HOME/{,xcloud/}opt/share/grok $HOME/.local/grok"
+export GROK="$HOME/{,xcloud/}opt/share/grok $HOME/.local/grok $HOME/.config/cheat"
 export HISTCONTROL=ignoreboth
 export HISTSIZE=4999
 export HISTSIZE_GLOBAL=999999
@@ -100,7 +104,7 @@ export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE
 export LANG=C
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
-export LESS="aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t"
+export LESS='-aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t'
 export LESSOPEN="|$HOME/.files/bin/see %s"
 export INDICES="$HOME/.local/indices/* $HOME/*/.index.gz /Volumes/Vault/.index.gz"
 export PAGER=more
@@ -145,19 +149,21 @@ unset TMOUT
 # ----------------------------------------------------------------------
 alias @='curl http://ipinfo.io/'
 alias \#=:    # allows comments to be pasted into command buffer along with commands
-alias c-='COLOR_GRC="--colour=off" COLOR_GREP="--color=never"'
 alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 alias df='df -h'
 alias du='du -h'
 alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
 alias grep='grep -Ed skip $COLOR_GREP --exclude-dir *git'
 alias gs='git status -s'
-alias l.='$GRC ls -Fd $COLOR_LS .* 2> /dev/null'
+alias l.='$GRC $GRC_OPTIONS ls -Fd $COLOR_LS .* 2> /dev/null'
+alias ls='$GRC $GRC_OPTINS ls -F $COLOR_LS'
+alias ll='$GRC $GRC_OPTINS ls -laF $COLOR_LS'
 alias mkdir='mkdir -p'
 alias mls='tmux ls 2>/dev/null || screen -ls 2>/dev/null;'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
 alias pkill='pkill -U $EUID'
 alias pssh='pssh -x \"-tt\"'
+alias rehome='sudo mount -o remount,exec /home 2>/dev/null; exec $PREFSHELL;'
 alias script='script $LOGDIR/script.$(now)'
 alias serial='screen /dev/ttyS0 9600'
 alias sha='openssl sha256'
@@ -183,12 +189,11 @@ alias tmux='tmux -L $SUBENV'; [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L 
 # ----------------------------------------------------------------------
 a()        { apropos $* 2> /dev/null; }
 c()        { clear; }
-color-()   { unset CLICOLOR COLOR_GREP COLOR_LS COLORFGBG COLORTERM GRC LSCOLORS LS_COLORS ZLS_COLORS ; COLOR_GRC='--colour=off'; }
 colormap() { for i in {0..255}; do printf "\x1b[38;5;${i}mcolor${i}\n"; done; }
 bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
 defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
 dx()       { docker run -ith dx --rm -e HOME=$HOME -v ~:$HOME $* $PREFSHELL; }
-e()        { (set;command env)| grep -Eva '^[_	 ]' | cut -c1-120 | sort -u | grep -Eai $COLOR_GREP $*; }
+e()        { (set;command env)| grep -Eva '^[_	 ]' | sort -u | grep -Eai $COLOR_GREP $*; }
 eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
@@ -207,13 +212,13 @@ hhh()      { grep -ih $1 $HISTDIR/../*/* 2>/dev/null | cut -d ';' -f2- | sort -u
 io()       { iostat -xnmz $* 3; }
 l()        { command ls -F $COLOR_LS $*; }
 loc()      { ( locate -i $1; eval gzip -dc $INDICES 2> /dev/null) | grep -i $COLOR_GREP $1; }
-lt()       { $GRC ls -lrtF $COLOR_LS $*; }
+lt()       { $GRC $GRC_OPTIONS ls -lrtF $COLOR_LS $*; }
 otr()      { savehist; unset HISTFILE HISTFILE_GLOBAL; }
 p()        { $PAGER $*;}
 passgen()  { local l=${1:=24}; head -${l} /dev/urandom | base64 | rev | cut -c${l}- | base64 | cut -c1-${l};}
 pod()      { pod2text --code $* | $PAGER; }
 pscpu()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "COMMAND|$*."|grep -v grep|sort -k4; }
-psg()      { $GRC ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
+psg()      { $GRC $GRC_OPTIONS ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
 psmem()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "COMMAND|$*."|grep -v grep|sort -k6; }
 pss()      { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k2; }
 pstime()   { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k5; }
@@ -231,18 +236,14 @@ tcp()      { lsof -i tcp | grep -i "$@" ; }
 tgz()      { tar cvzf "${1}".tgz "$1"; }
 zipit()    { zip -ry "${1}".zip "$1"; }
 
-export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
-export SCREENDIR SHELL TEMP TMPDIR XDG_CONFIG_HOME XDG_RUNTIME_DIR VSC_TMP
-export LPROFILES PROFILES 
 
-# ----------------------------------------
-# misc
-# ----------------------------------------
-mkdirs=(
-  "$HOME/.local/profile.d/default" "$HOME"/.terraform.d/plugin-cache "$HISTDIR" "$HISTDIR"/../.global "$LOGDIR"
-  "$XDG_RUNTIME_DIR"/{bin,tmp,tmux} "$XDG_RUNTIME_DIR"/ssh/{auth,cp} "$VSC_TMP"
-)
-umask 77; for d in "${mkdirs[@]}"; do [ -d "$d" ] || mkdir -p "$d"; done; umask 27
+export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
+export SCREENDIR SHELL TEMP TMPDIR VSC_TMP LPROFILES PROFILES 
+
+# --------------------------------------------------
+# the non-existence of this dir triggers a 'runonce'
+# --------------------------------------------------
+[ -d $XDG_RUNTIME_DIR/tmp ] || source $HOME/.runonce
 
 # ----------------------------------------
 # configure ssh agent/auth

@@ -28,7 +28,7 @@ zshaddhistory() { [[ "$1" =~ '^ ' ]] || print -Sr -- "${1%%$'\n'}"; [[ $1 =~ '<<
 
 makehist() { 
   local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE;
-  for f in $(command ls -tr ${HISTFILE_GLOBAL}* ~/.var/hist/*/zsh*[0-9]); do; fc -R "$f" 2> /dev/null; done; 
+  for f in ${HISTFILE_GLOBAL}* ~/.var/hist/*/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
   rm ${HISTFILE_GLOBAL}?* 2> /dev/null
 }
@@ -36,8 +36,8 @@ makehist() {
 # same as above plus add bash stuff
 MAKEHIST() { 
   local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE;
-  for f in $(command ls -tr ~/.var/hist/*/bash*[0-9]); do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; 
-  for f in $(command ls -tr $HISTFILE_GLOBAL ~/.var/hist/*/zsh*[0-9]); do; fc -R "$f" 2> /dev/null; done; 
+  for f in ~/.var/hist/*/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; 
+  for f in $HISTFILE_GLOBAL ~/.var/hist/*/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
   fc -ln -t '%s' 1 | while read time cmd; do; printf ': %s:0;%s\n' $time $cmd; done | sort -no $HISTFILE_GLOBAL
   cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
 }

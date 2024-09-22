@@ -1,5 +1,7 @@
 which kubectl > /dev/null 2>&1 || return
 
+[ "$BASH" ] && source <(kubectl completion bash)
+
 export KXSHELL=/bin/sh
 export KUBECONFIG=$(echo $HOME/.kube/config*| tr ' ' ':')
 

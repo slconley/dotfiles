@@ -9112,6 +9112,8 @@
 	<false/>
 	<key>QuitWhenAllWindowsClosed</key>
 	<false/>
+	<key>RestoreWindowsToSameSpaces</key>
+	<false/>
 	<key>RightCommand</key>
 	<integer>8</integer>
 	<key>RightControl</key>

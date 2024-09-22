@@ -1,4 +1,4 @@
-source $HOME/.files/screenrc/base
-source $HOME/.files/screenrc/$OSNAME
-source $HOME/.files/screenrc/$TERM_PROGRAM
-source $HOME/.local/screenrc/$HOST
+source $XDG_CONFIG_HOME/screenrc/base
+source $XDG_CONFIG_HOME/screenrc/$OSNAME
+source $XDG_CONFIG_HOME/screenrc/$TERM_PROGRAM
+source $XDG_CONFIG_HOME/screenrc/$HOST

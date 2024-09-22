@@ -1,34 +1,23 @@
 #!/usr/bin/env sh
 
-SEARCHPATH="`echo $PATH | tr ':' ' '`"
 PATH=/usr/bin:/bin:/usr/sbin:/sbin
-ls_list=""
 
-arg1="$1"
-if [ "$arg1" == "" ]; then
-  arg1=.
-fi
+target="$1"
+[ "$target" == "" ] && target=$PWD
+stat -L "$target" >/dev/null || exit 1
 
-if [ ! -f "$arg1" -a ! -d "$arg1" ] ; then
-  echo `basename $0`: no such animal: $arg1
-  exit 1
-fi
-
-if [ -d $arg1 ]; then
-  cd $arg1
+if [ -d $target ]; then
+  cd $target
 else
-  cd `dirname $arg1`
-  ls_list=`pwd`/`basename $arg1`
+  cd $(dirname $target)
+  ls_list=$PWD/$(basename $target)
 fi
 
-fullpath=`pwd`
-ls_list="$fullpath $ls_list"
-
-while [ "$fullpath" != "/" ]; do
-  thisDir="`dirname $fullpath`"
-  ls_list="$ls_list $thisDir"
-  fullpath=$thisDir
+thisnode=$PWD
+while [ "$thisnode" != "/" ]; do
+  ls_list="$ls_list $thisnode"
+  thisnode=$(dirname $thisnode)
 done
 
-ls -ld $ls_list
+ls -ld / $ls_list
 

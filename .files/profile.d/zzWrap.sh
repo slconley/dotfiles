@@ -7,6 +7,3 @@ which fzf > /dev/null 2>&1 && {
   pw()  { lpass show -c --password $(lpass ls  | fzf | awk '{print $(NF)}' | sed 's/\]//g'); }
 }
 
-ll() { ls -laF --color=always $*; }
-ls() { command ls -F $COLOR_LS $*; }
-

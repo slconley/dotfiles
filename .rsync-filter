@@ -3,17 +3,21 @@
 - .DS_Store
 - .git
 
+# top-level excludes
+- /.fzf/
+
 # top-level includes
-+ /*rc
++ /.*rc
 + /.bash_login
++ /.config/
 + /.files/
-+ /.fzf/
 + /.gitconfig
 + /.gitignore*
 + /.hushlogin
 + /.login
 + /.profile
 + /.rsync-filter
++ /.runonce
 + /.ssh/authorized_keys
 + /.ssh/config.example
 + /.ssh/config.satellite

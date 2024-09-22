@@ -1,4 +1,6 @@
+# --------------------------------------------------
 # shellcheck shell=zsh
+# --------------------------------------------------
 
 # --------------------------------------------------
 # simple tracing 
@@ -117,11 +119,8 @@ autoload -U colors; colors
 
 setopt nullglob
 for f in $LPROFILES/.early/*.{,z}sh ; source $f
-for f in $LPROFILES/$SUBENV/.early/*.{,z}sh ; source $f
 for f in $PROFILES/*.{,z}sh $PROFILES/.profile.${OSNAME}*; source $f
-for f in $PROFILES/$SUBENV/*.{,z}sh ; source $f
 for f in $LPROFILES/{,.late}/*.{,z}sh ; source $f
-for f in $LPROFILES/$SUBENV/{,.late}/*.{,z}sh ; source $f
 setopt nonullglob
 unset f
 

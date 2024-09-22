@@ -9,7 +9,7 @@
 # attempt to use tmux if it is available
 # ----------------------------------------
 if type -p tmux >/dev/null 2>&1; then
-  export TMUX_VERSION=$(tmux -V); TMUX_VERSION="${TMUX_VERSION##*[- ]}"
+  TMUX_VERSION=$(tmux -V); TMUX_VERSION="${TMUX_VERSION##*[- ]}"; export TMUX_VERSION
   target=$(tmux ls 2>/dev/null | command grep -v attached | cut -d: -f1 | head -1)
   if [ -n "$target" ] || [ -n "$emforce" ] || [ ! -f ~/.nomux ] || [ "$TERM_PROGRAM" = "vscode" ]; then
     [ "$target" ] && tmux attach -t $target && readhist && return

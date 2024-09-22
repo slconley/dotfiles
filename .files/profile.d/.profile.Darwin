@@ -1,6 +1,6 @@
-unset COLOR_LS
+# unset COLOR_LS
+# export CLICOLOR=""
 
-export CLICOLOR=""
 export TOP="-s3 -o cpu"
 
 alias top="top -u"
