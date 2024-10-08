@@ -118,9 +118,9 @@ autoload -U colors; colors
 [ "$EUID" = 0 ] && { umask \2\2; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
 
 setopt nullglob
-for f in $LPROFILES/.early/*.{,z}sh ; source $f
+for f in $LPROFILES/{,$SUBENV}/.early/*.{,z}sh ; source $f
 for f in $PROFILES/*.{,z}sh $PROFILES/.profile.${OSNAME}*; source $f
-for f in $LPROFILES/{,.late}/*.{,z}sh ; source $f
+for f in $LPROFILES/{,$SUBENV}/{,.late}/*.{,z}sh ; source $f
 setopt nonullglob
 unset f
 

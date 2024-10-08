@@ -1,1 +1,1 @@
-copy this stuff to ~/.local/profile.d/<some-env> and tailor as needed.
+this dir contains examples of scripts that could be copied to ~/.local/profile.d/<some-env>/ and tailored as needed.

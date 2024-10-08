@@ -45,9 +45,9 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 savehist() { history -a; }
 
 shopt -s nullglob
-for f in $LPROFILES/.early/*.{,ba}sh ; do source $f; done
+for f in $LPROFILES/{,$SUBENV}/.early/*.{,ba}sh ; do source $f; done
 for f in $PROFILES/*.{,ba}sh $PROFILES/.profile.${OSNAME}*; do source $f; done
-for f in $LPROFILES/{,.late}/*.{,ba}sh ; do source $f; done
+for f in $LPROFILES/{,$SUBENV}/{,.late}/*.{,ba}sh ; do source $f; done
 shopt -u nullglob
                                                                                                                                             # --------------------------------------------------
 # env var(s)
