@@ -156,8 +156,8 @@ alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
 alias grep='grep -Ed skip $COLOR_GREP --exclude-dir *git'
 alias gs='git status -s'
 alias l.='$GRC $GRC_OPTIONS ls -Fd $COLOR_LS .* 2> /dev/null'
-alias ls='$GRC $GRC_OPTINS ls -F $COLOR_LS'
-alias ll='$GRC $GRC_OPTINS ls -laF $COLOR_LS'
+alias ls='$GRC $GRC_OPTIONS ls -F $COLOR_LS'
+alias ll='$GRC $GRC_OPTIONS ls -laF $COLOR_LS'
 alias mkdir='mkdir -p'
 alias mls='tmux ls 2>/dev/null || screen -ls 2>/dev/null;'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
@@ -206,7 +206,7 @@ getenv()   { [ "$SUBENV" = "$1" ] && return; SUBENV=$1; exec $PREFSHELL; }
 gr()       { grep -i $COLOR_GREP $*;}
 grok()     { less -j10 +/$1 $(eval grep -ilr $* $GROK 2>/dev/null) 2> /dev/null ;}
 h()        { history | grep -i "$*"|tail -30; }
-header()   { echo -ne "\e]0;$me@${NICK}\a"; }
+header()   { echo -ne "\e]0;$USER@${NICK}\a"; }
 hh()       { grep -ih $1 $HISTDIR/* 2>/dev/null | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
 hhh()      { grep -ih $1 $HISTDIR/../*/* 2>/dev/null | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
 io()       { iostat -xnmz $* 3; }

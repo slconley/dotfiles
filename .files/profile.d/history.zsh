@@ -28,18 +28,18 @@ zshaddhistory() { [[ "$1" =~ '^ ' ]] || print -Sr -- "${1%%$'\n'}"; [[ $1 =~ '<<
 
 makehist() { 
   local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE;
-  for f in ${HISTFILE_GLOBAL}* ~/.var/hist/*/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
+  for f in ${HISTFILE_GLOBAL} ~/.var/hist/$NICK/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
-  rm ${HISTFILE_GLOBAL}?* 2> /dev/null
 }
 
-# same as above plus add bash stuff
+# same concept but much more inclusive while attempting to still favor local host
 MAKEHIST() { 
-  local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE;
-  for f in ~/.var/hist/*/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; 
-  for f in $HISTFILE_GLOBAL ~/.var/hist/*/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
-  fc -ln -t '%s' 1 | while read time cmd; do; printf ': %s:0;%s\n' $time $cmd; done | sort -no $HISTFILE_GLOBAL
-  cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
+  cp -p "${HISTFILE_GLOBAL}" "${HISTFILE_GLOBAL}.${HIST_DTG}"
+  local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
+  # fc -ln -t '%s' 1 | while read time cmd; do; printf ': %s:0;%s\n' $time $cmd; done | sort -no $HISTFILE_GLOBAL
+  for f in ~/.var/hist/*/bash*[0-9] ~/.var/hist/$NICK/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; 
+  for f in ${HISTFILE_GLOBAL}* ~/.var/hist/*/zsh*[0-9] ~/.var/hist/$NICK/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done; 
+  fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
 }
 
 trap 'savehist;' EXIT HUP
@@ -52,5 +52,6 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\C-e' edit-command-line
 
+[ -d "$HISTDIR" ] || mkdir -p $HISTDIR $HISTDIR/../.global 2>/dev/null
 [ -f "$HISTFILE" ] && [ -f "$HISTFILE_GLOBAL" ] || { touch "$HISTFILE" "$HISTFILE_GLOBAL";  makehist; }
 
