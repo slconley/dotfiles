@@ -14,5 +14,5 @@
 "colorscheme retrobox
 
 " current favorite(s)
-colorscheme vim90/sorbet
+" colorscheme sorbet
 colorscheme wildcharm

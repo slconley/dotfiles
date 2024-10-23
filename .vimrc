@@ -16,6 +16,11 @@ endif
 
 colorscheme torte
 
-if version >= 900 | source ~/.vim/vim90/vimrc | endif
-
+if version >= 900 
+  source ~/.vim/vim90/vimrc
+elseif version >= 800
+  source ~/.vim/vim80/vimrc
+elseif version >= 700
+  source ~/.vim/vim70/vimrc
+endif
 

@@ -126,7 +126,7 @@ export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 # ------------------------------------------------------------
 [ -d ~/.local/profile.d/$NICK ] && SUBENV=$NICK
 [ "$SUBENV" ] || SUBENV=default; export SUBENV
-which less >/dev/null 2>&1 && PAGER=less
+which less >/dev/null 2>&1 && PAGER=less && alias pp="vim --cmd 'let no_plugin_maps = 1' -c 'runtime! macros/less.vim'"  # TODO: make this better (see other TODO)
 which vim  >/dev/null 2>&1 && EDITOR=vim
 
 # --------------------------------------------------------------------------------
@@ -175,9 +175,9 @@ alias tls='tmux ls'
 alias tf='terraform'
 alias tg='terragrunt'
 alias tlog='tail -50f $SYSLOG'
-alias today="date -u '+%Y%m%d'"
+alias today="date '+%Y%m%d'"
 alias vi='$EDITOR'
-alias vless='/usr/share/vim/vim70/macros/less.sh'
+alias vless='/usr/share/vim/vim70/macros/less.sh'				# TODO: leverage this for PAGER/p/whatever
 alias vm='VBoxManage'
 alias which='which -a'
 

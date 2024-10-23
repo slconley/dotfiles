@@ -12,14 +12,14 @@ setopt hist_reduce_blanks
 
 # reminder... if HISTORY_IGNORE not completely working, you are potentially using an older zsh
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
-HISTFILE_GLOBAL="$HISTDIR/../.global/zsh.histfile"
+HISTFILE_GLOBAL="$HISTBASE/.global/zsh.histfile"
 HISTORY_IGNORE='( *|#*|*<<*|AWS*|e[bmz ]|exec |h[h]* |l[lst ]|lpass*|man |open |otr|p |s|sleep|which)'
 PERIOD=300
 SAVEHIST=$HISTSIZE
 export HISTFILE HISTORY_IGNORE PERIOD SAVEHIST
 
 h()   { fc -ln 1 | grep -i ${*:-''} | tail -50; }
-hh()  { fc -ln 1 | grep -i --color=always $*; }
+hh()  { fc -ln 1 | grep -i --color=always "$1"; }
 hhh() { readhist; fc -ln 1 | grep -ih $COLOR_GREP "$1" }
 periodic()      { savehist; }
 readhist()      { savehist; HISTSIZE=$HISTSIZE_GLOBAL; fc -R $HISTFILE_GLOBAL; fc -R $HISTFILE; }
