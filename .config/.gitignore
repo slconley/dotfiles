@@ -1,6 +1,14 @@
 *
 !.gitignore
+!cheat
+!cheat/*
 !git
 !git/*
 !grc
 !grc/*
+!iterm2
+!iterm2/*
+!screenrc
+!screenrc/*
+!tmux
+!tmux/*

@@ -1,0 +1,6 @@
+mkdirs=(
+  "$HOME/.local/profile.d/default" "$HOME/.terraform.d/plugin-cache" "$HISTBASE/.global" "$HISTDIR" "$LOGDIR"
+  "$XDG_DATA_HOME" "$XDG_RUNTIME_DIR"/{tmp,tmux} "$XDG_RUNTIME_DIR"/ssh/{auth,cp} "$VSC_TMP"
+  "$XDG_RUNTIME_DIR/zsh/functions"
+)
+for d in "${mkdirs[@]}"; do [ -d "$d" ] || [ -L $d ] || mkdir -m 700 -p "$d"; done; 

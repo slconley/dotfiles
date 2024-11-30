@@ -38,11 +38,10 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
-[ -d /run/user ] && XDG_RUNTIME_DIR=/run/user/$EUID
-[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/run/users/0}
-export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/.run/$NICK}
+export XDG_RUNTIME_DIR=~/.run/$HOST
+[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=/tmp/run/users/0
 export XDG_CACHE_HOME=$XDG_RUNTIME_DIR
-[ -d $XDG_RUNTIME_DIR ] || umask 77 && mkdir -p $XDG_RUNTIME_DIR
+[ -d $XDG_RUNTIME_DIR ] || mkdir -m 700 -p $XDG_RUNTIME_DIR
 
 OSNAME="$(uname -s)"
 OSREL="$(uname -r)"
@@ -50,7 +49,7 @@ OS="$OSNAME$OSREL"
 
 SHELL=${commands[zsh]:-${BASH}}
 TMPDIR=$XDG_RUNTIME_DIR/tmp; TEMP=$TMPDIR
-VSC_TMP=$XDG_RUNTIME_DIR/vsc
+VSC_TMP=$XDG_RUNTIME_DIR/vscode
 
 PROFILES=~/.files/profile.d
 LPROFILES=~/.local/profile.d
@@ -84,7 +83,7 @@ PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
 export TTY=$(tty)
 
 export CC=gcc
-export CDPATH=".:$HOME/.local/cdpath:$XDG_RUNTIME_DIR:$XDG_CONFIG_HOME:$HOME/.files:$HOME/.local:$HOME"
+export CDPATH=".:$HOME/.local/cdpath:$XDG_CONFIG_HOME:$XDG_RUNTIME_DIR:$HOME/.files:$HOME/.local:$HOME"
 export CDPATH_BASE=$CDPATH
 export COLOR_GREP="--color=always"
 export COLOR_LS="--color=always"
@@ -96,7 +95,7 @@ export GPG_TTY=$TTY
 export GNUPGHOME=${GNUPGHOME:-$HOME/.gnupg}
 export GREP_COLOR='01;32'
 export GREP_COLORS='ms=01;32:mc=01;32:sl=:cx=:fn=36:ln=33:bn=33:se=36'
-export GROK="$HOME/{,xcloud/}opt/share/grok $HOME/.local/grok $HOME/.config/cheat"
+export GROK="$HOME/opt/share/grok $HOME/.local/grok $XDG_CONFIG_HOME/cheat/cheatsheets/*"
 export HISTCONTROL=ignoreboth
 export HISTSIZE=4999
 export HISTSIZE_GLOBAL=999999
@@ -171,6 +170,7 @@ alias sls='screen -ls'
 alias sops='TERM=xterm sops'
 alias t='tmux'
 alias ta='tmux attach -d -t'
+alias take='sudo chown -R ${USER}: $*'
 alias tls='tmux ls'
 alias tf='terraform'
 alias tg='terragrunt'
@@ -237,18 +237,18 @@ tgz()      { tar cvzf "${1}".tgz "$1"; }
 zipit()    { zip -ry "${1}".zip "$1"; }
 
 
-export HIST_DTG HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
+export HIST_DTG HISTBASE HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
 export SCREENDIR SHELL TEMP TMPDIR VSC_TMP LPROFILES PROFILES 
 
 # --------------------------------------------------
 # the non-existence of this dir triggers a 'runonce'
 # --------------------------------------------------
-[ -d $XDG_RUNTIME_DIR/tmp ] || source $HOME/.runonce
+[ -d $XDG_RUNTIME_DIR/ssh ] || source $HOME/.files/bin/runonce
 
 # ----------------------------------------
 # configure ssh agent/auth
 # ----------------------------------------
-authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock.${NICK}.${OSTYPE}
+authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock
 [ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
 ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
 [ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)

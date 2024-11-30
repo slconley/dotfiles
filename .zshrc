@@ -115,7 +115,7 @@ autoload -U colors; colors
 # --------------------------------------------------
 # root specific tweaks
 # --------------------------------------------------
-[ "$EUID" = 0 ] && { umask \2\2; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
+[ "$EUID" = 0 ] && { \u\mask \2\2; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
 
 setopt nullglob
 for f in $LPROFILES/{,$SUBENV}/.early/*.{,z}sh ; source $f
@@ -176,7 +176,6 @@ zstyle ':completion:*:my-accounts' users-hosts $my_accounts
 zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
 
 declare -a fplist
-[ -d "$XDG_RUNTIME_DIR/zsh/functions" ] || mkdir -p $XDG_RUNTIME_DIR/zsh/functions
 fplist=( /usr/local/share/zsh-completions ~/.files/zsh.d/functions $XDG_RUNTIME_DIR/zsh/functions )
 for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
 unset d fplist
@@ -196,7 +195,7 @@ unset d fplist
 
 profile_dirs=($PROFILES $LPROFILES)
 compctl -g '*' -W /etc/init.d start status stop restart
-compctl -k "(all rhel6)" -x 'p[2]' -f -- dist2
+compctl -k "(all rhel7 rhel8)" -x 'p[2]' -f -- dist2
 compctl -g '*' -W $XDG_CONFIG_HOME/myconfig myconfig
 compctl -W profile_dirs -/ getenv
 autoload -U compinit
@@ -214,14 +213,7 @@ compdef _path_commands h hh hhh
 # --------------------
 # remove dupes
 # --------------------
-#typeset -U path cdpath manpath fpath 
-
-# --------------------------------------------------
-# ensure "python" maps to something (v3 preferred)
-# NOTE: this must come after the 'typeset' above
-# --------------------------------------------------
-# hash python=$(whence -p python3 2> /dev/null)
-# whence -p python > /dev/null 2>&1 || hash python=$(whence -p python2 2> /dev/null)
+typeset -U path cdpath manpath fpath 
 
 # ----------------------------------------------------------------------
 # disable exhaustive tracing - this is paired with section at the top

@@ -26,5 +26,8 @@
 + /.vim/
 + /.zlogout
 
+# takebacks
+- /.config/packer/
+
 # exclude everything else
 - /*

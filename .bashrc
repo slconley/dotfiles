@@ -41,33 +41,27 @@ bind 'set completion-ignore-case on'
 # --------------------------------------------------
 # misc
 # --------------------------------------------------
+HISTFILE="$HISTDIR/bash.histfile.${HIST_DTG}"
+PS1='\[\e[0;32m\][\u@\h:\w]\$\[\e[0m\] '
+PROMPT_DIRTRIM=2
 export BASH_SILENCE_DEPRECATION_WARNING=1
+export PROMPT_DIRTRIM HISTFILE
+touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.histfile.${HIST_DTG}"
 savehist() { history -a; }
 
+# --------------------------------------------------
+# root specific tweak(s)
+# --------------------------------------------------
+[ "$EUID" = 0 ] && { \u\mask \2\2; PS1='\[\e[0;31m\][\u@\h:\w]\$\[\e[0m\] '; }
+
+# --------------------------------------------------
+# source local profiles
+# --------------------------------------------------
 shopt -s nullglob
 for f in $LPROFILES/{,$SUBENV}/.early/*.{,ba}sh ; do source $f; done
 for f in $PROFILES/*.{,ba}sh $PROFILES/.profile.${OSNAME}*; do source $f; done
 for f in $LPROFILES/{,$SUBENV}/{,.late}/*.{,ba}sh ; do source $f; done
 shopt -u nullglob
-                                                                                                                                            # --------------------------------------------------
-# env var(s)
-# --------------------------------------------------
-HISTFILE="$HISTDIR/bash.histfile.${HIST_DTG}"
-PS1='\[\e[0;32m\][\u@\h:\w]\$\[\e[0m\] '
-PROMPT_DIRTRIM=2
-export PROMPT_DIRTRIM HISTFILE
-touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.histfile.${HIST_DTG}"
-
-# --------------------------------------------------
-# ensure "python" maps to somethingg (v3 preferred)
-# --------------------------------------------------
-# hash -p $(type -p python3 2> /dev/null) python > /dev/null 2>&1
-# type -p python >/dev/null 2>&1 || hash -p $(type -p python2 2> /dev/null) python > /dev/null 2>&1
-
-# --------------------------------------------------
-# root specific tweak(s)
-# --------------------------------------------------
-[ "$EUID" = 0 ] && { umask \2\2; PS1='\[\e[0;31m\][\u@\h:\w]\$\[\e[0m\] '; }
 
 # --------------------------------------------------
 # muxrc
