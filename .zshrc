@@ -21,10 +21,6 @@
 # --------------------------------------------------
 [ -f $HOME/.globalrc ] && source $HOME/.globalrc
 
-# zinit on/off/exclusive?
-[ -f ~/.zinit/.zshrc ] && { source ~/.zinit/.zshrc; unalias gr 2>/dev/null; }
-# return 0
-
 # --------------------------------------------------
 # shell options
 # --------------------------------------------------
@@ -119,7 +115,7 @@ autoload -U colors; colors
 
 setopt nullglob
 for f in $LPROFILES/{,$SUBENV}/.early/*.{,z}sh ; source $f
-for f in $PROFILES/*.{,z}sh $PROFILES/.profile.${OSNAME}*; source $f
+for f in $PROFILES/*.{,z}sh; source $f
 for f in $LPROFILES/{,$SUBENV}/{,.late}/*.{,z}sh ; source $f
 setopt nonullglob
 unset f

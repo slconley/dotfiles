@@ -69,4 +69,3 @@ shopt -u nullglob
 [ -f ~/.muxrc ] && source ~/.muxrc
 [[ "$TERM" =~ tmux && ! -f /usr/share/terminfo/t/$TERM ]] && TERM=screen-256color         # tmux v1.x hack
 
-# vi: filetype=bash

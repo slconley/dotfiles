@@ -25,3 +25,4 @@ fi
 alias c+="GRC='grc' GRC_OPTIONS=(-es --colour=on) COLOR_GREP='--color=always' COLOR_LS='--color=always'"
 alias c-="GRC='' GRC_OPTIONS='' COLOR_GREP='--color=never' COLOR_LS='--color=never'"
 alias color='$GRC $GRC_OPTIONS'
+c+  # color enabled by default

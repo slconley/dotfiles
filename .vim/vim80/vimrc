@@ -1,0 +1,14 @@
+" colorscheme desert
+" colorscheme elflord
+" colorscheme evening
+" colorscheme industry
+" colorscheme koehler
+" colorscheme murphy
+" colorscheme peachpuff
+" colorscheme ron
+" colorscheme slate
+" colorscheme torte
+" colorscheme zellner
+
+" default looks pretty good. ironic?
+colorscheme default
