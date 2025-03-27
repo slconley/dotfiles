@@ -12,7 +12,7 @@ setopt hist_reduce_blanks
 
 # reminder... if HISTORY_IGNORE not completely working, you are potentially using an older zsh
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
-HISTFILE_GLOBAL="$HISTBASE/.global/zsh.histfile"
+HISTFILE_GLOBAL="$HISTBASE/.global/zsh.global"
 # TODO: revisit - check if heredocs are working well in the main HISTFILE
 # HISTORY_IGNORE='( *|#*|*<<*|AWS*|e[bmz ]|exec |h[h]* |l[lst ]|lpass*|man |open |otr|p |s|sleep|which)'
 HISTORY_IGNORE='( *|AWS*|e[bmsz ]|exec |h[h]* |l[lst ]|lpass*|man |open |otr|p |s|sleep|which)'
@@ -29,10 +29,10 @@ savehist()      { [ "$HISTFILE" ] || return; fc -AI 2>/dev/null; SAVEHIST=$HISTS
 # TODO: revisit - check if heredocs are working well in the main HISTFILE
 # zshaddhistory() { [[ "$1" =~ '^ ' ]] || print -Sr -- "${1%%$'\n'}"; [[ $1 =~ '<<' ]] && print "$1" >> ${HISTFILE}.heredoc; }
 
-# TODO: introduce curated HISTFILEs
+# TODO: follow up on curated histfiles, utilizing $HISTBASE/.global/zsh.curated (or the like)
 makehist() { 
   local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE;
-  for f in ${HISTFILE_GLOBAL} ~/.var/hist/$NICK/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
+  for f in ${HISTBASE}/.global/zsh* ~/.var/hist/$NICK/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done; 
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
 }
 
@@ -42,7 +42,7 @@ MAKEHIST() {
   local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
   # fc -ln -t '%s' 1 | while read time cmd; do; printf ': %s:0;%s\n' $time $cmd; done | sort -no $HISTFILE_GLOBAL
   for f in ~/.var/hist/*/bash*[0-9] ~/.var/hist/$NICK/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; 
-  for f in ${HISTFILE_GLOBAL}* ~/.var/hist/*/zsh*[0-9] ~/.var/hist/$NICK/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done; 
+  for f in ${HISTBASE}/.global/zsh* ~/.var/hist/*/zsh*[0-9] ~/.var/hist/$NICK/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done; 
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
 }
 
