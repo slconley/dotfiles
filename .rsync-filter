@@ -4,7 +4,7 @@
 - .git
 
 # top-level excludes
-- /.fzf/
+# - /.fzf/
 
 # top-level includes
 + /.*rc
@@ -14,20 +14,19 @@
 + /.gitconfig
 + /.gitignore*
 + /.hushlogin
-+ /.login
++ /.*login*
 + /.profile
 + /.rsync-filter
-+ /.runonce
 + /.ssh/authorized_keys
 + /.ssh/config.example
 + /.ssh/config.satellite
 + /.ssh/rc
-+ /.tmux.conf
-+ /.vim/
++ /.tmux*
++ /.vim*
 + /.zlogout
 
 # takebacks
-- /.config/packer/
+# - /.config/packer/
 
 # exclude everything else
 - /*

@@ -22,37 +22,37 @@ if [ "$PS1" ]; then
   [ "$BASH" ] || [ "$ZSH_REEXEC" ] || { export ZSH_REEXEC=done; exec zsh; }
 fi
 
-HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
+export HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
-NICK=${HOST}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
+export NICK=${HOST}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
 
-HISTBASE=$HOME/.var/hist
-HIST_DTG="$(/bin/date '+%Y%m')"
-HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
-HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
-HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
+export HISTBASE=$HOME/.var/hist
+export HIST_DTG="$(/bin/date '+%Y%m')"
+export HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+export HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
+export HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
 
-LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
+export LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
 
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
-export XDG_RUNTIME_DIR=~/.run/$HOST
-[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=/tmp/run/users/0
-export XDG_CACHE_HOME=$XDG_RUNTIME_DIR
-[ -d $XDG_RUNTIME_DIR ] || mkdir -m 700 -p $XDG_RUNTIME_DIR
+[ -d /run/user/$EUID ] && XDG_RUNTIME_DIR=/run/user/$EUID
+[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=/tmp/run/users/0}
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=~/.run/$HOST}
+export XDG_CACHE_HOME=$XDG_RUNTIME_DIR/cache
 
-OSNAME="$(uname -s)"
-OSREL="$(uname -r)"
-OS="$OSNAME$OSREL"
+export OSNAME="$(uname -s)"
+export OSREL="$(uname -r)"
+export OS="$OSNAME$OSREL"
 
-SHELL=${commands[zsh]:-${BASH}}
-TMPDIR=$XDG_RUNTIME_DIR/tmp; TEMP=$TMPDIR
-VSC_TMP=$XDG_RUNTIME_DIR/vscode
+export SHELL=${commands[zsh]:-${BASH}}
+export TMPDIR=$XDG_RUNTIME_DIR/tmp; TEMP=$TMPDIR
+export VSC_TMP=$XDG_RUNTIME_DIR/vscode
 
-PROFILES=~/.files/profile.d
-LPROFILES=~/.local/profile.d
+export PROFILES=~/.files/profile.d
+export LPROFILES=~/.local/profile.d
 
 # ----------------------------------------------------------------------
 # capture current PATH for cygwin/msys before making any changes
@@ -85,8 +85,6 @@ export TTY=$(tty)
 export CC=gcc
 export CDPATH=".:$HOME/.local/cdpath:$XDG_CONFIG_HOME:$XDG_RUNTIME_DIR:$HOME/.files:$HOME/.local:$HOME"
 export CDPATH_BASE=$CDPATH
-export COLOR_GREP="--color=always"
-export COLOR_LS="--color=always"
 export EDITOR=vi
 export ES_NETWORK_HOST=localhost
 export FUNCNEST=25
@@ -106,6 +104,8 @@ export LDAPTLS_REQCERT=require    # change to "allow" to relax this
 export LESS='-aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t'
 export LESSOPEN="|$HOME/.files/bin/see %s"
 export INDICES="$HOME/.local/indices/* $HOME/*/.index* /Volumes/Vault/.index*"
+export PACKER_CONFIG_DIR=$XDG_DATA_HOME/packer
+export PACKER_CACHE_DIR=$XDG_CACHE_HOME/packer
 export PAGER=more
 export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export SYSLOG=(/var/log/{messages,secure})
@@ -124,9 +124,10 @@ export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 # some conditional items
 # ------------------------------------------------------------
 [ -d ~/.local/profile.d/$NICK ] && SUBENV=$NICK
-[ "$SUBENV" ] || SUBENV=default; export SUBENV
+[ "$SUBENV" ] || export SUBENV=default
 which less >/dev/null 2>&1 && PAGER=less && alias pp="vim --cmd 'let no_plugin_maps = 1' -c 'runtime! macros/less.vim'"  # TODO: make this better (see other TODO)
 which vim  >/dev/null 2>&1 && EDITOR=vim
+export EDITOR PAGER SUBENV
 
 # --------------------------------------------------------------------------------
 # these get redifined later, or I just don't like other config interfering
@@ -158,7 +159,7 @@ alias l.='$GRC $GRC_OPTIONS ls -Fd $COLOR_LS .* 2> /dev/null'
 alias ls='$GRC $GRC_OPTIONS ls -F $COLOR_LS'
 alias ll='$GRC $GRC_OPTIONS ls -laF $COLOR_LS'
 alias mkdir='mkdir -p'
-alias mls='tmux ls 2>/dev/null || screen -ls 2>/dev/null;'
+alias mls='tmux ls 2>/dev/null || screen -ls >/dev/null 2>&1;'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
 alias pkill='pkill -U $EUID'
 alias pssh='pssh -x \"-tt\"'
@@ -233,7 +234,7 @@ start()    { service "$1" start; }
 status()   { service "$1" status; }
 stop()     { service "$1" stop; }
 tcp()      { lsof -i tcp | grep -i "$@" ; }
-tgz()      { tar cvzf "${1}".tgz "$1"; }
+tgz()      { tar cvzf "${1}".tar "$1"; }
 zipit()    { zip -ry "${1}".zip "$1"; }
 
 

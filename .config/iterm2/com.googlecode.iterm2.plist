@@ -3033,6 +3033,8 @@
 	<false/>
 	<key>EnableRendezvous</key>
 	<false/>
+	<key>EnterCopyModeAutomatically</key>
+	<false/>
 	<key>FocusFollowsMouse</key>
 	<true/>
 	<key>FocusOnRightOrMiddleClick</key>
@@ -3221,13 +3223,15 @@
 			<key>AWDS Window Option</key>
 			<string>No</string>
 			<key>Allow Change Cursor Blink</key>
-			<true/>
+			<false/>
 			<key>Allow Paste Bracketing</key>
 			<false/>
 			<key>Allow Title Reporting</key>
-			<true/>
+			<false/>
 			<key>Allow Title Setting</key>
 			<true/>
+			<key>Allow modifyOtherKeys</key>
+			<false/>
 			<key>Ambiguous Double Width</key>
 			<false/>
 			<key>Ansi 0 Color</key>
@@ -3508,6 +3512,8 @@
 			<true/>
 			<key>Draw Powerline Glyphs</key>
 			<false/>
+			<key>Enable Triggers in Interactive Apps</key>
+			<false/>
 			<key>Flashing Bell</key>
 			<true/>
 			<key>Foreground Color</key>
@@ -3758,9 +3764,9 @@
 			<key>Scrollback Lines</key>
 			<integer>0</integer>
 			<key>Scrollback With Status Bar</key>
-			<true/>
+			<false/>
 			<key>Scrollback in Alternate Screen</key>
-			<true/>
+			<false/>
 			<key>Selected Text Color</key>
 			<dict>
 				<key>Blue Component</key>
@@ -10135,6 +10141,8 @@
 			<string>.</string>
 		</dict>
 	</array>
+	<key>NotifyOnlyForCriticalShellIntegrationUpdates</key>
+	<false/>
 	<key>OnlyWhenMoreTabs</key>
 	<false/>
 	<key>OpenArrangementAtStartup</key>
@@ -10250,7 +10258,7 @@
 	<key>TmuxSyncClipboard</key>
 	<false/>
 	<key>TmuxUsesDedicatedProfile</key>
-	<true/>
+	<false/>
 	<key>ToolbeltTools</key>
 	<array>
 		<string>Paste History</string>
@@ -10266,6 +10274,8 @@
 	<key>UseLionStyleFullscreen</key>
 	<true/>
 	<key>UseMetal</key>
+	<false/>
+	<key>UseTmuxStatusBar</key>
 	<false/>
 	<key>VisualIndicatorForEsc</key>
 	<false/>

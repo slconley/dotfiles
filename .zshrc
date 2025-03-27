@@ -3,6 +3,11 @@
 # --------------------------------------------------
 
 # --------------------------------------------------
+# check for env being disabled
+# --------------------------------------------------
+[ -f $HOME/.noenv ] && return
+
+# --------------------------------------------------
 # simple tracing 
 # --------------------------------------------------
 # source() { echo $SHELL sourcing: $1; builtin source $1; }
@@ -53,7 +58,6 @@ export PERIOD SHELL
 # non-env variables
 # --------------------------------------------------
 #context='%{\e[0;32m%}%n@%m'   # becomes part of prompt
-my_accounts=({root,centos,ubuntu,ec2-user}@{kali})
 watch=notme
 
 # --------------------------------------------------
@@ -94,7 +98,7 @@ s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
 # ------------------------------------------------------------
 setopt prompt_subst
 autoload -Uz vcs_info
-zstyle ':vcs_info:*' enable git svn
+zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' actionformats '|%F{2}%b%f|%F{1}%a'
 zstyle ':vcs_info:*' formats       '|%F{2}%b'
 precmd() { vcs_info; header; }
@@ -111,7 +115,11 @@ autoload -U colors; colors
 # --------------------------------------------------
 # root specific tweaks
 # --------------------------------------------------
-[ "$EUID" = 0 ] && { \u\mask \2\2; PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; }
+[ "$EUID" = 0 ] && { 
+  \u\mask \2\2; 
+  PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; 
+  sudo() {$@;};
+}
 
 setopt nullglob
 for f in $LPROFILES/{,$SUBENV}/.early/*.{,z}sh ; source $f
@@ -146,23 +154,25 @@ zstyle ':completion:*:*:tmux:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
 # ----------------------------------------
 # account completion via defined config
 # ----------------------------------------
-my_accounts=()
+my_accounts=({root,centos,ubuntu,ec2-user}@rhel8)
 [ -f $XDG_CONFIG_HOME/enum/hosts ]    && hosts=($(cat $XDG_CONFIG_HOME/enum/hosts)) || hosts=()
 [ -f $XDG_CONFIG_HOME/enum/domains ]  && domains=($(cat $XDG_CONFIG_HOME/enum/domains)) || domains=()
-[ -f $XDG_CONFIG_HOME/enum/accounts ] && accounts=($(cat $XDG_CONFIG_HOME/enum/accounts)) || accounts=()
-accounts_spec="{$(echo $accounts | tr -s ' ' ',')}"
-my_accounts=($my_accounts $(eval echo $accounts_spec))
-for h in $hosts ; do
-  my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
-  for d in $domains ; do
-    my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
-  done
-done
-unset d h accounts_spec
+[ -f $XDG_CONFIG_HOME/enum/users ] && users=($(cat $XDG_CONFIG_HOME/enum/users)) || users=()
+accounts_spec=($(echo $users | tr -s ' ' ','))
+# my_accounts=($my_accounts $(eval echo $accounts_spec))
+my_accounts=($my_accounts $users)
+# for h in $hosts ; do
+#   my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
+#   for d in $domains ; do
+#     my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
+#   done
+# done
+# unset d h accounts_spec
 
 # --------------------------------------------------
 # this must occur after defining 'my_accounts'
 # --------------------------------------------------
+zstyle ':completion:*:my-accounts' users $my_accounts
 zstyle ':completion:*:my-accounts' users-hosts $my_accounts 
 
 # ----------------------------------------
@@ -175,9 +185,6 @@ declare -a fplist
 fplist=( /usr/local/share/zsh-completions ~/.files/zsh.d/functions $XDG_RUNTIME_DIR/zsh/functions )
 for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
 unset d fplist
-
-[ -f $XDG_RUNTIME_DIR/zsh/functions/_kubectl ] || command kubectl completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_kubectl 2> /dev/null
-[ -f $XDG_RUNTIME_DIR/zsh/functions/_helm ]    || command helm completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_helm 2> /dev/null
 
 # ------------------------------
 # fallback completion for aws

@@ -1,31 +1,3 @@
-# /.CFUserTextEncoding
-# /.ICEauthority
-# /.ansible/
-# /.archive/
-# /.bridge/
-# /.config/
-# /.cups/
-# /.disabled/
-# /.fusion/
-# /.fzf*
-# /.gnupg*
-# /.grip/
-# /.kube/
-# /.lemminx/
-# /.lesshst
-# /.local
-# /.m2/
-# /.minikube/
-# /.noscreen
-# /.npm/
-# /.openjfx/
-# /.rbenv/
-# /.redhat/
-# /.rest-client/
-# /.terraform.d/
-# /.viminfo
-# /.vmware
-# /.zsh_sessions/
 /[^\.]*
 /.*
 !/.files

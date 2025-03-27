@@ -1,0 +1,8 @@
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"ActiveWndTrkTimeout"=dword:0000012c
+; with auto-raise
+; "UserPreferencesMask"=hex:DF,3E,00,80,11,00,00,00
+; sans auto-raise
+; "UserPreferencesMask"=hex:DD,3E,00,80,11,00,00,00
+; normal (no auto-raise)
+"UserPreferencesMask"=hex:9F,3E,00,80,11,00,00,00

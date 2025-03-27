@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-[ $OSNAME = "Darwin" ] || return
+[ "$OSNAME" = "Darwin" ] || return
 
 [ -d "/Applications/VMware Fusion.app/Contents/Library" ] && PATH="$PATH:/Applications/VMware Fusion.app/Contents/Library"
 # unset COLOR_LS

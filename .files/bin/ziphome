@@ -15,20 +15,21 @@ MANIFEST=/tmp/${LOGNAME}-manifest.$TIME; >$MANIFEST
 # ------------------------------------------------------------
 INCLUDES="
 	.*bash*
+	.*login*
+	.*profile*
 	.*rc
 	.*zsh*
-	.bash_login
+	.config
 	.gitconfig
-	.hushlogin
-	.login
-	.profile*
+	.gitignore*
 	.rsync-filter
 	.screen*
 	.ssh/*.pub
 	.ssh/authorized_keys
-	.ssh/config
+	.ssh/config.*
+	.ssh/rc
+	.tmux*
 	.vim*
-	.zlog*
   .files
 "
 
@@ -40,7 +41,7 @@ for file in $INCLUDES; do
   [ -d $file -o -f $file -o -s $file ] && echo $file >> $MANIFEST
 done
 
-rm -rf home.zip
-zip -oqry -@ home < $MANIFEST
+rm -f home.zip
+zip -oqry -@ home < $MANIFEST 2>/dev/null
 
 rm $MANIFEST

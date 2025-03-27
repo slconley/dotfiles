@@ -3,7 +3,7 @@
 # ------------------------------------------------------------
 # don't bother with anything more if already in mux session
 # ------------------------------------------------------------
-[[ "$TERM" =~ tmux || "$TERM" =~ screen ]] && return
+[[ "$TMUX" || "$TERM" =~ tmux || "$TERM" =~ screen ]] && return
 
 # ----------------------------------------
 # attempt to use tmux if it is available
