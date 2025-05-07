@@ -1,5 +1,5 @@
 [HKEY_CURRENT_USER\Control Panel\Desktop]
-"ActiveWndTrkTimeout"=dword:0000012c
+"ActiveWndTrkTimeout"=dword:00000064
 ; with auto-raise
 ; "UserPreferencesMask"=hex:DF,3E,00,80,11,00,00,00
 ; sans auto-raise

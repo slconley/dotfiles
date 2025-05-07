@@ -22,7 +22,7 @@
 # setopt xtrace prompt_subst
 
 # --------------------------------------------------
-# globalrc should always be first
+# call ~/.globalrc early
 # --------------------------------------------------
 [ -f $HOME/.globalrc ] && source $HOME/.globalrc
 
@@ -90,8 +90,8 @@ alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
 # --------------------------------------------------
 # functions
 # --------------------------------------------------
-..()       { builtin cd ..; }
-s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
+..() { builtin cd ..; }
+s()  { savehist; sudo -sE HOME=$HOME ; readhist; }
 
 # ------------------------------------------------------------
 # VCS aware prompt
@@ -106,8 +106,7 @@ precmd() { vcs_info; header; }
 # --------------------------------------------------
 # right-side prompt
 # --------------------------------------------------
-RPROMPT='%F{green}${SUBENV}${vcs_info_msg_0_}%f'
-[ "$TMUX" ] && RPROMPT=''
+RPROMPT='%F{green}${SUBENV}${vcs_info_msg_0_}%f'; [ "$TMUX" ] && RPROMPT=''
 autoload -U colors; colors
 # kubectl config current-context > /dev/null 2>&1 && \
 # RPROMPT='${vcs_info_msg_0_}[%{$fg[green]%}$(kubectl config current-context)%{$reset_color%}]'
@@ -182,7 +181,7 @@ zstyle ':completion:*:my-accounts' users-hosts $my_accounts
 zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
 
 declare -a fplist
-fplist=( /usr/local/share/zsh-completions ~/.files/zsh.d/functions $XDG_RUNTIME_DIR/zsh/functions )
+fplist=( /usr/local/share/zsh-completions $XDG_RUNTIME_DIR/zsh/functions ~/.files/zsh.d/functions )
 for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
 unset d fplist
 

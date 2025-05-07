@@ -10,6 +10,7 @@
 # ----------------------------------------
 if type -p tmux >/dev/null 2>&1; then
   TMUX_VERSION=$(tmux -V); TMUX_VERSION="${TMUX_VERSION##*[- ]}"; export TMUX_VERSION
+  [ -d "$TMUX_TMPDIR" ] || mkdir -m 700 -p "$TMUX_TMPDIR"
   target=$(tmux ls 2>/dev/null | command grep -v attached | cut -d: -f1 | head -1)
   if [ -n "$target" ] || [ -n "$emforce" ] || [ ! -f ~/.nomux ] || [ "$TERM_PROGRAM" = "vscode" ]; then
     [ "$target" ] && tmux attach -t $target && readhist && return

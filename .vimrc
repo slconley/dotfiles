@@ -1,11 +1,7 @@
-set expandtab ignorecase incsearch modeline paste ruler smartcase showmatch modelines=20 shiftwidth=2 tabstop=2
+set expandtab hlsearch ignorecase incsearch modeline paste ruler smartcase showmatch bg=dark modelines=20 shiftwidth=2 tabstop=2
 filetype plugin indent on
+syntax enable
 nmap . .`[
-
-if &t_Co > 2 || has("gui_running")
-  syntax enable
-  set hlsearch
-endif
 
 if has("autocmd")
   autocmd BufEnter    * if &filetype == "" | setlocal ft=yaml | endif
