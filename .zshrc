@@ -83,9 +83,22 @@ zle -N up-line-or-beginning-search up-line-or-beginning-search
 zle -N down-line-or-beginning-search down-line-or-beginning-search
 
 # --------------------------------------------------
-# alias(es)
+# initialize completion
 # --------------------------------------------------
-alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
+# alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
+alias compinit='compinit -u -d $XDG_RUNTIME_DIR/zsh/zcompcache'
+autoload -Uz compinit bashcompinit && compinit && bashcompinit
+zstyle ':completion:*' use-cache on
+zstyle ':completion::complete:*' cache-path $XDG_RUNTIME_DIR/zsh/zcompcache
+# Complete the alias when _expand_alias is used as a function
+zstyle ':completion:*' complete true
+
+# autocomplete options for cd instead of directory stack
+# zstyle ':completion:*' complete-options true
+
+# sort file completions by mtime
+# zstyle ':completion:*' file-sort modification
+
 
 # --------------------------------------------------
 # functions
@@ -138,47 +151,69 @@ unset f
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # completion caching
-zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path $XDG_RUNTIME_DIR/zsh/zcompcache
+# zstyle ':completion::complete:*' use-cache 1
 
-# add colors to completions
+# see details when completing filenames
+zstyle ':completion:*' file-list all
+
+# add colors to file completions
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # complete cd with local dirs if a match, then path dirs
-zstyle ':completion:*:cd:*' tag-order local-directories path-directories
+# zstyle ':completion:*:cd:*' tag-order local-directories path-directories
 
-# help tmux find custom sockets dir
-zstyle ':completion:*:*:tmux:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
+# help tmux attach ("ta") alias find custom sockets dir
+zstyle ':completion:*:*:ta:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
+
+# ref: https://github.com/Phantas0s/.dotfiles/blob/master/zsh/completion.zsh
+# zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
+# zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
+# zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
+# zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
 
 # ----------------------------------------
 # account completion via defined config
 # ----------------------------------------
+# TODO: revisit and clean up user/host/domain completion setup
 my_accounts=({root,centos,ubuntu,ec2-user}@rhel8)
-[ -f $XDG_CONFIG_HOME/enum/hosts ]    && hosts=($(cat $XDG_CONFIG_HOME/enum/hosts)) || hosts=()
-[ -f $XDG_CONFIG_HOME/enum/domains ]  && domains=($(cat $XDG_CONFIG_HOME/enum/domains)) || domains=()
-[ -f $XDG_CONFIG_HOME/enum/users ] && users=($(cat $XDG_CONFIG_HOME/enum/users)) || users=()
-accounts_spec=($(echo $users | tr -s ' ' ','))
+# [ -f $XDG_CONFIG_HOME/enum/hosts ]    && hosts=($(grep -v ^# $XDG_CONFIG_HOME/enum/hosts)) || hosts=()
+[ -f $XDG_CONFIG_HOME/enum/domains ]  && domains=($(grep -v ^# $XDG_CONFIG_HOME/enum/domains)) || domains=()
+[ -f $XDG_CONFIG_HOME/enum/users ] && users=($(grep -v ^# $XDG_CONFIG_HOME/enum/users)) || users=()
+accounts_spec=($users)
 # my_accounts=($my_accounts $(eval echo $accounts_spec))
 my_accounts=($my_accounts $users)
-# for h in $hosts ; do
-#   my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
+for h in $hosts ; do
+  my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
+  # my_accounts=($my_accounts @$h)
 #   for d in $domains ; do
 #     my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
 #   done
-# done
-# unset d h accounts_spec
+done
+unset d h accounts_spec
+
+khostfiles=(~/.ssh/known_hosts $XDG_CONFIG_HOME/enum/hosts/*)
+zstyle ':completion:*:hosts' known-hosts-files $khostfiles
+
+my_accounts=($(cut -d: -f1 /etc/passwd))
+for d in /home/*; do my_accounts=($my_accounts ${d##*/}); done
+for f in $XDG_CONFIG_HOME/enum/users/*; do
+  [ -f $f ] && my_accounts=($my_accounts $(cut -d# -f1 $f))
+done
+zstyle ':completion:*:users' users $my_accounts
 
 # --------------------------------------------------
 # this must occur after defining 'my_accounts'
 # --------------------------------------------------
-zstyle ':completion:*:my-accounts' users $my_accounts
-zstyle ':completion:*:my-accounts' users-hosts $my_accounts 
+# zstyle ':completion:*:my-accounts' users-hosts $my_accounts 
+# zstyle ':completion:*:my-accounts' users-hosts ${my_accounts[@]}
+# zstyle ':completion:*:my-accounts' hosts ${my_accounts[@]}
+# zstyle ':completion:*:my-accounts' hosts $my_accounts
 
 # ----------------------------------------
 # hostname completion via known_hosts
 # ----------------------------------------
-[ -r ~/.ssh/known_hosts ] && myhosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || myhosts=()
-zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
+# [ -r ~/.ssh/known_hosts ] && myhosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || myhosts=()
+# zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
 
 declare -a fplist
 fplist=( /usr/local/share/zsh-completions $XDG_RUNTIME_DIR/zsh/functions ~/.files/zsh.d/functions )
@@ -200,9 +235,6 @@ compctl -g '*' -W /etc/init.d start status stop restart
 compctl -k "(all rhel7 rhel8)" -x 'p[2]' -f -- dist2
 compctl -g '*' -W $XDG_CONFIG_HOME/myconfig myconfig
 compctl -W profile_dirs -/ getenv
-autoload -U compinit
-autoload -U +X bashcompinit && bashcompinit
-compinit
 compdef _vars e
 complete -o nospace -C /usr/local/bin/terraform terraform
 

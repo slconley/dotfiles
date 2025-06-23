@@ -13,8 +13,6 @@ setopt hist_reduce_blanks
 # reminder... if HISTORY_IGNORE not completely working, you are potentially using an older zsh
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
 HISTFILE_GLOBAL="$HISTBASE/.global/zsh.global"
-# TODO: revisit - check if heredocs are working well in the main HISTFILE
-# HISTORY_IGNORE='( *|#*|*<<*|AWS*|e[bmz ]|exec |h[h]* |l[lst ]|lpass*|man |open |otr|p |s|sleep|which)'
 HISTORY_IGNORE='( *|AWS*|e[bmsz ]|exec |h[h]* |l[lst ]|lpass*|man |open |otr|p |s|sleep|which)'
 PERIOD=300
 SAVEHIST=$HISTSIZE
@@ -26,8 +24,6 @@ hhh() { readhist; fc -ln 1 | grep -ih $COLOR_GREP "$1" }
 periodic()      { savehist; }
 readhist()      { savehist; HISTSIZE=$HISTSIZE_GLOBAL; fc -R $HISTFILE_GLOBAL; fc -R $HISTFILE; }
 savehist()      { [ "$HISTFILE" ] || return; fc -AI 2>/dev/null; SAVEHIST=$HISTSIZE_GLOBAL fc -AI "$HISTFILE_GLOBAL" 2>/dev/null; }
-# TODO: revisit - check if heredocs are working well in the main HISTFILE
-# zshaddhistory() { [[ "$1" =~ '^ ' ]] || print -Sr -- "${1%%$'\n'}"; [[ $1 =~ '<<' ]] && print "$1" >> ${HISTFILE}.heredoc; }
 
 # TODO: follow up on curated histfiles, utilizing $HISTBASE/.global/zsh.curated (or the like)
 makehist() { 
