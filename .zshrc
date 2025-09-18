@@ -52,13 +52,19 @@ PS1=$'%{\e[0;32m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '
 PS4=$'%{\e[0;33m%}+%x:%I>%{\e[0m%} '
 READNULLCMD=$PAGER
 TMPPREFIX=$XDG_RUNTIME_DIR/tmp/zsh
-export PERIOD SHELL
+export PERIOD
 
 # --------------------------------------------------
 # non-env variables
 # --------------------------------------------------
 #context='%{\e[0;32m%}%n@%m'   # becomes part of prompt
 watch=notme
+
+# --------------------------------------------------
+# some generic autoload stuff
+# --------------------------------------------------
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd header
 
 # --------------------------------------------------
 # key bindings
@@ -105,6 +111,7 @@ zstyle ':completion:*' complete true
 # --------------------------------------------------
 ..() { builtin cd ..; }
 s()  { savehist; sudo -sE HOME=$HOME ; readhist; }
+tmux-refresh-env() { eval $(tmux showenv -s); }
 
 # ------------------------------------------------------------
 # VCS aware prompt
@@ -114,12 +121,12 @@ autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' actionformats '|%F{2}%b%f|%F{1}%a'
 zstyle ':vcs_info:*' formats       '|%F{2}%b'
-precmd() { vcs_info; header; }
+add-zsh-hook precmd vcs_info
 
 # --------------------------------------------------
 # right-side prompt
 # --------------------------------------------------
-RPROMPT='%F{green}${SUBENV}${vcs_info_msg_0_}%f'; [ "$TMUX" ] && RPROMPT=''
+RPROMPT='%F{green}${SUBENV}${vcs_info_msg_0_}%f'
 autoload -U colors; colors
 # kubectl config current-context > /dev/null 2>&1 && \
 # RPROMPT='${vcs_info_msg_0_}[%{$fg[green]%}$(kubectl config current-context)%{$reset_color%}]'
@@ -131,6 +138,14 @@ autoload -U colors; colors
   \u\mask \2\2; 
   PS1=$'%{\e[0;31m%}%n@%m:%{\e[1;33m%}%2c%#%{\e[0m%} '; 
   sudo() {$@;};
+}
+
+# --------------------------------------------------
+# tmux tweaks
+# --------------------------------------------------
+[ "$TMUX" ] && {
+  RPROMPT=''
+  add-zsh-hook periodic tmux-refresh-env
 }
 
 setopt nullglob
@@ -154,13 +169,13 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:
 # zstyle ':completion::complete:*' use-cache 1
 
 # see details when completing filenames
-zstyle ':completion:*' file-list all
+# zstyle ':completion:*' file-list all
 
 # add colors to file completions
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # complete cd with local dirs if a match, then path dirs
-# zstyle ':completion:*:cd:*' tag-order local-directories path-directories
+zstyle ':completion:*:cd:*' tag-order local-directories path-directories
 
 # help tmux attach ("ta") alias find custom sockets dir
 zstyle ':completion:*:*:ta:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
@@ -175,31 +190,31 @@ zstyle ':completion:*:*:ta:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
 # account completion via defined config
 # ----------------------------------------
 # TODO: revisit and clean up user/host/domain completion setup
-my_accounts=({root,centos,ubuntu,ec2-user}@rhel8)
-# [ -f $XDG_CONFIG_HOME/enum/hosts ]    && hosts=($(grep -v ^# $XDG_CONFIG_HOME/enum/hosts)) || hosts=()
-[ -f $XDG_CONFIG_HOME/enum/domains ]  && domains=($(grep -v ^# $XDG_CONFIG_HOME/enum/domains)) || domains=()
-[ -f $XDG_CONFIG_HOME/enum/users ] && users=($(grep -v ^# $XDG_CONFIG_HOME/enum/users)) || users=()
-accounts_spec=($users)
+[ -d $XDG_CONFIG_HOME/enum/domains ] && domains=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/domains/* 2>/dev/null)) || domains=()
+[ -d $XDG_CONFIG_HOME/enum/hosts ] && hosts=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/hosts/* 2>/dev/null)) || hosts=()
+[ -d $XDG_CONFIG_HOME/enum/users ] && users=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/users/* 2>/dev/null)) || users=()
+# accounts_spec=($users)
 # my_accounts=($my_accounts $(eval echo $accounts_spec))
-my_accounts=($my_accounts $users)
-for h in $hosts ; do
-  my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
+# my_accounts=($my_accounts $users)
+# for h in $hosts ; do
+#   my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
   # my_accounts=($my_accounts @$h)
 #   for d in $domains ; do
 #     my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
 #   done
-done
-unset d h accounts_spec
+# done
+# unset d h accounts_spec
 
-khostfiles=(~/.ssh/known_hosts $XDG_CONFIG_HOME/enum/hosts/*)
+# khostfiles=(~/.ssh/known_hosts $XDG_CONFIG_HOME/enum/hosts/*)
+khostfiles=( ~/.ssh/known_hosts )
 zstyle ':completion:*:hosts' known-hosts-files $khostfiles
 
-my_accounts=($(cut -d: -f1 /etc/passwd))
-for d in /home/*; do my_accounts=($my_accounts ${d##*/}); done
-for f in $XDG_CONFIG_HOME/enum/users/*; do
-  [ -f $f ] && my_accounts=($my_accounts $(cut -d# -f1 $f))
-done
-zstyle ':completion:*:users' users $my_accounts
+# my_accounts=($my_accounts $(cut -d: -f1 /etc/passwd))
+# for d in /home/*; do my_accounts=($my_accounts ${d##*/}); done
+# for f in $XDG_CONFIG_HOME/enum/users/*; do
+#   [ -f $f ] && my_accounts=($my_accounts $(cut -d# -f1 $f))
+# done
+zstyle ':completion:*:users' users $my_accounts $users
 
 # --------------------------------------------------
 # this must occur after defining 'my_accounts'
