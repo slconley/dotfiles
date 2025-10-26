@@ -40,7 +40,7 @@ export XDG_STATE_HOME=$HOME/.local/state
 
 
 [ -d /run/user/$EUID ] && XDG_RUNTIME_DIR=/run/user/$EUID
-[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=/tmp/run/users/0}
+[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=/tmp/run/users/0
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=~/.run/$HOST}
 export XDG_CACHE_HOME=$XDG_RUNTIME_DIR/cache
 
@@ -64,7 +64,7 @@ PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/local/bin:/usr/local/opt/bin:/usr/bi
 
 export LSCOLORS=exfxcxdxcxegedabagacad   # macOS only?
 export LS_COLORS=$(tr -d '\n' << END
-no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:
+no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:ow=1;34:tw=1;34:
 *.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:
 *.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;34:*.jpeg=01;34:*.gif=01;34:*.bmp=01;34:*.pbm=01;34:
 *.pgm=01;34:*.ppm=01;34:*.tga=01;34:*.xbm=01;34:*.xpm=01;34:*.tif=01;34:*.tiff=01;34:*.png=01;34:
@@ -83,11 +83,9 @@ PATH=$(echo "$PATH" | sed  -E 's/[[:space:]]*:[[:space:]]*/:/g')
 
 export TTY=$(tty)
 
-export CC=gcc
 export CDPATH=".:$HOME/.local/cdpath:$XDG_CONFIG_HOME:$XDG_RUNTIME_DIR:$HOME/.files:$HOME/.local:$HOME"
 export CDPATH_BASE=$CDPATH
 export EDITOR=vi
-export ES_NETWORK_HOST=localhost
 export FUNCNEST=25
 export FZF_DEFAULT_OPTS='-e --ansi --no-mouse'
 export GPG_TTY=$TTY
@@ -100,7 +98,6 @@ export HISTSIZE=4999
 export HISTSIZE_GLOBAL=999999
 export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE
-export LANG=C
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
 export LESS='-aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t'
 export LESSOPEN="|$HOME/.files/bin/see %s"
@@ -112,8 +109,6 @@ export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export TMUX_TMPDIR=$XDG_RUNTIME_DIR/tmux
 export TOP="-s3"
 
-export esEndpoint=${ES_NETWORK_HOST}:9200
-
 export LESS_TERMCAP_mb=$'\E[01;31m'       # begin blinking
 export LESS_TERMCAP_me=$'\E[0m'           # end mode
 export LESS_TERMCAP_se=$'\E[0m'           # end standout-mode
@@ -121,7 +116,6 @@ export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
 SYSLOG=(/var/log/{messages,secure}); export SYSLOG
-
 
 # ------------------------------------------------------------
 # some conditional items
@@ -178,14 +172,15 @@ alias tls='tmux ls'
 alias tf='terraform'
 alias tg='terragrunt'
 alias tlog='tail -f $* $SYSLOG'
+alias tmux='tmux -L $SUBENV'
 alias today="date '+%Y%m%d'"
 alias vi='$EDITOR'
 alias vless='/usr/share/vim/vim70/macros/less.sh'				# TODO: leverage this for PAGER/p/whatever
 alias vm='VBoxManage'
 alias which='which -a'
 
-# conditional aliases
-alias tmux='tmux -L $SUBENV'; [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
+# conditional alias(es)
+# [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
 
 # ----------------------------------------------------------------------
 # functions
@@ -198,7 +193,6 @@ defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
 dx()       { docker run -ith dx --rm -e HOME=$HOME -v ~:$HOME $* $PREFSHELL; }
 e()        { (set;command env)| grep -Eva '^[_	 ]' | sort -u | grep -Eai $COLOR_GREP $*; }
 eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
-ec()       { savehist; export PREFSHELL=csh; exec csh;}
 errno()    { less -p $1 $errfile; }
 em()       { savehist; emforce=1; source ~/.muxrc; }
 es()       { savehist; screen $SCREEN_OPTS -RR; }
@@ -225,23 +219,19 @@ psg()      { $GRC $GRC_OPTIONS ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
 psmem()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "COMMAND|$*."|grep -v grep|sort -k6; }
 pss()      { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k2; }
 pstime()   { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k5; }
-restart()  { service $1 restart; }
+restart()  { systemctl restart "$1"; }
 s()        { sudo -sE HOME=$HOME; }
 savehist() { history -a; }
 showcerts() { openssl s_client -connect "$1" -servername "${1%:*}" -showcerts < /dev/null; }
 sslconn()  { openssl s_client -connect "$1" -servername "${1%:*}" < /dev/null; }
 sockets()  { netstat -anp | grep -ai "list|idle|tcp|udp" | grep -i "$COLOR_GREP" "$@"; }
 sourcevault() { source <(ansible-vault view "$@"); }
-start()    { service "$1" start; }
-status()   { service "$1" status; }
-stop()     { service "$1" stop; }
+start()    { systemctl start "$1"; }
+status()   { systemctl status "$1"; }
+stop()     { systemctl stop "$1"; }
 tcp()      { lsof -i tcp | grep -i "$@" ; }
 tgz()      { tar cvzf "${1}".tar "$1"; }
 zipit()    { zip -ry "${1}".zip "$1"; }
-
-
-export HIST_DTG HISTBASE HISTDIR HISTFILE HISTFILE_GLOBAL HOST LOGDIR NICK OSNAME OSREL OSTYPE OS 
-export SCREENDIR SHELL TEMP TMPDIR VSC_TMP LPROFILES PROFILES 
 
 # --------------------------------------------------
 # the non-existence of this dir triggers a 'runonce'
@@ -253,7 +243,7 @@ export SCREENDIR SHELL TEMP TMPDIR VSC_TMP LPROFILES PROFILES
 # ----------------------------------------
 authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock
 [ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
-ssh-add -l > /dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile 2> /dev/null && SSH_AUTH_SOCK=""; }
+ssh-add -l >/dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile && SSH_AUTH_SOCK=""; }
 [ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
 [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
 [ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'

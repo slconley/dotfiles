@@ -1,12 +1,13 @@
-# global excludes
+# exclude these everywhere
 - *.swp
 - .DS_Store
 - .git
 
-# top-level excludes
+# this-level excludes
 # - /.fzf/
+- /.viminfo
 
-# top-level includes
+# this-level includes
 + /.*rc
 + /.bash_login
 + /.config/
@@ -17,6 +18,7 @@
 + /.*login*
 + /.profile
 + /.rsync-filter
++ /.ssh/
 + /.ssh/authorized_keys
 + /.ssh/config.example
 + /.ssh/config.satellite
@@ -29,4 +31,5 @@
 # - /.config/packer/
 
 # exclude everything else
+- /.ssh/*
 - /*

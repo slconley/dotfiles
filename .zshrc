@@ -37,7 +37,6 @@ setopt no_beep
 setopt no_nomatch
 setopt notify
 setopt pushd_silent
-setopt pushd_silent
 setopt rm_star_silent
 setopt transient_rprompt
 
@@ -111,7 +110,7 @@ zstyle ':completion:*' complete true
 # --------------------------------------------------
 ..() { builtin cd ..; }
 s()  { savehist; sudo -sE HOME=$HOME ; readhist; }
-tmux-refresh-env() { eval $(tmux showenv -s); }
+tmux-refresh-env() { eval $(tmux showenv -s 2>/dev/null); }
 
 # ------------------------------------------------------------
 # VCS aware prompt
