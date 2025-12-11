@@ -77,7 +77,7 @@ for file in $*; do
     #*.markdown|*.md) markdown $file 2> /dev/null ;;
 
     # json
-    *.json) which jq > /dev/null 2>&1 && jq -C . $file || cat $file;;
+    *.json) which jq > /dev/null 2>&1 && jq "$COLOR_JQ" . $file || cat $file;;
 
     # rar archives
     *.rar) unrar l $file 2> /dev/null ;;

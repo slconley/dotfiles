@@ -5,7 +5,7 @@
 # ----------------------------------------
 # local globalrc comes first if it exists
 # ----------------------------------------
-[ -f $HOME/.local/.globalrc ] && source $HOME/.local/.globalrc
+[ -f $HOME/.local/profile.d/.globalrc ] && source $HOME/.local/profile.d/.globalrc
 
 # ------------------------------------------------------------------------------------------
 PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/opt/bin
@@ -98,6 +98,8 @@ export HISTSIZE=4999
 export HISTSIZE_GLOBAL=999999
 export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE
+export LANG=${LANG:=en_US.UTF-8}
+export LC_COLLATE=${LC_COLLATE:-C}
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
 export LESS='-aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t'
 export LESSOPEN="|$HOME/.files/bin/see %s"

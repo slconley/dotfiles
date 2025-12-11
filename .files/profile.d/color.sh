@@ -1,8 +1,9 @@
 export COLOR_GREP="--color=always"
 export COLOR_LS="--color=always"
+export COLOR_JQ="-C"
 
 alias c+="COLOR_GREP='--color=always' COLOR_LS='--color=always'"
-alias c-="COLOR_GREP='--color=never' COLOR_LS='--color=never'"
+alias c-="COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"
 
 # --------------------------------------------------------------------------------
 # notes:
@@ -37,4 +38,4 @@ fi
 
 alias color='$GRC $GRC_OPTIONS'
 alias c+="GRC='grc' GRC_OPTIONS=(-es --colour=on) COLOR_GREP='--color=always' COLOR_LS='--color=always'"
-alias c-="GRC='' GRC_OPTIONS=() COLOR_GREP='--color=never' COLOR_LS='--color=never'"
+alias c-="GRC='' GRC_OPTIONS=() COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"
