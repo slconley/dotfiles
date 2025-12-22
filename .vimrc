@@ -1,4 +1,5 @@
-set expandtab hlsearch ignorecase incsearch modeline paste ruler smartcase showmatch bg=dark modelines=20 shiftwidth=2 tabstop=2
+set autoindent expandtab hlsearch ignorecase incsearch modeline ruler smartcase showmatch bg=dark modelines=20 shiftwidth=2 tabstop=2 
+set nopaste " paste conflicts with autoindent
 filetype plugin indent on
 syntax enable
 nmap . .`[

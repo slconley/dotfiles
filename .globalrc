@@ -3,12 +3,14 @@
 # ------------------------------
 
 # ----------------------------------------
+# basic PATH
+# ----------------------------------------
+PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+
+# ----------------------------------------
 # local globalrc comes first if it exists
 # ----------------------------------------
 [ -f $HOME/.local/profile.d/.globalrc ] && source $HOME/.local/profile.d/.globalrc
-
-# ------------------------------------------------------------------------------------------
-PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/opt/bin
 
 # ------------------------------------------------------------------------------------------
 # PREFSHELL selection - for interactive sessions only.
@@ -60,7 +62,7 @@ export LPROFILES=~/.local/profile.d
 # ----------------------------------------------------------------------
 [ "$OSTYPE" = "cygwin" ] && export CYGPATH=${CYGPATH:=$PATH}
 [ "$OSTYPE" = "msys" ] && export MSYSPATH=${MSYSPATH:=$PATH}
-PATH=$HOME/.local/bin:$HOME/.files/bin:/usr/local/bin:/usr/local/opt/bin:/usr/bin:/bin:/usr/sbin:/sbin:
+PATH=$HOME/.local/bin:$HOME/.files/bin:$PATH
 
 export LSCOLORS=exfxcxdxcxegedabagacad   # macOS only?
 export LS_COLORS=$(tr -d '\n' << END
@@ -187,6 +189,7 @@ alias which='which -a'
 # ----------------------------------------------------------------------
 # functions
 # ----------------------------------------------------------------------
+..()       { builtin cd ..; }
 a()        { apropos $* 2> /dev/null; }
 c()        { clear; }
 colormap() { for i in {0..255}; do printf "\x1b[38;5;${i}mcolor${i}\n"; done; }
@@ -212,7 +215,7 @@ io()       { iostat -xnmz $* 3; }
 l()        { command ls -F $COLOR_LS $*; }
 loc()      { ( locate -i $1; eval gzip -dc $INDICES 2> /dev/null) | grep -i $COLOR_GREP $1; }
 lt()       { $GRC $GRC_OPTIONS ls -lrtF $COLOR_LS $*; }
-otr()      { savehist; unset HISTFILE HISTFILE_GLOBAL; }
+otr()      { savehist; unset HISTFILE HISTFILE_GLOBAL; readhist() { :; }; savehist() { :; }; }
 p()        { $PAGER $*;}
 passgen()  { local l=${1:=24}; head -${l} /dev/urandom | base64 | rev | cut -c${l}- | base64 | cut -c1-${l};}
 pod()      { pod2text --code $* | $PAGER; }
@@ -222,18 +225,20 @@ psmem()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "
 pss()      { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k2; }
 pstime()   { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k5; }
 restart()  { systemctl restart "$1"; }
-s()        { sudo -sE HOME=$HOME; }
+s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
 savehist() { history -a; }
-showcerts() { openssl s_client -connect "$1" -servername "${1%:*}" -showcerts < /dev/null; }
 sslconn()  { openssl s_client -connect "$1" -servername "${1%:*}" < /dev/null; }
 sockets()  { netstat -anp | grep -ai "list|idle|tcp|udp" | grep -i "$COLOR_GREP" "$@"; }
-sourcevault() { source <(ansible-vault view "$@"); }
 start()    { systemctl start "$1"; }
 status()   { systemctl status "$1"; }
 stop()     { systemctl stop "$1"; }
 tcp()      { lsof -i tcp | grep -i "$@" ; }
 tgz()      { tar cvzf "${1}".tar "$1"; }
 zipit()    { zip -ry "${1}".zip "$1"; }
+
+showcerts()        { openssl s_client -connect "$1" -servername "${1%:*}" -showcerts < /dev/null; }
+sourcevault()      { source <(ansible-vault view "$@"); }
+tmux-refresh-env() { eval $(tmux showenv -s 2>/dev/null); }
 
 # --------------------------------------------------
 # the non-existence of this dir triggers a 'runonce'

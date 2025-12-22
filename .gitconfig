@@ -29,6 +29,21 @@
   required = true
 [color]
   ui = true
+[color "status"]
+  header = "#999999"
+  added = "#99cc99"
+  changed = "#f2777a"
+  untracked = "#ffcc66"
+  branch = "#2d2d2d" "#6699cc"
+  # Because the phrase "Detached HEAD" isn't unnerving enough
+  nobranch = bold ul blink "#f99157"
+[color "diff"]
+  meta = "#515151"
+  func = "#cc99cc"
+  frag = "#66cccc"
+  context = "#999999"
+  old = "#b05555"
+  new = "#bef2be"
 [format]
   pretty = format:%h %Cblue%ai%Creset %<(33,trunc)%ae %Cblue%d%Creset %Cgreen%s%Creset
 [diff "sopsdiff"]

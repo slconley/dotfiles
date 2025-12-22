@@ -52,7 +52,8 @@ PROMPT_DIRTRIM=2
 export BASH_SILENCE_DEPRECATION_WARNING=1
 export PROMPT_DIRTRIM HISTFILE
 touch $HISTFILE 2> /dev/null || HISTFILE="$(eval cd ~$USER && pwd)/${NICK}/bash.histfile.${HIST_DTG}"
-savehist() { history -a; }
+readhist() { history -r $HISTFILE_GLOBAL; history -r; }
+savehist() { history -a $HISTFILE_GLOBAL; history -a; }
 
 # --------------------------------------------------
 # root specific tweak(s)

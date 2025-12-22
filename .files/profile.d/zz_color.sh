@@ -2,7 +2,7 @@ export COLOR_GREP="--color=always"
 export COLOR_LS="--color=always"
 export COLOR_JQ="-C"
 
-alias c+="COLOR_GREP='--color=always' COLOR_LS='--color=always'"
+alias c+="COLOR_GREP='--color=always' COLOR_LS='--color=always' COLOR_JQ='-C'"
 alias c-="COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"
 
 # --------------------------------------------------------------------------------
@@ -12,13 +12,14 @@ alias c-="COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"
 #   - having grc color always on messes up completion for grc-fronted commands
 #   - use the 'c-' alias to disable when necessary
 # --------------------------------------------------------------------------------
-[ "$ZSH_NAME" ] && GRC="$commands[grc]"
-[ "$BASH" ] && GRC="$(type -p grc)"
+declare -a GRC GRC_NORM
+[ "$ZSH_NAME" ] && GRC=($commands[grc])
+[ "$BASH" ] && GRC=($(type -p grc))
 
 [ "$TERM" = dumb ] || [ -z "$GRC" ] && return
 
-declare -a GRC_OPTIONS
-GRC_OPTIONS=(-es --colour=on); export GRC GRC_OPTIONS
+GRC=(grc -es --colour=on); export GRC
+GRC_NORM=(${GRC[@]})
 
 # disabled commands: dnf yum
 color_cmds=(
@@ -31,11 +32,15 @@ color_cmds=(
 )
 
 if [ "$ZSH_NAME" ]; then
-  for c in ${color_cmds[@]} ; do [ "$commands[$c]" ] && $c() { $GRC $GRC_OPTIONS ${commands[$0]} "$@";}; done
+  alias c+="GRC=(grc -es --colour=on) GRC_NORM=($GRC) COLOR_GREP='--color=always' COLOR_LS='--color=always' COLOR_JQ='-C' "
+  alias c-="GRC=command GRC_NORM='' COLOR_LS='--color=never' COLOR_JQ='-M'"
+  for c in ${color_cmds[@]} ; do [ "$commands[$c]" ] && $c() { $GRC ${commands[$0]} "$@";}; done
+  _grc_off()   { GRC=''; comppostfuncs+=(_grc_reset); return 1; }  # always disable during completion
+  _grc_reset() { GRC=($GRC_NORM); }
+  zstyle ':completion:*' completer _grc_off _complete _ignored
 else
-  for c in ${color_cmds[@]} ; do alias ${c}="color $c"; done
+  alias c+="GRC='grc -es --colour=on' GRC_NORM=($GRC) COLOR_GREP='--color=always' COLOR_LS='--color=always' COLOR_JQ='-C' "
+  alias c-="GRC=() GRC=command COLOR_LS='--color=never' COLOR_JQ='-M'"
+  for c in ${color_cmds[@]} ; do eval function $c ' { ${GRC[@]} '$c' $@; } '; done
 fi
 
-alias color='$GRC $GRC_OPTIONS'
-alias c+="GRC='grc' GRC_OPTIONS=(-es --colour=on) COLOR_GREP='--color=always' COLOR_LS='--color=always'"
-alias c-="GRC='' GRC_OPTIONS=() COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"

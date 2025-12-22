@@ -32,10 +32,12 @@
 setopt auto_cd
 setopt auto_pushd
 setopt chase_links
+setopt extended_glob
 setopt magic_equal_subst
 setopt no_beep
 setopt no_nomatch
 setopt notify
+setopt prompt_subst
 setopt pushd_silent
 setopt rm_star_silent
 setopt transient_rprompt
@@ -57,10 +59,11 @@ export PERIOD
 # non-env variables
 # --------------------------------------------------
 #context='%{\e[0;32m%}%n@%m'   # becomes part of prompt
+profile_dirs=($PROFILES $LPROFILES)
 watch=notme
 
 # --------------------------------------------------
-# some generic autoload stuff
+# keep terminal app title text current
 # --------------------------------------------------
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd header
@@ -87,35 +90,9 @@ autoload -Uz down-line-or-beginning-search
 zle -N up-line-or-beginning-search up-line-or-beginning-search
 zle -N down-line-or-beginning-search down-line-or-beginning-search
 
-# --------------------------------------------------
-# initialize completion
-# --------------------------------------------------
-# alias compinit='compinit -C -d $XDG_RUNTIME_DIR/zsh/zcompdump'
-alias compinit='compinit -u -d $XDG_RUNTIME_DIR/zsh/zcompcache'
-autoload -Uz compinit bashcompinit && compinit && bashcompinit
-zstyle ':completion:*' use-cache on
-zstyle ':completion::complete:*' cache-path $XDG_RUNTIME_DIR/zsh/zcompcache
-# Complete the alias when _expand_alias is used as a function
-zstyle ':completion:*' complete true
-
-# autocomplete options for cd instead of directory stack
-# zstyle ':completion:*' complete-options true
-
-# sort file completions by mtime
-# zstyle ':completion:*' file-sort modification
-
-
-# --------------------------------------------------
-# functions
-# --------------------------------------------------
-..() { builtin cd ..; }
-s()  { savehist; sudo -sE HOME=$HOME ; readhist; }
-tmux-refresh-env() { eval $(tmux showenv -s 2>/dev/null); }
-
 # ------------------------------------------------------------
 # VCS aware prompt
 # ------------------------------------------------------------
-setopt prompt_subst
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' actionformats '|%F{2}%b%f|%F{1}%a'
@@ -154,6 +131,19 @@ for f in $LPROFILES/{,$SUBENV}/{,.late}/*.{,z}sh ; source $f
 setopt nonullglob
 unset f
 
+# --------------------------------------------------
+# COMPLETION...
+# general order of things: fpath, zstyle, autoload, then compinit
+# --------------------------------------------------
+
+# --------------------------------------------------
+# where to potentially find more completion functions
+# --------------------------------------------------
+declare -a fplist
+fplist=( /usr/local/share/zsh-completions $XDG_RUNTIME_DIR/zsh/functions ~/.files/share/zsh/functions )
+for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
+unset d fplist
+
 # ----------------------------------------------------------------------
 # from: http://hintsforums.macworld.com/archive/index.php/t-6493.html
 # ----------------------------------------------------------------------
@@ -163,9 +153,6 @@ unset f
 #zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 ## case-insensitive,partial-word and then substring completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
-# completion caching
-# zstyle ':completion::complete:*' use-cache 1
 
 # see details when completing filenames
 # zstyle ':completion:*' file-list all
@@ -197,7 +184,7 @@ zstyle ':completion:*:*:ta:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
 # my_accounts=($my_accounts $users)
 # for h in $hosts ; do
 #   my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
-  # my_accounts=($my_accounts @$h)
+#   my_accounts=($my_accounts @$h)
 #   for d in $domains ; do
 #     my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
 #   done
@@ -229,34 +216,55 @@ zstyle ':completion:*:users' users $my_accounts $users
 # [ -r ~/.ssh/known_hosts ] && myhosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || myhosts=()
 # zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
 
-declare -a fplist
-fplist=( /usr/local/share/zsh-completions $XDG_RUNTIME_DIR/zsh/functions ~/.files/zsh.d/functions )
-for d in $fplist; { [ -d "$d" ] && fpath=($d $fpath); }
-unset d fplist
+# complete the alias when _expand_alias is used as a function
+zstyle ':completion:*' complete true
+
+# autocomplete options for cd instead of directory stack
+# zstyle ':completion:*' complete-options true
+
+# sort file completions by mtime
+# zstyle ':completion:*' file-sort modification
+
+compctl -g '*' -W /etc/init.d start status stop restart
+compctl -k "(all rhel7 rhel8)" -x 'p[2]' -f -- dist2
+compctl -g '*' -W $XDG_CONFIG_HOME/myconfig myconfig
+compctl -W profile_dirs -/ getenv
+
+# --------------------------------------------------
+# and finally... cache setup, autoload, and init
+# --------------------------------------------------
+ZSH_CACHE="$XDG_CACHE_HOME/zsh/zcompcache"; export ZSH_CACHE
+[ -d "$ZSH_CACHE" ] || mkdir -p "$ZSH_CACHE"
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$ZSH_CACHE"
+
+autoload -Uz compinit
+zcompdump="$ZSH_CACHE/zcompdump-${ZSH_VERSION}-$HOST"
+[[ -n ${zcompdump}(#qN.mh+24) ]] && compinit -C -d "$zcompdump" || compinit -d "$zcompdump"
+autoload -Uz bashcompinit; bashcompinit
+
+# ----------------------------------------
+# compdef statements must come after compinit
+# ----------------------------------------
+compdef _pssh pssh pscp
+compdef _path_commands h hh hhh
+compdef _vars e
+
+# ----------------------------------------
+# one-liner completion(s)
+# ----------------------------------------
+_pssh() { _arguments : '-h+:hosts:( $XDG_CONFIG_HOME/enum/hosts/*(DN) )' '*: : _default' ;}
 
 # ------------------------------
 # fallback completion for aws
+# (keep this post-bashcompinit)
 # ------------------------------
-[ "${functions[aws]}" ] && {
+[ "${functions[aws]}" ] || [ "${commands[aws]}" ] && {
   declare -a aws_completer_scripts
   aws_completer_scripts=( "${commands[aws]%%aws}aws_zsh_completer.sh" /usr/local/share/zsh/site-functions/aws_zsh_completer.sh /usr/bin/aws_zsh_completer.sh )
   for f in ${aws_completer_scripts[@]}; { [ -f $f ] && source $f && break; }		# first match wins
   unset f aws_completer_scripts
 }
-
-profile_dirs=($PROFILES $LPROFILES)
-compctl -g '*' -W /etc/init.d start status stop restart
-compctl -k "(all rhel7 rhel8)" -x 'p[2]' -f -- dist2
-compctl -g '*' -W $XDG_CONFIG_HOME/myconfig myconfig
-compctl -W profile_dirs -/ getenv
-compdef _vars e
-complete -o nospace -C /usr/local/bin/terraform terraform
-
-# ------------------------------------------------------------------------------------------
-_pssh() { _arguments : '-h+:hosts:( ~/.local/pssh-hosts/*(DN) )' '*: : _default' ;}
-compdef _pssh pssh pscp
-compdef _path_commands h hh hhh
-# ------------------------------------------------------------------------------------------
 
 # --------------------
 # remove dupes
@@ -268,7 +276,7 @@ typeset -U path cdpath manpath fpath
 # ----------------------------------------------------------------------
 # unsetopt xtrace
 # exec 2>&3 3>&-
-# zprof            # for profiling
+# zprof
 
 # --------------------
 # muxrc

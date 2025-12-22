@@ -1,0 +1,7 @@
+#compdef terraform
+_terraform() {
+  typeset -f bashcompinit >/dev/null || { autoload -U +X bashcompinit && bashcompinit }
+  complete -o nospace -C "${commands[terraform]}" terraform
+  _bash_complete
+}
+_terraform "$@"

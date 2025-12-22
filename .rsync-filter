@@ -1,7 +1,9 @@
 # exclude these everywhere
 - *.swp
 - .DS_Store
+- .archive
 - .git
+- *~
 
 # this-level excludes
 # - /.fzf/
