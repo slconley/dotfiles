@@ -155,9 +155,10 @@ alias du='du -h'
 alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
 alias grep='grep -Ed skip $COLOR_GREP --exclude-dir *git'
 alias gs='git status -s'
-alias l.='$GRC $GRC_OPTIONS ls -Fd $COLOR_LS .* 2> /dev/null'
-alias ls='$GRC $GRC_OPTIONS ls -F $COLOR_LS'
-alias ll='$GRC $GRC_OPTIONS ls -laF $COLOR_LS'
+alias l.='ls -Fd $COLOR_LS .* 2> /dev/null'
+alias ls='ls -F $COLOR_LS'
+alias ll='ls -laF $COLOR_LS'
+alias lt='ls -lrtF $COLOR_LS'
 alias mkdir='mkdir -p'
 alias mls='tmux ls 2>/dev/null || screen -ls >/dev/null 2>&1;'
 alias now="date -u '+%Y%m%dT%H%M%SZ'"
@@ -171,7 +172,7 @@ alias sls='screen -ls'
 alias sops='TERM=xterm sops'
 alias t='tmux'
 alias ta='tmux attach -d -t'
-alias take='sudo chown -R ${USER}: $*'
+alias take='sudo chown -Rh ${USER}: $*'
 alias tls='tmux ls'
 alias tf='terraform'
 alias tg='terragrunt'
@@ -214,13 +215,12 @@ hhh()      { grep -ih $1 $HISTDIR/../*/* 2>/dev/null | cut -d ';' -f2- | sort -u
 io()       { iostat -xnmz $* 3; }
 l()        { command ls -F $COLOR_LS $*; }
 loc()      { ( locate -i $1; eval gzip -dc $INDICES 2> /dev/null) | grep -i $COLOR_GREP $1; }
-lt()       { $GRC $GRC_OPTIONS ls -lrtF $COLOR_LS $*; }
 otr()      { savehist; unset HISTFILE HISTFILE_GLOBAL; readhist() { :; }; savehist() { :; }; }
 p()        { $PAGER $*;}
 passgen()  { local l=${1:=24}; head -${l} /dev/urandom | base64 | rev | cut -c${l}- | base64 | cut -c1-${l};}
 pod()      { pod2text --code $* | $PAGER; }
 pscpu()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "COMMAND|$*."|grep -v grep|sort -k4; }
-psg()      { $GRC $GRC_OPTIONS ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
+psg()      { ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
 psmem()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "COMMAND|$*."|grep -v grep|sort -k6; }
 pss()      { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k2; }
 pstime()   { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k5; }
@@ -234,7 +234,7 @@ status()   { systemctl status "$1"; }
 stop()     { systemctl stop "$1"; }
 tcp()      { lsof -i tcp | grep -i "$@" ; }
 tgz()      { tar cvzf "${1}".tar "$1"; }
-zipit()    { zip -ry "${1}".zip "$1"; }
+zipit()    { zip -roy "${1}".zip "$1"; }
 
 showcerts()        { openssl s_client -connect "$1" -servername "${1%:*}" -showcerts < /dev/null; }
 sourcevault()      { source <(ansible-vault view "$@"); }

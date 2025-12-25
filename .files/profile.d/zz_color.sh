@@ -18,6 +18,13 @@ declare -a GRC GRC_NORM
 
 [ "$TERM" = dumb ] || [ -z "$GRC" ] && return
 
+# common aliases/functions
+alias l.='$GRC $GRC_OPTIONS ls -Fd $COLOR_LS .* 2> /dev/null'
+alias ls='$GRC $GRC_OPTIONS ls -F $COLOR_LS'
+alias ll='$GRC $GRC_OPTIONS ls -laF $COLOR_LS'
+alias lt='$GRC $GRC_OPTIONS ls -lrtF $COLOR_LS'
+psg() { $GRC $GRC_OPTIONS ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
+
 GRC=(grc -es --colour=on); export GRC
 GRC_NORM=(${GRC[@]})
 
@@ -33,14 +40,14 @@ color_cmds=(
 
 if [ "$ZSH_NAME" ]; then
   alias c+="GRC=(grc -es --colour=on) GRC_NORM=($GRC) COLOR_GREP='--color=always' COLOR_LS='--color=always' COLOR_JQ='-C' "
-  alias c-="GRC=command GRC_NORM='' COLOR_LS='--color=never' COLOR_JQ='-M'"
+  alias c-="GRC=command GRC_NORM='' COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"
   for c in ${color_cmds[@]} ; do [ "$commands[$c]" ] && $c() { $GRC ${commands[$0]} "$@";}; done
   _grc_off()   { GRC=''; comppostfuncs+=(_grc_reset); return 1; }  # always disable during completion
   _grc_reset() { GRC=($GRC_NORM); }
   zstyle ':completion:*' completer _grc_off _complete _ignored
 else
   alias c+="GRC='grc -es --colour=on' GRC_NORM=($GRC) COLOR_GREP='--color=always' COLOR_LS='--color=always' COLOR_JQ='-C' "
-  alias c-="GRC=() GRC=command COLOR_LS='--color=never' COLOR_JQ='-M'"
+  alias c-="GRC=() GRC=command COLOR_GREP='--color=never' COLOR_LS='--color=never' COLOR_JQ='-M'"
   for c in ${color_cmds[@]} ; do eval function $c ' { ${GRC[@]} '$c' $@; } '; done
 fi
 

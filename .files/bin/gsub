@@ -8,7 +8,8 @@
 cur_text=$1; shift
 new_text=$1; shift
 
-for file in `grep -rl "$cur_text" $*`; do
+
+for file in $(grep -rl "$cur_text" $*); do
   sed "s/$cur_text/$new_text/g" $file > $file.$$
   mv $file.$$ $file
 done
