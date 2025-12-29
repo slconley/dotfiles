@@ -175,55 +175,21 @@ zstyle ':completion:*:*:ta:*:sockets' socketdir "${TMUX_TMPDIR}/tmux-${UID}"
 # ----------------------------------------
 # account completion via defined config
 # ----------------------------------------
-# TODO: revisit and clean up user/host/domain completion setup
-[ -d $XDG_CONFIG_HOME/enum/domains ] && domains=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/domains/* 2>/dev/null)) || domains=()
 [ -d $XDG_CONFIG_HOME/enum/hosts ] && hosts=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/hosts/* 2>/dev/null)) || hosts=()
 [ -d $XDG_CONFIG_HOME/enum/users ] && users=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/users/* 2>/dev/null)) || users=()
-# accounts_spec=($users)
-# my_accounts=($my_accounts $(eval echo $accounts_spec))
-# my_accounts=($my_accounts $users)
-# for h in $hosts ; do
-#   my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h))
-#   my_accounts=($my_accounts @$h)
-#   for d in $domains ; do
-#     my_accounts=($my_accounts $(eval echo ${accounts_spec}@$h.$d))
-#   done
-# done
-# unset d h accounts_spec
+[ -d $XDG_CONFIG_HOME/enum/users-hosts ] && my_accounts=($(cut -d# -f1 $XDG_CONFIG_HOME/enum/users-hosts/* 2>/dev/null)) || my_accounts=()
 
-# khostfiles=(~/.ssh/known_hosts $XDG_CONFIG_HOME/enum/hosts/*)
-khostfiles=( ~/.ssh/known_hosts )
-zstyle ':completion:*:hosts' known-hosts-files $khostfiles
+users=( $USERNAME $users "${(@)${(@)${(@f)$(< /etc/passwd)}:#\#*}%%:*}" )
 
-# my_accounts=($my_accounts $(cut -d: -f1 /etc/passwd))
-# for d in /home/*; do my_accounts=($my_accounts ${d##*/}); done
-# for f in $XDG_CONFIG_HOME/enum/users/*; do
-#   [ -f $f ] && my_accounts=($my_accounts $(cut -d# -f1 $f))
-# done
-zstyle ':completion:*:users' users $my_accounts $users
+zstyle ':completion:*:users' users $users
+zstyle ':completion:*:hosts' hosts $hosts
+zstyle ':completion:*:hosts' known-hosts-files ~/.ssh/known_hosts
+zstyle ':completion:*:my-accounts' users-hosts $my_accounts
 
-# --------------------------------------------------
-# this must occur after defining 'my_accounts'
-# --------------------------------------------------
-# zstyle ':completion:*:my-accounts' users-hosts $my_accounts 
-# zstyle ':completion:*:my-accounts' users-hosts ${my_accounts[@]}
-# zstyle ':completion:*:my-accounts' hosts ${my_accounts[@]}
-# zstyle ':completion:*:my-accounts' hosts $my_accounts
+zstyle ':completion:*:(ssh|scp|rsync):*' tag-order my-accounts hosts users
 
-# ----------------------------------------
-# hostname completion via known_hosts
-# ----------------------------------------
-# [ -r ~/.ssh/known_hosts ] && myhosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || myhosts=()
-# zstyle -e ':completion:*:hosts' hosts 'reply=($myhosts)'
-
-# complete the alias when _expand_alias is used as a function
+# complete aliases identically to the command the alias calls
 zstyle ':completion:*' complete true
-
-# autocomplete options for cd instead of directory stack
-# zstyle ':completion:*' complete-options true
-
-# sort file completions by mtime
-# zstyle ':completion:*' file-sort modification
 
 compctl -g '*' -W /etc/init.d start status stop restart
 compctl -k "(all rhel7 rhel8)" -x 'p[2]' -f -- dist2
@@ -231,16 +197,16 @@ compctl -g '*' -W $XDG_CONFIG_HOME/myconfig myconfig
 compctl -W profile_dirs -/ getenv
 
 # --------------------------------------------------
-# and finally... cache setup, autoload, and init
+# cache setup, autoload, and init
 # --------------------------------------------------
 ZSH_CACHE="$XDG_CACHE_HOME/zsh/zcompcache"; export ZSH_CACHE
-[ -d "$ZSH_CACHE" ] || mkdir -p "$ZSH_CACHE"
-zstyle ':completion:*' use-cache on
+[ -d "$ZSH_CACHE" ] || mkdir -m 700 -p "$ZSH_CACHE"
 zstyle ':completion:*' cache-path "$ZSH_CACHE"
+zstyle ':completion:*' use-cache on
 
 autoload -Uz compinit
-zcompdump="$ZSH_CACHE/zcompdump-${ZSH_VERSION}-$HOST"
-[[ -n ${zcompdump}(#qN.mh+24) ]] && compinit -C -d "$zcompdump" || compinit -d "$zcompdump"
+zcompdump="$ZSH_CACHE/zcompdump-${HOST}-${ZSH_VERSION}"
+[[ -n "${zcompdump}(#qN.mh+24)" ]] && compinit -C -d "$zcompdump" || compinit -d "$zcompdump"
 autoload -Uz bashcompinit; bashcompinit
 
 # ----------------------------------------

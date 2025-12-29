@@ -13,7 +13,7 @@ setopt hist_reduce_blanks
 # reminder... if HISTORY_IGNORE not completely working, you are potentially using an older zsh
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
 HISTFILE_GLOBAL="$HISTBASE/.global/zsh.global"
-HISTORY_IGNORE='( |AWS|HIST|c[dp] |d[fu] |e[bmsz ]|exec |h[h]* |l[lst ]|lpass|man |mv |open |otr|p |psg |rm |s|sleep|which)*'
+HISTORY_IGNORE='( |AWS|HIST|cp |d[fu] |e[bmsz ]|exec |h[h]* |l[lst ]|lpass|man |mv |open |otr|p |psg |rm |s|sleep|which)*'
 SAVEHIST=$HISTSIZE
 export HISTFILE HISTORY_IGNORE SAVEHIST
 
