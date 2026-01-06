@@ -173,7 +173,6 @@ alias sops='TERM=xterm sops'
 alias t='tmux'
 alias ta='tmux attach -d -t'
 alias take='sudo chown -Rh ${USER}: $*'
-alias tls='tmux ls'
 alias tf='terraform'
 alias tg='terragrunt'
 alias tlog='tail -f $* $SYSLOG'
@@ -185,7 +184,8 @@ alias vm='VBoxManage'
 alias which='which -a'
 
 # conditional alias(es)
-# [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
+[[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
+[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
 # ----------------------------------------------------------------------
 # functions
@@ -246,6 +246,11 @@ tmux-refresh-env() { eval $(tmux showenv -s 2>/dev/null); }
 [ -d $XDG_RUNTIME_DIR/ssh ] || source $HOME/.files/bin/runonce
 
 # ----------------------------------------
+# don't bother with ssh agent for root
+# ----------------------------------------
+[ "$EUID" = 0 ] && return
+
+# ----------------------------------------
 # configure ssh agent/auth
 # ----------------------------------------
 authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock
@@ -253,6 +258,5 @@ authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock
 ssh-add -l >/dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile && SSH_AUTH_SOCK=""; }
 [ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
 [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
-[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
 
 # vi: filetype=zsh

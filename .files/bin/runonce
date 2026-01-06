@@ -18,6 +18,7 @@ for d in "${transient_dirs[@]}"; do rm -rf "$d" &&  mkdir -m 700 -p "$d"; done;
 # ----------------------------------------
 # some manual completion items
 # ----------------------------------------
-command kubectl completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_kubectl 2> /dev/null
-command helm completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_helm 2> /dev/null
+for c in colima helm kubectl oc podman; do
+  command $c completion zsh > $XDG_RUNTIME_DIR/zsh/functions/_$c 2> /dev/null
+done
 

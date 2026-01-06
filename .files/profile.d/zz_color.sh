@@ -45,9 +45,9 @@ fi
 
 # common aliases/functions
 alias c-="GRC=(command) GRC_NORM='' COLOR_GREP=--color=never COLOR_LS=--color=never COLOR_JQ=-M S_COLORS=never"
-alias l.='$GRC $GRC_OPTIONS ls -Fd $COLOR_LS .* 2> /dev/null'
-alias ls='$GRC $GRC_OPTIONS ls -F $COLOR_LS'
-alias ll='$GRC $GRC_OPTIONS ls -laF $COLOR_LS'
-alias lt='$GRC $GRC_OPTIONS ls -lrtF $COLOR_LS'
-psg() { $GRC $GRC_OPTIONS ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
+alias l.='$GRC ls -Fd $COLOR_LS .* 2> /dev/null'
+alias ls='$GRC ls -F $COLOR_LS'
+alias ll='$GRC ls -laF $COLOR_LS'
+alias lt='$GRC ls -lrtF $COLOR_LS'
+psg() { $GRC ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
 
