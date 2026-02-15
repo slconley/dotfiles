@@ -26,31 +26,29 @@ fi
 
 export HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
-export NICK=${HOST}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
+export NICK=${NICK:=${HOST}}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
 
-export HISTBASE=$HOME/.var/hist
 export HIST_DTG="$(/bin/date '+%Y%m')"
-export HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+export HISTBASE=${HISTBASE:=$HOME/.var/hist}
+export HISTDIR=${HISTDIR:=$HISTBASE/$NICK}; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
 export HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
 export HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
 
-export LOGDIR=~/.var/log/$NICK; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
+export LOGDIR=${LOGDIR:="~/.var/log/$NICK"}; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
 
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
-export XDG_STATE_HOME=$HOME/.local/state
-
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:=$HOME/.config}
+export XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
+export XDG_STATE_HOME=${XDG_STATE_HOME:=$HOME/.local/state}
 
 [ -d /run/user/$EUID ] && XDG_RUNTIME_DIR=/run/user/$EUID
-[ "$EUID" = 0 ] && XDG_RUNTIME_DIR=/tmp/run/users/0
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=~/.run/$HOST}
-export XDG_CACHE_HOME=$XDG_RUNTIME_DIR/cache
+export XDG_CACHE_HOME=${XDG_CACHE_HOME:=$XDG_RUNTIME_DIR/cache}
 
 export OSNAME="$(uname -s)"
 export OSREL="$(uname -r)"
 export OS="$OSNAME$OSREL"
 
-export SHELL=${commands[zsh]:-${BASH}}
+export SHELL=${commands[zsh]:=${BASH}}
 export TMPDIR=$XDG_RUNTIME_DIR/tmp; TEMP=$TMPDIR
 export VSC_TMP=$XDG_RUNTIME_DIR/vscode
 
@@ -91,7 +89,7 @@ export EDITOR=vi
 export FUNCNEST=25
 export FZF_DEFAULT_OPTS='-e --ansi --no-mouse'
 export GPG_TTY=$TTY
-export GNUPGHOME=${GNUPGHOME:-$HOME/.gnupg}
+export GNUPGHOME=${GNUPGHOME:=$HOME/.gnupg}
 export GREP_COLOR='01;32'
 export GREP_COLORS='ms=01;32:mc=01;32:sl=:cx=:fn=36:ln=33:bn=33:se=36'
 export GROK="$HOME/opt/share/grok $HOME/.local/grok $XDG_CONFIG_HOME/cheat/cheatsheets/*"
@@ -101,11 +99,11 @@ export HISTSIZE_GLOBAL=999999
 export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE
 export LANG=${LANG:=en_US.UTF-8}
-export LC_COLLATE=${LC_COLLATE:-C}
+export LC_COLLATE=${LC_COLLATE:=C}
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
 export LESS='-aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t'
 export LESSOPEN="|$HOME/.files/bin/see %s"
-export INDICES="$HOME/.local/indices/* $HOME/*/.index* /Volumes/Vault/.index*"
+export INDICES="$HOME/.local/indices/*.gz $HOME/*/.index*.gz /Volumes/Vault/.index*.gz"
 export PACKER_CONFIG_DIR=$XDG_DATA_HOME/packer
 export PACKER_CACHE_DIR=$XDG_CACHE_HOME/packer
 export PAGER=more
@@ -124,7 +122,7 @@ SYSLOG=(/var/log/{messages,secure}); export SYSLOG
 # ------------------------------------------------------------
 # some conditional items
 # ------------------------------------------------------------
-[ -d ~/.local/profile.d/$NICK ] && SUBENV=$NICK
+[ -d "~/.local/profile.d/$NICK" ] && SUBENV="$NICK"
 [ "$SUBENV" ] || export SUBENV=default
 which less >/dev/null 2>&1 && PAGER=less && alias pp="vim --cmd 'let no_plugin_maps = 1' -c 'runtime! macros/less.vim'"  # TODO: make this better (see other TODO)
 which vim  >/dev/null 2>&1 && EDITOR=vim

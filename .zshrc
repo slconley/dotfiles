@@ -27,6 +27,11 @@
 [ -f $HOME/.globalrc ] && source $HOME/.globalrc
 
 # --------------------------------------------------
+# remainder is specific to interactive shells
+# --------------------------------------------------
+[ "$PS1" ] || return
+
+# --------------------------------------------------
 # shell options
 # --------------------------------------------------
 setopt auto_cd
@@ -205,7 +210,7 @@ zstyle ':completion:*' cache-path "$ZSH_CACHE"
 zstyle ':completion:*' use-cache on
 
 autoload -Uz compinit
-zcompdump="$ZSH_CACHE/zcompdump-${HOST}-${ZSH_VERSION}"
+zcompdump="$ZSH_CACHE/zcompdump-${NICK}-${ZSH_VERSION}"
 [[ -n "${zcompdump}(#qN.mh+24)" ]] && compinit -C -d "$zcompdump" || compinit -d "$zcompdump"
 autoload -Uz bashcompinit; bashcompinit
 
