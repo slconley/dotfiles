@@ -242,6 +242,11 @@ _pssh() { _arguments : '-h+:hosts:( $XDG_CONFIG_HOME/enum/hosts/*(DN) )' '*: : _
 # --------------------
 typeset -U path cdpath manpath fpath 
 
+# ----------------------------------------
+# in case sourced files add any completion
+# ----------------------------------------
+compinit -u
+
 # ----------------------------------------------------------------------
 # disable exhaustive tracing - this is paired with section at the top
 # ----------------------------------------------------------------------
