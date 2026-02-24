@@ -26,7 +26,7 @@ fi
 
 export HOST=${HOST:=${HOSTNAME}}; HOST=${HOST%%.*}
 [[ $HOST = ip-* ]] && HOST="$(hostnamectl 2>/dev/null | grep Pretty | cut -d: -f2 | cut -c2-)"
-export NICK=${NICK:=${HOST}}; [[ -f ~/.nickname ]] && NICK=$(cat "~/.nickname")
+export NICK=${NICK:=${HOST}}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nickname")
 
 export HIST_DTG="$(/bin/date '+%Y%m')"
 export HISTBASE=${HISTBASE:=$HOME/.var/hist}
@@ -34,14 +34,13 @@ export HISTDIR=${HISTDIR:=$HISTBASE/$NICK}; [ -d "$HISTDIR" ] || mkdir -p $HISTD
 export HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
 export HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
 
-export LOGDIR=${LOGDIR:="~/.var/log/$NICK"}; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
+export LOGDIR=${LOGDIR:="$HOME/.var/log/$NICK"}; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
 
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:=$HOME/.config}
 export XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
 export XDG_STATE_HOME=${XDG_STATE_HOME:=$HOME/.local/state}
 
-[ -d /run/user/$EUID ] && XDG_RUNTIME_DIR=/run/user/$EUID
-export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=~/.run/$HOST}
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=$HOME/.run/$HOST}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:=$XDG_RUNTIME_DIR/cache}
 
 export OSNAME="$(uname -s)"
@@ -52,8 +51,8 @@ export SHELL=${commands[zsh]:=${BASH}}
 export TMPDIR=$XDG_RUNTIME_DIR/tmp; TEMP=$TMPDIR
 export VSC_TMP=$XDG_RUNTIME_DIR/vscode
 
-export PROFILES=~/.files/profile.d
-export LPROFILES=~/.local/profile.d
+export PROFILES=$HOME/.files/profile.d
+export LPROFILES=$HOME/.local/profile.d
 
 # ----------------------------------------------------------------------
 # capture current PATH for cygwin/msys before making any changes
@@ -122,7 +121,7 @@ SYSLOG=(/var/log/{messages,secure}); export SYSLOG
 # ------------------------------------------------------------
 # some conditional items
 # ------------------------------------------------------------
-[ -d "~/.local/profile.d/$NICK" ] && SUBENV="$NICK"
+[ -d "$HOME/.local/profile.d/$NICK" ] && SUBENV="$NICK"
 [ "$SUBENV" ] || export SUBENV=default
 which less >/dev/null 2>&1 && PAGER=less && alias pp="vim --cmd 'let no_plugin_maps = 1' -c 'runtime! macros/less.vim'"  # TODO: make this better (see other TODO)
 which vim  >/dev/null 2>&1 && EDITOR=vim
@@ -148,6 +147,7 @@ unset TMOUT
 # ----------------------------------------------------------------------
 alias @='curl http://ipinfo.io/'
 alias \#=:    # allows comments to be pasted into command buffer along with commands
+alias cp='cp -p'
 alias df='df -h'
 alias du='du -h'
 alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
@@ -183,7 +183,7 @@ alias which='which -a'
 
 # conditional alias(es)
 [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
-[ -f ~/.ssh/config ] && alias scp='scp -F ~/.ssh/config' && alias ssh='ssh -F ~/.ssh/config'
+[ -f $HOME/.ssh/config ] && alias scp='scp -F $HOME/.ssh/config' && alias ssh='ssh -F $HOME/.ssh/config'
 
 # ----------------------------------------------------------------------
 # functions
@@ -193,12 +193,12 @@ a()        { apropos $* 2> /dev/null; }
 c()        { clear; }
 colormap() { for i in {0..255}; do printf "\x1b[38;5;${i}mcolor${i}\n"; done; }
 bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
-defpass()  { gzip -dc ~/share/etc/passwords/* | grep -i $*; }
-dx()       { docker run -ith dx --rm -e HOME=$HOME -v ~:$HOME $* $PREFSHELL; }
+defpass()  { gzip -dc $HOME/share/etc/passwords/* | grep -i $*; }
+dx()       { docker run -ith dx --rm -e HOME=$HOME -v $HOME:$HOME $* $PREFSHELL; }
 e()        { (set;command env)| grep -Eva '^[_	 ]' | sort -u | grep -Eai $COLOR_GREP $*; }
 eb()       { savehist; export PREFSHELL=bash; exec bash -l;}
 errno()    { less -p $1 $errfile; }
-em()       { savehist; emforce=1; source ~/.muxrc; }
+em()       { savehist; emforce=1; source $HOME/.muxrc; }
 es()       { savehist; screen $SCREEN_OPTS -RR; }
 et()       { savehist; tmux; }
 ez()       { savehist; export PREFSHELL=zsh; exec zsh -l;}
@@ -241,7 +241,7 @@ tmux-refresh-env() { eval $(tmux showenv -s 2>/dev/null); }
 # --------------------------------------------------
 # the non-existence of this dir triggers a 'runonce'
 # --------------------------------------------------
-[ -d $XDG_RUNTIME_DIR/ssh ] || source $HOME/.files/bin/runonce
+[ -d $XDG_RUNTIME_DIR/ssh ] || $HOME/.files/bin/runonce
 
 # ----------------------------------------
 # don't bother with ssh agent for root
