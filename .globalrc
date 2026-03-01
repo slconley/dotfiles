@@ -30,7 +30,7 @@ export NICK=${NICK:=${HOST}}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nic
 
 export HIST_DTG="$(/bin/date '+%Y%m')"
 export HISTBASE=${HISTBASE:=$HOME/.var/hist}
-export HISTDIR=${HISTDIR:=$HISTBASE/$NICK}; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+export HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
 export HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
 export HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
 
