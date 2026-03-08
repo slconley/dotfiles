@@ -30,11 +30,11 @@ export NICK=${NICK:=${HOST}}; [[ -f $HOME/.nickname ]] && NICK=$(cat "$HOME/.nic
 
 export HIST_DTG="$(/bin/date '+%Y%m')"
 export HISTBASE=${HISTBASE:=$HOME/.var/hist}
-export HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -p $HISTDIR
+export HISTDIR=$HISTBASE/$NICK; [ -d "$HISTDIR" ] || mkdir -m 700 -p $HISTDIR
 export HISTFILE=$HISTDIR/sh.histfile.${HIST_DTG}
 export HISTFILE_GLOBAL=$HISTBASE/.global/sh.histfile
 
-export LOGDIR=${LOGDIR:="$HOME/.var/log/$NICK"}; [ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
+export LOGDIR=${LOGDIR:="$HOME/.var/log/$NICK"}; [ -d "$LOGDIR" ] || mkdir -m 700 -p "$LOGDIR"
 
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:=$HOME/.config}
 export XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
@@ -42,6 +42,8 @@ export XDG_STATE_HOME=${XDG_STATE_HOME:=$HOME/.local/state}
 
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:=$HOME/.run/$HOST}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:=$XDG_RUNTIME_DIR/cache}
+
+export REGISTRY_AUTH_FILE=${REGISTRY_AUTH_FILE:=$XDG_RUNTIME_DIR/containers/auth.json}
 
 export OSNAME="$(uname -s)"
 export OSREL="$(uname -r)"
@@ -106,7 +108,6 @@ export INDICES="$HOME/.local/indices/*.gz $HOME/*/.index*.gz /Volumes/Vault/.ind
 export PACKER_CONFIG_DIR=$XDG_DATA_HOME/packer
 export PACKER_CACHE_DIR=$XDG_CACHE_HOME/packer
 export PAGER=more
-export PKG_CONFIG_PATH=/usr/share/pkgconfig
 export TMUX_TMPDIR=$XDG_RUNTIME_DIR/tmux
 export TOP="-s3"
 
@@ -150,10 +151,8 @@ alias \#=:    # allows comments to be pasted into command buffer along with comm
 alias cp='cp -p'
 alias df='df -h'
 alias du='du -h'
-alias fixauth='screen -X setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK"'
 alias grep='grep -Ed skip $COLOR_GREP --exclude-dir *git'
 alias gs='git status -s'
-alias l.='ls -Fd $COLOR_LS .* 2> /dev/null'
 alias ls='ls -F $COLOR_LS'
 alias ll='ls -laF $COLOR_LS'
 alias lt='ls -lrtF $COLOR_LS'
@@ -168,7 +167,7 @@ alias serial='screen /dev/ttyS0 9600'
 alias sha='openssl sha256'
 alias sls='screen -ls'
 alias sops='TERM=xterm sops'
-alias t='tmux'
+alias t='traceroute'
 alias ta='tmux attach -d -t'
 alias take='sudo chown -Rh ${USER}: $*'
 alias tf='terraform'
@@ -252,9 +251,9 @@ tmux-refresh-env() { eval $(tmux showenv -s 2>/dev/null); }
 # configure ssh agent/auth
 # ----------------------------------------
 authfile=$XDG_RUNTIME_DIR/ssh/auth/ssh_auth_sock
-[ -h $authfile ] && export SSH_AUTH_SOCK=$authfile
+[ -L $authfile ] && export SSH_AUTH_SOCK=$authfile
 ssh-add -l >/dev/null 2>&1 || { [ $? -eq 2 ] && rm -f $authfile && SSH_AUTH_SOCK=""; }
 [ -z "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
-[ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
+[ -S "$SSH_AUTH_SOCK" ] && [ ! -L "$SSH_AUTH_SOCK" ] && [ ! -e $authfile ] && ln -sf "$SSH_AUTH_SOCK" $authfile
 
 # vi: filetype=zsh
