@@ -98,11 +98,12 @@ export HISTCONTROL=ignoreboth
 export HISTSIZE=4999
 export HISTSIZE_GLOBAL=999999
 export HISTTIMEFORMAT='%F %T '
-export HISTFILESIZE=$HISTSIZE
+export HISTFILESIZE=$HISTSIZE_GLOBAL
 export LANG=${LANG:=en_US.UTF-8}
 export LC_COLLATE=${LC_COLLATE:=C}
 export LDAPTLS_REQCERT=require    # change to "allow" to relax this
 export LESS='-aiej10RSsMPM?f?mfile %i/%m. %f. ?lbline %lb?L/%L. :byte %bB?s/%s. .?e(END) ?x- Next\: %x.:?pB%pB\%..%t'
+export LESSHISTFILE="$XDG_RUN_HOME"
 export LESSOPEN="|$HOME/.files/bin/see %s"
 export INDICES="$HOME/.local/indices/*.gz $HOME/*/.index*.gz /Volumes/Vault/.index*.gz"
 export PACKER_CONFIG_DIR=$XDG_DATA_HOME/packer

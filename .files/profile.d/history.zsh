@@ -29,25 +29,23 @@ add-zsh-hook periodic savehist
 makehist() {
   local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE;
   for f in ${HISTBASE}/.global/zsh* $HISTDIR/zsh*[0-9]; do; fc -R "$f" 2> /dev/null; done;
-  fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
+  fc -W $HISTFILE_GLOBAL; fc -W  $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
 }
 
-# same concept but much more inclusive while attempting to still favor local host
+# same concept but much more inclusive while attempting to still favor current host
 MAKEHIST() {
-  setopt nullglob
+  setopt nullglob; local f
   [ -f "${HISTFILE_GLOBAL}" ] && cp -p "${HISTFILE_GLOBAL}" "${HISTFILE_GLOBAL}.${HIST_DTG}"
-  local f; savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
-  # fc -ln -t '%s' 1 | while read time cmd; do; printf ': %s:0;%s\n' $time $cmd; done | sort -no $HISTFILE_GLOBAL
+  savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
   for f in $HISTBASE/*/bash*[0-9] $HISTDIR/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done;
   for f in ${HISTBASE}/.global/zsh* $HISTBASE/*/zsh*[0-9] $HISTDIR/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done;
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
-  setopt nonullglob
+  # setopt nonullglob
 }
 
 trap 'savehist;' EXIT HUP TERM QUIT
 
 touch $HISTFILE 2> /dev/null || { [ -d ~$LOGNAME/... ] && HOME=~$LOGNAME/... && exec zsh }
-unset d
 
 # map <ctrl>e to invoke fc edit
 autoload -U edit-command-line
@@ -55,5 +53,5 @@ zle -N edit-command-line
 bindkey '\C-e' edit-command-line
 
 [ -d "$HISTDIR" ] || mkdir -m 700 -p $HISTDIR $HISTBASE/.global 2>/dev/null
-[ -f "$HISTFILE" ] && [ -f "$HISTFILE_GLOBAL" ] || { touch "$HISTFILE" "$HISTFILE_GLOBAL";  makehist; }
+[ -s "$HISTFILE" ] && [ -s "$HISTFILE_GLOBAL" ] || { touch "$HISTFILE" "$HISTFILE_GLOBAL";  makehist; }
 

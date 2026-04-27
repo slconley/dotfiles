@@ -42,6 +42,7 @@ setopt magic_equal_subst
 setopt no_beep
 setopt no_nomatch
 setopt notify
+setopt nullglob             # trial run for this
 setopt prompt_subst
 setopt pushd_silent
 setopt rm_star_silent
