@@ -5,7 +5,7 @@
 # ----------------------------------------
 # basic PATH
 # ----------------------------------------
-PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # ----------------------------------------
 # local globalrc comes first if it exists
@@ -95,8 +95,8 @@ export GREP_COLOR='01;32'
 export GREP_COLORS='ms=01;32:mc=01;32:sl=:cx=:fn=36:ln=33:bn=33:se=36'
 export GROK="$HOME/opt/share/grok $HOME/.local/grok $XDG_CONFIG_HOME/cheat/cheatsheets/*"
 export HISTCONTROL=ignoreboth
-export HISTSIZE=4999
-export HISTSIZE_GLOBAL=999999
+export HISTSIZE=10000
+export HISTSIZE_GLOBAL=9999999
 export HISTTIMEFORMAT='%F %T '
 export HISTFILESIZE=$HISTSIZE_GLOBAL
 export LANG=${LANG:=en_US.UTF-8}

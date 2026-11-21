@@ -21,7 +21,7 @@ h()   { fc -ln 1 | grep -i ${*:-''} | tail -50; }
 hh()  { fc -ln 1 | grep -i --color=always "$1"; }
 hhh() { readhist; fc -ln 1 | grep -ih $COLOR_GREP "$1" }
 readhist()      { savehist; HISTSIZE=$HISTSIZE_GLOBAL; fc -R $HISTFILE_GLOBAL; fc -R $HISTFILE; }
-savehist()      { [ "$HISTFILE" ] || return; fc -AI 2>/dev/null; SAVEHIST=$HISTSIZE_GLOBAL fc -AI "$HISTFILE_GLOBAL" 2>/dev/null; }
+savehist()      { [ "$HISTFILE" ] || return; SAVEHIST=$HISTSIZE_GLOBAL fc -AI "$HISTFILE_GLOBAL" 2>/dev/null; fc -AI 2>/dev/null; }
 
 add-zsh-hook periodic savehist
 
@@ -37,7 +37,7 @@ MAKEHIST() {
   setopt nullglob; local f
   [ -f "${HISTFILE_GLOBAL}" ] && cp -p "${HISTFILE_GLOBAL}" "${HISTFILE_GLOBAL}.${HIST_DTG}"
   savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
-  for f in $HISTBASE/*/bash*[0-9] $HISTDIR/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done;
+  for f in $HISTBASE/*/bash*[0-9] $HISTDIR/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; fc -R $HISTFILE_GLOBAL
   for f in ${HISTBASE}/.global/zsh* $HISTBASE/*/zsh*[0-9] $HISTDIR/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done;
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
   # setopt nonullglob

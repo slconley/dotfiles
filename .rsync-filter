@@ -8,6 +8,7 @@
 # this-level excludes
 # - /.fzf/
 - /.viminfo
+- /.crc
 
 # this-level includes
 + /.*rc
