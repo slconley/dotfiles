@@ -13,7 +13,7 @@ setopt hist_reduce_blanks
 # reminder... if HISTORY_IGNORE not completely working, you are potentially using an older zsh
 HISTFILE="$HISTDIR/zsh.histfile.${HIST_DTG}"
 HISTFILE_GLOBAL="$HISTBASE/.global/zsh.global"
-HISTORY_IGNORE='( |AWS|HIST|cp |d[fu] |e[bmsz ]|exec |h[h]* |l[lst ]|lpass|man |mv |open |otr|p |psg |rm |sleep|which)*'
+HISTORY_IGNORE='^( |:|#[0-9]AWS|HIST|cp |d[fu] |e[bmsz ]|exec |h[h]* |l[lst ]|lpass|man |mv |open |otr|p |psg |rm |sleep|ta |which)*'
 SAVEHIST=$HISTSIZE
 export HISTFILE HISTORY_IGNORE SAVEHIST
 
@@ -37,7 +37,7 @@ MAKEHIST() {
   setopt nullglob; local f
   [ -f "${HISTFILE_GLOBAL}" ] && cp -p "${HISTFILE_GLOBAL}" "${HISTFILE_GLOBAL}.${HIST_DTG}"
   savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
-  for f in $HISTBASE/*/bash*[0-9] $HISTDIR/bash*[0-9]; do; bash-to-zsh-hist < $f >> $HISTFILE_GLOBAL; done; fc -R $HISTFILE_GLOBAL
+  for f in $HISTBASE/*/bash*[0-9] $HISTDIR/bash*[0-9]; do; b2zhist < $f >> $HISTFILE_GLOBAL; done; fc -R $HISTFILE_GLOBAL
   for f in ${HISTBASE}/.global/zsh* $HISTBASE/*/zsh*[0-9] $HISTDIR/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done;
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
   # setopt nonullglob

@@ -181,6 +181,15 @@ alias vless='/usr/share/vim/vim70/macros/less.sh'				# TODO: leverage this for P
 alias vm='VBoxManage'
 alias which='which -a'
 
+# systemctl aliases
+alias disable='systemctl disable'
+alias enable='systemctl enable'
+alias restart='systemctl restart'
+alias sc='systemctl'
+alias start='systemctl start'
+alias status='systemctl status'
+alias stop='systemctl stop'
+
 # conditional alias(es)
 [[ "$TTY" =~ "tty[0-9]" ]] && alias tmux='tmux -L $(basename $TTY)'
 [ -f $HOME/.ssh/config ] && alias scp='scp -F $HOME/.ssh/config' && alias ssh='ssh -F $HOME/.ssh/config'
@@ -190,6 +199,7 @@ alias which='which -a'
 # ----------------------------------------------------------------------
 ..()       { builtin cd ..; }
 a()        { apropos $* 2> /dev/null; }
+b2zhist()  { while IFS= read -r line1 && IFS= read -r line2; do printf ": %s:0;%s\n" ${line1##\#} ${line2}; done; }
 c()        { clear; }
 colormap() { for i in {0..255}; do printf "\x1b[38;5;${i}mcolor${i}\n"; done; }
 bak()      { cp -rp "$1" "${1}.$(/bin/date -u '+%Y%m%dT%H%MZ'~)"; }
@@ -210,6 +220,7 @@ h()        { history | grep -i "$*"|tail -30; }
 header()   { echo -ne "\e]0;$USER@${NICK}\a"; }
 hh()       { grep -ih $1 $HISTDIR/* 2>/dev/null | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
 hhh()      { grep -ih $1 $HISTDIR/../*/* 2>/dev/null | cut -d ';' -f2- | sort -u | grep -i $COLOR_GREP $1; }
+hostsort() { sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n; }
 io()       { iostat -xnmz $* 3; }
 l()        { command ls -F $COLOR_LS $*; }
 loc()      { ( locate -i $1; eval gzip -dc $INDICES 2> /dev/null) | grep -i $COLOR_GREP $1; }
@@ -222,14 +233,10 @@ psg()      { ps -ef | grep -v grep | grep -i $COLOR_GREP $*; }
 psmem()    { ps -eo user,pid,ppid,pcpu,vsz,rss,pmem,args | grep -i $COLOR_GREP "COMMAND|$*."|grep -v grep|sort -k6; }
 pss()      { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k2; }
 pstime()   { ps -ef | grep -i $COLOR_GREP $*. | grep -v grep | sort -k5; }
-restart()  { systemctl restart "$1"; }
 s()        { savehist; sudo -sE HOME=$HOME ; readhist; }
 savehist() { history -a; }
 sslconn()  { openssl s_client -connect "$1" -servername "${1%:*}" < /dev/null; }
 sockets()  { netstat -anp | grep -ai "list|idle|tcp|udp" | grep -i "$COLOR_GREP" "$@"; }
-start()    { systemctl start "$1"; }
-status()   { systemctl status "$1"; }
-stop()     { systemctl stop "$1"; }
 tcp()      { lsof -i tcp | grep -i "$@" ; }
 tgz()      { tar cvzf "${1}".tar "$1"; }
 zipit()    { zip -roy "${1}".zip "$1"; }
