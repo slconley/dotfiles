@@ -36,7 +36,7 @@ makehist() {
 MAKEHIST() {
   setopt nullglob; local f
   [ -f "${HISTFILE_GLOBAL}" ] && cp -p "${HISTFILE_GLOBAL}" "${HISTFILE_GLOBAL}.${HIST_DTG}"
-  savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cp /dev/null $HISTFILE_GLOBAL
+  savehist; HISTSIZE=0; HISTSIZE=$HISTSIZE_GLOBAL; SAVEHIST=$HISTSIZE; cat /dev/null >$HISTFILE_GLOBAL
   for f in $HISTBASE/*/bash*[0-9] $HISTDIR/bash*[0-9]; do; b2zhist < $f >> $HISTFILE_GLOBAL; done; fc -R $HISTFILE_GLOBAL
   for f in ${HISTBASE}/.global/zsh* $HISTBASE/*/zsh*[0-9] $HISTDIR/zsh*[0-9]; do; fc -R "$f" 2>/dev/null; done;
   fc -W $HISTFILE_GLOBAL; cp $HISTFILE_GLOBAL $HISTFILE; HISTSIZE=0; HISTSIZE=$SAVEHIST; fc -R
